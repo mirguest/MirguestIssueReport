@@ -2,6 +2,7 @@
 #define ParticleDescription_hh
 
 #include <string>
+#include <vector>
 
 #include <globals.hh>
 
@@ -77,6 +78,8 @@ struct ParticleInfo {
   G4double pz;
   G4double mass;
 };
+
+typedef std::vector< ParticleInfo > ParticleInfoContainer;
 
   }
 
