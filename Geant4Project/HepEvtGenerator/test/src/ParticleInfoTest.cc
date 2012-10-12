@@ -12,6 +12,11 @@ ParticleInfoTest::testParticleInfo()
   gu_pi . px = 1.216710e-03 * GeV;
   gu_pi . py = 6.703129e-04 * GeV;
   gu_pi . pz = -4.525696e-04 * GeV;
+
+  Generator::Utils::ParticleInfoContainer gu_pic;
+
+  gu_pic.push_back(gu_pi);
+  
 }
 
 }
