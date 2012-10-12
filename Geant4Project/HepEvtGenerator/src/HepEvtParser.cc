@@ -156,10 +156,10 @@ EasyHepEvtParser::getParticleInfoPerLine()
     }
 
     tmp_pi . pid = id;
-    tmp_pi . px = px;
-    tmp_pi . py = py;
-    tmp_pi . pz = pz;
-    tmp_pi . mass = mass;
+    tmp_pi . px = px * GeV;
+    tmp_pi . py = py * GeV;
+    tmp_pi . pz = pz * GeV;
+    tmp_pi . mass = mass * GeV;
 
     break;
   }
