@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include "ParticleDescription.hh"
+#include "globals.hh"
 
 namespace Generator {
   namespace Utils {
@@ -13,7 +14,7 @@ class EasyHepEvtParser {
 public:
   EasyHepEvtParser( std::istream& );
 
-  void SetVervosity(G4int verbosity);
+  void setVerbosity(G4int verbosity);
   ParticleInfoContainer next();
 
 private:
