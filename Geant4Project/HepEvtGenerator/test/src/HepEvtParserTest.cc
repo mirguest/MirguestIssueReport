@@ -18,6 +18,12 @@ HepEvtParserTest::testOpen() {
 
   G4cout << pic.size() << G4endl;
 
+  std::ifstream ifin2("th_decays.asc");
+  Generator::Utils::EasyHepEvtParser ehep_th(ifin2);
+  Generator::Utils::ParticleInfoContainer pic_th;
+  pic_th = ehep_th.next();
+  G4cout << pic_th.size() << G4endl;
+
 }
 
 }

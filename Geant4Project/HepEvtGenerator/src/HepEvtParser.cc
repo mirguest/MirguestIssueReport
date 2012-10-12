@@ -14,6 +14,12 @@ EasyHepEvtParser::EasyHepEvtParser( std::istream& in_f )
 {
 }
 
+void
+EasyHepEvtParser::setVervosity(G4int verbosity)
+{
+  m_verbosity = verbosity;
+}
+
 ParticleInfoContainer
 EasyHepEvtParser::next() 
 {

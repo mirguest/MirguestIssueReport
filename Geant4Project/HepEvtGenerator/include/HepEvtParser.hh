@@ -13,6 +13,7 @@ class EasyHepEvtParser {
 public:
   EasyHepEvtParser( std::istream& );
 
+  void SetVervosity(G4int verbosity);
   ParticleInfoContainer next();
 
 private:
