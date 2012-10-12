@@ -18,8 +18,12 @@ public:
 private:
   G4int getNumberOfParticles();
 
+  G4bool checkOK( std::istream& );
+
 private:
   std::istream& m_hepevt_src;
+
+  G4int m_verbosity;
 
 };
 
