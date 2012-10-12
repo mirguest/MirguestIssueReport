@@ -26,6 +26,7 @@ EasyHepEvtParser::next()
 
     for (G4int i = 0; i < number_of_particles; ++i ) {
       // Parse Per line.
+      getParticleInfoPerLine();
     }
 
   }
@@ -78,6 +79,73 @@ EasyHepEvtParser::checkOK( std::istream& is )
   return (is.good());
 }
 
+
+ParticleInfo 
+EasyHepEvtParser::getParticleInfoPerLine() 
+{
+  ParticleInfo tmp_pi;
+  G4int status = 0;
+  G4int id = 0;
+  G4int daughter_begin, daughter_end;
+  G4double px, py, pz;
+  std::string tmp_line;
+
+  while ( checkOK(m_hepevt_src) ) {
+    // Get the Line.
+    std::getline(m_hepevt_src, tmp_line);
+
+    std::stringstream ss;
+    ss << tmp_line;
+
+    // Parse Status
+    ss >> status;
+    if (ss.fail()) {
+      continue;
+    }
+    if (m_verbosity > 3) {
+      G4cout << "HEPEVT Status: " 
+             << status << G4endl;
+    }
+    // Parse ID
+    ss >> id;
+    if (ss.fail()) {
+      continue;
+    }
+    if (m_verbosity > 3) {
+      G4cout << "HEPEVT ID: " 
+             << id << G4endl;
+    }
+    // Parse Daughter
+    ss >> daughter_begin >> daughter_end;
+    if (ss.fail()) {
+      continue;
+    }
+    if (m_verbosity > 3) {
+      G4cout << "HEPEVT Daughter: " 
+             << "From: " << daughter_begin << ", "
+             << "To  : " << daughter_end
+             << G4endl;
+    }
+    // Parse Px, Py, Pz
+    ss >> px >> py >> pz;
+    if (ss.fail()) {
+      continue;
+    }
+    if (m_verbosity > 3) {
+      G4cout << "HEPEVT P: " 
+             << "( " 
+             << px << ", "
+             << py << ", "
+             << pz << ") "
+             << G4endl;
+    }
+
+
+  }
+
+  return tmp_pi;
+
+}
 
   }
 

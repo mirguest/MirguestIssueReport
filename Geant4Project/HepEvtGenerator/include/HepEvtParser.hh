@@ -17,6 +17,7 @@ public:
 
 private:
   G4int getNumberOfParticles();
+  ParticleInfo getParticleInfoPerLine();
 
   G4bool checkOK( std::istream& );
 
