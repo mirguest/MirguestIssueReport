@@ -22,8 +22,10 @@ HepEvtParserTest::testOpen() {
   Generator::Utils::EasyHepEvtParser ehep_th(ifin2);
   ehep_th.setVerbosity(0);
   Generator::Utils::ParticleInfoContainer pic_th;
+  do {
   pic_th = ehep_th.next();
   G4cout << pic_th.size() << G4endl;
+  } while (pic_th.size());
 
 }
 
