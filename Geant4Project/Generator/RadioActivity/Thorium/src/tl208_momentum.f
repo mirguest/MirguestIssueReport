@@ -14,10 +14,10 @@ C
         include 'fermi_bin.inc'
 
         integer i,j,k
-	real*4 rndm,rndm_g,rndm_conv	! Random number
+        real*4 rndm,rndm_g,rndm_conv    ! Random number
         real*4 rndm3(3)
-	logical*4 tfg/.false./	! Marks the first decay for which the random
-				! number generator has to be initialized.
+        logical*4 tfg/.false./  ! Marks the first decay for which the random
+                                ! number generator has to be initialized.
         real*4 total_energy     ! Total energy in [GeV]
         real*4 beta(nr_beta_bins_tl208) ! Work array to create random beta energy. Need
                                 ! because random number generator can only handle one
@@ -30,7 +30,7 @@ C
 
 C Initializations to be done during the first call.
 
-	if(.not.tfg)then
+        if(.not.tfg)then
 
 C Convert branching ratios into probability distribution.
            write(*,*)'208Tl'
@@ -88,12 +88,12 @@ C              read(*,*)
 
 C Set new seed value for the random number generator.
            is=is+54321
-	   call rluxgo(lux,is,0,0)! Set new seed values. 
-	   write(*,*)'Initialize random number generator TL208_MOMENTUM'
+           call rluxgo(lux,is,0,0)! Set new seed values. 
+           write(*,*)'Initialize random number generator TL208_MOMENTUM'
 
 C Don't go in here again.
-	   tfg=.true.
-	endif
+           tfg=.true.
+        endif
 
 C Reset all arrays for this decay.
 
@@ -359,9 +359,9 @@ C Convert kinetic energy into total momentum.
            total_energy=sqrt(energy(k)*(energy(k)+2.*mass(k)))
 C Get momentum vector with isotropic angular distribution.
            call ran_momentum(total_energy,momentum_in)
-	   momentum(3*k-2)=momentum_in(1)
-	   momentum(3*k-1)=momentum_in(2)
-	   momentum(3*k)=momentum_in(3)
+           momentum(3*k-2)=momentum_in(1)
+           momentum(3*k-1)=momentum_in(2)
+           momentum(3*k)=momentum_in(3)
         enddo
 
         return
