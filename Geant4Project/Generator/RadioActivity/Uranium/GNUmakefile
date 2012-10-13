@@ -1,6 +1,6 @@
 
 F77 = gfortran
-F77FLAGS += -ffixed-line-length-none -fPIC -fno-align-commons
+F77FLAGS += -ffixed-line-length-none -fPIC -fno-align-commons -fno-automatic -w -Wno-globals
 LDFLAGS += $(shell cernlib pawlib)
 
 SRCS = $(wildcard src/*.f)
