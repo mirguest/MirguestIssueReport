@@ -27,6 +27,15 @@ HepEvtParserTest::testOpen() {
   G4cout << pic_th.size() << G4endl;
   } while (pic_th.size());
 
+  std::ifstream ifin3("u_decas.asc");
+  Generator::Utils::EasyHepEvtParser ehep_u(ifin3);
+  ehep_u.setVerbosity(0);
+  Generator::Utils::ParticleInfoContainer pic_u;
+  do {
+  pic_u = ehep_u.next();
+  G4cout << pic_u.size() << G4endl;
+  } while (pic_u.size());
+
 }
 
 }
