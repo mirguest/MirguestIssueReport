@@ -1,6 +1,6 @@
 
 F77 = gfortran
-
+F77FLAGS += -ffixed-line-length-none -fPIC -fno-align-commons
 LDFLAGS += $(shell cernlib pawlib)
 
 SRCS = $(wildcard src/*.f)
@@ -9,10 +9,10 @@ OBJS = $(SRCS:.f=.o)
 TARGET = Uranium
 
 $(TARGET): $(OBJS)
-	$(F77) -o $@ $^ $(LDFLAGS)  
+	@$(F77) $(F77FLAGS) -o $@ $^ $(LDFLAGS)  
 
 %.o: %.f
-	$(F77) -c $< -o $@
+	@$(F77) $(F77FLAGS) -c $< -o $@
 
 clean:
 	@-rm $(OBJS)
