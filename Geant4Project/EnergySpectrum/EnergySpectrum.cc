@@ -22,9 +22,16 @@ int main (int argc, char** argv) {
     ehep.setVerbosity(0);
     Generator::Utils::ParticleInfoContainer pic_u;
 
+    // Output data.
+    std::string output_filename(argv[i]);
+    output_filename = output_filename + std::string(".total_enegry.txt");
+    std::ofstream ofout( output_filename.c_str() );
+
     while ( (pic_u = ehep.next()).size() ) {
-      G4cout << getEnergyFromContainer(pic_u) << G4endl;
+      ofout << getEnergyFromContainer(pic_u) << std::endl;
     }
+
+    ofout.close();
 
   }
 
