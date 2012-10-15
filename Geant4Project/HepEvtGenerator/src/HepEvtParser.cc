@@ -49,6 +49,7 @@ G4int
 EasyHepEvtParser::getNumberOfParticles()
 {
   G4int total = 0;
+  std::string tmp_tail;
   std::string tmp_line;
 
   while ( checkOK(m_hepevt_src) ) {
@@ -71,6 +72,15 @@ EasyHepEvtParser::getNumberOfParticles()
     if (ss.fail()) {
       continue;
     }
+
+    // Try to Judge, is there any string?
+    ss >> tmp_tail;
+    // If it fails, that mean, no more any character.
+    // else, read again.
+    if (!ss.fail()) {
+      continue;
+    }
+
 
     if (m_verbosity > 3) {
       G4cout << total << G4endl;
