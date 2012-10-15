@@ -28,7 +28,7 @@ int main (int argc, char** argv) {
     std::ofstream ofout( output_filename.c_str() );
 
     while ( (pic_u = ehep.next()).size() ) {
-      ofout << getEnergyFromContainer(pic_u) << std::endl;
+      ofout << getEnergyFromContainer(pic_u) / GeV << std::endl;
     }
 
     ofout.close();
