@@ -38,4 +38,13 @@ HepEvtParserTest::testOpen() {
 
 }
 
+void
+HepEvtParserTest::testReadTime() {
+
+  std::ifstream ifin("Data_of_HepEvtParserTest.txt");
+  Generator::Utils::EasyHepEvtParser ehep2(ifin);
+  Generator::Utils::ParticleInfoContainer pic = ehep2.next();
+
+}
+
 }

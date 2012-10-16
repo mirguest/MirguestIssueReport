@@ -189,6 +189,15 @@ EasyHepEvtParser::getParticleInfoPerLine()
 
     global_dtime += dtime;
 
+    if (m_verbosity > 3) {
+      G4cout << "HEPEVT Global DTime: " 
+             << global_dtime
+             << G4endl
+             << "HEPEVT Local DTime: "
+             << dtime
+             << G4endl;
+    }
+
     tmp_pi . dt = global_dtime;
 
     break;

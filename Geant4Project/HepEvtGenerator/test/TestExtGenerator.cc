@@ -2,6 +2,8 @@
 #include "ParticleInfoTest.hh"
 #include "HepEvtParserTest.hh"
 
+#include "globals.hh"
+
 int main (void) {
 
   Test::ParticleInfoTest pit;
@@ -11,5 +13,9 @@ int main (void) {
   Test::HepEvtParserTest hept;
 
   hept.testOpen();
+
+  G4cout << "################################" << G4endl;
+
+  hept.testReadTime();
 
 }

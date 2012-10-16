@@ -6,6 +6,7 @@ namespace Test {
 class HepEvtParserTest {
   public:
     void testOpen();
+    void testReadTime();
 
 };
 
