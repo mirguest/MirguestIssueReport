@@ -77,6 +77,15 @@ struct ParticleInfo {
   G4double py;
   G4double pz;
   G4double mass;
+  /*
+   * Optional:
+   *  * dt (ns)
+   *    This is from an Event start.
+   *    Different from HepEvt.
+   *    in HepEvt, the dt is the time 
+   *    begins from the previous line.
+   */
+  G4double dt;
 };
 
 typedef std::vector< ParticleInfo > ParticleInfoContainer;
