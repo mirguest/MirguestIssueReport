@@ -1,7 +1,7 @@
 
 CC = g++
-CCFLAGS += $(shell clhep-config --include)
-LDFLAGS += $(shell clhep-config --libs)
+CCFLAGS += $(shell clhep-config --include) $(shell root-config --cflags)
+LDFLAGS += $(shell clhep-config --libs) $(shell root-config --libs)
 
 SRCS = $(wildcard src/*.cc)
 OBJS = $(SRCS:.cc=.o)
