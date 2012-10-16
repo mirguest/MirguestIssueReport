@@ -45,6 +45,14 @@ HepEvtParserTest::testReadTime() {
   Generator::Utils::EasyHepEvtParser ehep2(ifin);
   Generator::Utils::ParticleInfoContainer pic = ehep2.next();
 
+  std::ifstream ifin2("th_decays.asc");
+  Generator::Utils::EasyHepEvtParser ehep_th(ifin2);
+  Generator::Utils::ParticleInfoContainer pic_th;
+
+  for (int i=0; i<10; ++i) {
+    pic_th = ehep_th.next();
+    G4cout << pic_th.size() << G4endl;
+  }
 }
 
 }

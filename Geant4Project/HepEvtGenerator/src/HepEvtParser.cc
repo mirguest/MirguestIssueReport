@@ -31,6 +31,8 @@ EasyHepEvtParser::next()
              << number_of_particles << G4endl;
     }
 
+    global_dtime = 0.0;
+
     for (G4int i = 0; i < number_of_particles; ++i ) {
       // Parse Per line.
       new_pic . push_back(getParticleInfoPerLine());
@@ -109,7 +111,6 @@ EasyHepEvtParser::getParticleInfoPerLine()
   G4int daughter_begin, daughter_end;
   G4double px, py, pz;
   G4double mass = 0.0;
-  G4double global_dtime = 0.0;
   G4double dtime = 0.0;
   std::string tmp_line;
 

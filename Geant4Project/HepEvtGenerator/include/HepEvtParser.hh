@@ -28,6 +28,9 @@ private:
 
   G4int m_verbosity;
 
+  // Need to reset per EVENT.
+  G4double global_dtime;
+
 };
 
   }
