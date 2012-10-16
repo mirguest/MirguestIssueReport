@@ -68,6 +68,7 @@ C Calculate beta distributions.
                     stop
                  endif
               endif
+              fpoint_nr = int(1.e6*e_beta_ac228(i))
               do j=1,fpoint_nr
                 beta(j)=probfermi_s(j)
               enddo

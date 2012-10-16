@@ -1,7 +1,7 @@
 
 F77 = gfortran
-F77FLAGS += -ffixed-line-length-none -fPIC -fno-align-commons -fno-automatic -Wno-globals
-LDFLAGS += $(shell cernlib pawlib)
+F77FLAGS += -ffixed-line-length-none -fPIC -fno-automatic 
+LDFLAGS += $(shell cernlib pawlib mathlib)
 
 SRCS = $(wildcard src/*.f)
 OBJS = $(SRCS:.f=.o)

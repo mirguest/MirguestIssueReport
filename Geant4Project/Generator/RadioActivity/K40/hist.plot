@@ -11,12 +11,12 @@ set xrange [min:max]
 set yrange [0:]
 #to put an empty boundary around the
 #data inside an autoscaled graph.
-set offset graph 0.05,0.05,0.05,0.0
+#set offset graph 0.05,0.05,0.05,0.0
 set xtics min,(max-min)/5,max
 set boxwidth width*0.9
 set style fill solid 0.5    #fillstyle
-set tics out nomirror
+#set tics out nomirror
 set xlabel "x"
 set ylabel "Frequency"
 #count and plot
-plot "k40.asc.total_enegry.txt" u (hist(($1*1000),width)):(1.0) smooth freq w boxes lc rgb"green" notitle
+plot "k40.asc.total_enegry.txt" u (hist(($1*1000),width)):(1.0) smooth freq w boxes 

@@ -9,4 +9,5 @@ c
        integer*4 fpoint_nr
        integer nfcommon
        parameter(nfcommon=10000)
-       common /fermibin/ fpoint_nr,efermi,probfermi_s
+c      common /fermibin/ fpoint_nr,efermi,probfermi_s
+       common /fermibin/ efermi,probfermi_s,fpoint_nr
