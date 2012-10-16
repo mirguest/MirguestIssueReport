@@ -199,7 +199,7 @@ EasyHepEvtParser::getParticleInfoPerLine()
              << G4endl;
     }
 
-    tmp_pi . dt = global_dtime;
+    tmp_pi . dt = global_dtime * ns;
 
     break;
   }
