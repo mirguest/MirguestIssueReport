@@ -109,6 +109,8 @@ EasyHepEvtParser::getParticleInfoPerLine()
   G4int daughter_begin, daughter_end;
   G4double px, py, pz;
   G4double mass = 0.0;
+  G4double global_dtime = 0.0;
+  G4double dtime = 0.0;
   std::string tmp_line;
 
   while ( checkOK(m_hepevt_src) ) {
@@ -176,6 +178,18 @@ EasyHepEvtParser::getParticleInfoPerLine()
     tmp_pi . py = py * GeV;
     tmp_pi . pz = pz * GeV;
     tmp_pi . mass = mass * GeV;
+
+    // Then, It is Optional.
+    // Parse Time
+    ss >> dtime;
+    if (ss.fail()) {
+      // If fails, set it to ZERO.
+      dtime = 0.0;
+    }
+
+    global_dtime += dtime;
+
+    tmp_pi . dt = global_dtime;
 
     break;
   }
