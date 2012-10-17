@@ -9,9 +9,18 @@
 namespace Generator {
   namespace Utils {
 
-EasyHepEvtParser::EasyHepEvtParser( std::istream& in_f )
-:m_hepevt_src(in_f), m_verbosity(4)
+//EasyHepEvtParser::EasyHepEvtParser( std::istream& in_f )
+//:m_hepevt_src(in_f), m_verbosity(4)
+//{
+//}
+
+EasyHepEvtParser::EasyHepEvtParser( std::string fname )
+  : m_verbosity(4)
 {
+  m_hepevt_src.open( fname.c_str(), std::ifstream::in );
+
+  // Build The Map Table
+  m_pdg_mapper[ 9802004 ] = 1000020040 ;
 }
 
 void
@@ -135,6 +144,8 @@ EasyHepEvtParser::getParticleInfoPerLine()
     if (ss.fail()) {
       continue;
     }
+
+    id = getPDGID(id);
     if (m_verbosity > 3) {
       G4cout << "HEPEVT ID: " 
              << id << G4endl;
@@ -206,6 +217,15 @@ EasyHepEvtParser::getParticleInfoPerLine()
 
   return tmp_pi;
 
+}
+
+G4int
+EasyHepEvtParser::getPDGID(G4int pdgid) 
+{
+  if ( m_pdg_mapper.count(pdgid)>0 ) {
+    pdgid = m_pdg_mapper[pdgid];
+  }
+  return pdgid;
 }
 
   }
