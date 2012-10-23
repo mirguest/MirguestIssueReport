@@ -10,3 +10,10 @@ EOF
 `
 echo $var
 $var
+
+var2=$(python << EOF
+print "hello"
+print "hello"
+EOF
+)
+echo $var2
