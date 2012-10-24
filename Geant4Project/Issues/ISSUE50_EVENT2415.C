@@ -1,3 +1,5 @@
+// The problem is described here:
+//   https://github.com/mirguest/MirguestIssueReport/issues/50
 
 void ISSUE50_EVENT2415() {
   TFile* f = new TFile("MC-Thorium-1002-5000.root");
