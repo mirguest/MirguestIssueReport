@@ -17,3 +17,8 @@ print "hello"
 EOF
 )
 echo $var2
+
+for i in $var2
+do
+  echo $i
+done
