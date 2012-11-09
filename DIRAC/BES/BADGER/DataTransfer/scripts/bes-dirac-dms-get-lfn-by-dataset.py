@@ -39,4 +39,3 @@ def getLFNsByDataset(dataset):
 for dataset in Script.getPositionalArgs():
     for lfn in getLFNsByDataset(dataset):
         print lfn
-    break
