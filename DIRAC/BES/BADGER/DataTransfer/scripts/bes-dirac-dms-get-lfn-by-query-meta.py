@@ -37,5 +37,34 @@ def getLFNsByQueryString(query):
 
 query_string = " ".join(Script.getPositionalArgs())
 
+def createQuery(query):
+    def yieldAll(query):
+        for s in map(lambda x:x.strip(), query.split()):
+            curop = None
+            for op in ['>=','<=','>','<','!=','=']:
+                pos = s.find(op)
+                if pos == -1:
+                    continue
+
+                curop = op
+                if s[:pos]:
+                    yield s[:pos]
+                if s[pos: pos+len(curop)]:
+                    yield s[pos: pos+len(curop)]
+                if s[pos+len(curop):]:
+                    yield s[pos+len(curop):]
+                break
+            else:
+                yield s
+    qiter = yieldAll(query)
+
+    for q in qiter:
+        key = q
+        op = qiter.next()
+        value = qiter.next()
+        yield "%s%s%s" %(key, op, value)
+
+query_string = " ".join(createQuery(query_string))
+
 for lfn in getLFNsByQueryString(query_string):
     print lfn
