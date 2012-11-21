@@ -228,6 +228,6 @@ Hello_DetectorConstruction::makePMTPhysical()
     }
   }
 
-  G4cout << "### Total PMTs: " << copyno << G4endl
+  G4cout << "### Total PMTs: " << copyno << G4endl;
 
 }
