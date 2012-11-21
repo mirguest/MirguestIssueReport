@@ -143,13 +143,13 @@ Hello_DetectorConstruction::makePMTPhysical()
 
   G4int n_x_z_half = n_x_z / 2;
 
-  G4int n_theta_one_circle = n_x_z_half / 2;
+  G4int n_theta_one_circle = n_x_z_half / 2 + 1;
 
-  G4double per_theta = pi / n_x_z_half;
+  G4double per_theta = 2*pi / n_x_z;
 
   G4cout << "### n_x_z: " << n_x_z << G4endl;
   G4cout << "### n_x_z_half: " << n_x_z_half << G4endl;
-  G4cout << "### n_theta_one_circle" << n_theta_one_circle << G4endl;
+  G4cout << "### n_theta_one_circle: " << n_theta_one_circle << G4endl;
   G4cout << "### per_theta: " << per_theta << G4endl;
 
   for (G4int theta_i = 0; theta_i < n_theta_one_circle; ++theta_i) {
