@@ -1,0 +1,143 @@
+
+*************************************************************
+ Geant4 version Name: geant4-09-04-patch-04    (13-April-2012)
+                      Copyright : Geant4 Collaboration
+                      Reference : NIM A 506 (2003), 250-303
+                            WWW : http://cern.ch/geant4
+*************************************************************
+
+G4VisAttributes::SetForcedLineSegmentsPerCircle: attempt to set the
+number of line segements per circle < 12; forced to 12
+### n_x_z: 121
+### n_x_z_half: 60
+### n_theta_one_circle30
+### per_theta: 0.0523599
+Small theta: 0.0253945
+Theta: 0
+Small theta: 0.0253945
+Theta: 0.0523599
+Theta: 0.0269653
+Small theta: 0.0253945
+Theta: 0.10472
+Theta: 0.0793252
+Small theta: 0.0253945
+Theta: 0.15708
+Theta: 0.131685
+Small theta: 0.0253945
+Theta: 0.20944
+Theta: 0.184045
+Small theta: 0.0253945
+Theta: 0.261799
+Theta: 0.236405
+Small theta: 0.0253945
+Theta: 0.314159
+Theta: 0.288765
+Small theta: 0.0253945
+Theta: 0.366519
+Theta: 0.341125
+Small theta: 0.0253945
+Theta: 0.418879
+Theta: 0.393484
+Small theta: 0.0253945
+Theta: 0.471239
+Theta: 0.445844
+Small theta: 0.0253945
+Theta: 0.523599
+Theta: 0.498204
+Small theta: 0.0253945
+Theta: 0.575959
+Theta: 0.550564
+Small theta: 0.0253945
+Theta: 0.628319
+Theta: 0.602924
+Small theta: 0.0253945
+Theta: 0.680678
+Theta: 0.655284
+Small theta: 0.0253945
+Theta: 0.733038
+Theta: 0.707644
+Small theta: 0.0253945
+Theta: 0.785398
+Theta: 0.760004
+Small theta: 0.0253945
+Theta: 0.837758
+Theta: 0.812364
+Small theta: 0.0253945
+Theta: 0.890118
+Theta: 0.864723
+Small theta: 0.0253945
+Theta: 0.942478
+Theta: 0.917083
+Small theta: 0.0253945
+Theta: 0.994838
+Theta: 0.969443
+Small theta: 0.0253945
+Theta: 1.0472
+Theta: 1.0218
+Small theta: 0.0253945
+Theta: 1.09956
+Theta: 1.07416
+Small theta: 0.0253945
+Theta: 1.15192
+Theta: 1.12652
+Small theta: 0.0253945
+Theta: 1.20428
+Theta: 1.17888
+Small theta: 0.0253945
+Theta: 1.25664
+Theta: 1.23124
+Small theta: 0.0253945
+Theta: 1.309
+Theta: 1.2836
+Small theta: 0.0253945
+Theta: 1.36136
+Theta: 1.33596
+Small theta: 0.0253945
+Theta: 1.41372
+Theta: 1.38832
+Small theta: 0.0253945
+Theta: 1.46608
+Theta: 1.44068
+Small theta: 0.0253945
+Theta: 1.51844
+Theta: 1.49304
+### Total PMTs: 2187
+Visualization Manager instantiating with verbosity "warnings (3)"...
+Visualization Manager initialising...
+Registering graphics systems...
+
+You have successfully registered the following graphics systems.
+Current available graphics systems are:
+  ASCIITree (ATree)
+  DAWNFILE (DAWNFILE)
+  G4HepRep (HepRepXML)
+  G4HepRepFile (HepRepFile)
+  RayTracer (RayTracer)
+  VRML1FILE (VRML1FILE)
+  VRML2FILE (VRML2FILE)
+  gMocrenFile (gMocrenFile)
+  OpenGLStoredX (OGL)
+  OpenGLImmediateX (OGLI)
+  OpenGLStoredX (OGLS)
+  OpenGLImmediateX (OGLIX)
+  OpenGLStoredX (OGLSX)
+  RayTracerX (RayTracerX)
+
+Registering model factories...
+
+You have successfully registered the following model factories.
+Registered model factories:
+  generic
+  drawByCharge
+  drawByParticleID
+  drawByOriginVolume
+  drawByAttribute
+
+Registered filter factories:
+  chargeFilter
+  particleFilter
+  originVolumeFilter
+  attributeFilter
+
+Idle> 
+Session terminated.
