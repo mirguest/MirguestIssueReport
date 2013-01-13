@@ -33,8 +33,8 @@ Hello_DetectorConstruction::Construct()
   makeWorldLogical();
   makeWorldPhysical();
 
-  makePMTLogical();
-  makePMTPhysical();
+  //makePMTLogical();
+  //makePMTPhysical();
 
   return experimentalHall_phys;
 }
