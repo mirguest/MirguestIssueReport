@@ -5,7 +5,7 @@
 import uuid
 import datetime
 
-from . import DB
+import DB
 
 class Monitor(object):
 
