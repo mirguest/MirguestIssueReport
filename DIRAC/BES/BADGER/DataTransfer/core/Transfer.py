@@ -8,6 +8,7 @@ import time
 import random
 
 from Monitor import gMonitor
+from TransferWorker import DemoTransferWorker
 
 MAX_TRANSFER = 2
 
@@ -41,7 +42,11 @@ class Transfer(object):
 
         time.sleep(0.1)
         print "Add A New Transfer, will sleep", sleep_time
-        self.transfer_worker.append( (guid, index, Popen(cmd)) )
+        dtw = DemoTransferWorker()
+        dtw.create_popen(cmd)
+        self.transfer_worker.append( (guid, 
+                                      index, 
+                                      dtw) )
 
         # Change the status
         gMonitor.change_one_file_transfer(guid, index)
@@ -56,7 +61,7 @@ class Transfer(object):
     def start(self):
         while True:
             for worker in self.transfer_worker:
-                retcode = worker[2].poll()
+                retcode = worker[2].proc.poll()
                 #print retcode
                 if retcode is not None:
                     # Handle the Result
@@ -66,6 +71,9 @@ class Transfer(object):
 
                     self.transfer_worker.remove(worker)
                     break
+                else:
+                    # handle when the job is not OK.
+                    worker[2].handle_waiting()
             else:
                 time.sleep(1)
                 print "Sleeping"
