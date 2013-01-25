@@ -259,6 +259,26 @@ class TransferFileListTabel(object):
 
         return cursor.fetchone()
 
+    def get_request_count(self, guid, status=None):
+        cursor = self.m_conn.cursor()
+
+        if status:
+            cursor.execute("""
+                select count(*) from trans_file
+                where guid=? and status=?
+            """, (guid, status))
+        else:
+            cursor.execute("""
+                select count(*) from trans_file
+                where guid=? 
+            """, (guid,))
+
+        result = cursor.fetchone()
+        if result:
+            return result[0]
+        return 0
+
+
     def dump_all(self):
         cursor = self.m_conn.cursor()
 
@@ -326,6 +346,8 @@ if __name__ == "__main__":
 
     tflt.create_new_filelist(guid, filelist, "new")
     tflt.dump_all()
+
+    print tflt.get_request_total_files(guid)
 
     tflt.modify_status(guid, 0, "transfer")
     tflt.dump_all()

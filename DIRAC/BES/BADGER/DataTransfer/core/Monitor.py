@@ -52,7 +52,18 @@ class Monitor(object):
 
 
     def get_new_one_request(self):
-        return self.m_transfer_request.get_one("new")
+        # TODO
+        new_one = self.m_transfer_request.get_one("new")
+        # Make sure the guid --> File with new status.
+        if new_one is None:
+            return
+        guid = new_one["guid"]
+        if self.m_transfer_file.get_request_count(guid):
+            if self.m_transfer_file.get_request_count(guid, "new"):
+                return new_one
+            else:
+                # Change the status
+                self.m_transfer_request.modify_status(guid, "transfer")
 
     def get_request_new_one_file(self, guid):
         return self.m_transfer_file.get_one(guid, "new")
