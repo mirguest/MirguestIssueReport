@@ -64,12 +64,14 @@ class Transfer(object):
                 retcode = worker[2].proc.poll()
                 #print retcode
                 if retcode is not None:
-                    # Handle the Result
+
+                    self.transfer_worker.remove(worker)
                     #print retcode
+                    result = worker[2].handle_exit(retcode)
+                    # Handle the Result
                     print "Finish ", worker[0], worker[1]
                     self.finish_transfer(worker[0], worker[1])
 
-                    self.transfer_worker.remove(worker)
                     break
                 else:
                     # handle when the job is not OK.

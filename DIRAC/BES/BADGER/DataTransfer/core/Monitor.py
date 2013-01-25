@@ -112,4 +112,12 @@ else:
                            user,
                            filelist)
     print "Create A New Request"
+    filelist = [("/new/from/here1", "/new/to/there1"), 
+                ("/new/from/here2", "/new/to/there2"),
+                ("/new/from/here3", "/new/to/there3"),
+                ("/new/from/here4", "/new/to/there4"),]
+    gMonitor.create_request(from_ep,
+                           to_ep,
+                           user,
+                           filelist)
 
