@@ -33,7 +33,7 @@ class Monitor(object):
 
     # API
 
-    def create_request(self, from_ep, to_ep, user, filelists):
+    def create_request(self, from_ep, to_ep, user, trans_protocol, filelists):
         if self.m_endpoint.check(from_ep) and self.m_endpoint.check(to_ep):
             # generate the uuid
             guid = uuid.uuid1()
@@ -43,6 +43,7 @@ class Monitor(object):
                     from_ep,
                     to_ep,
                     user,
+                    trans_protocol,
                     "new",
                     datetime.datetime.now())
             self.m_transfer_file.create_new_filelist(guid, filelist, "new")
@@ -74,6 +75,10 @@ class Monitor(object):
     def change_one_file_finish(self, guid, file_index):
         self.m_transfer_file.modify_status(guid, file_index, "finish")
 
+    def get_endpoint_url(self, ep):
+        result = self.m_endpoint.get_endpoint(ep)
+        if result:
+            return result["url"]
 
 
 if __name__ == "__main__":
@@ -86,10 +91,11 @@ if __name__ == "__main__":
     from_ep = "lintao#test1"
     to_ep = "lintao#test2"
     user = "lintao"
-
+    trans_protocol = "scp"
     monitor.create_request(from_ep,
                            to_ep,
                            user,
+                           trans_protocol, 
                            filelist)
 
     result = monitor.get_new_one_request()
@@ -106,10 +112,12 @@ else:
     from_ep = "lintao#test1"
     to_ep = "lintao#test2"
     user = "lintao"
+    trans_protocol = "scp"
 
     gMonitor.create_request(from_ep,
                            to_ep,
                            user,
+                           trans_protocol, 
                            filelist)
     print "Create A New Request"
     filelist = [("/new/from/here1", "/new/to/there1"), 
@@ -119,5 +127,16 @@ else:
     gMonitor.create_request(from_ep,
                            to_ep,
                            user,
+                           trans_protocol, 
+                           filelist)
+    print "Create A New Request"
+    filelist = [("/home/ihep/paw.metafile.2", "/home/ihep/paw.2"), 
+                ("/home/ihep/paw.metafile.2", "/home/ihep/paw.3"),
+                ("/home/ihep/paw.metafile.2", "/home/ihep/paw.4"),
+                ("/home/ihep/paw.metafile.2", "/home/ihep/paw.5"),]
+    gMonitor.create_request(from_ep,
+                           to_ep,
+                           user,
+                           trans_protocol, 
                            filelist)
 

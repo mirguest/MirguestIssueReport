@@ -17,11 +17,17 @@ class SCPTransferProcess(ITransferProcess):
 
 if __name__ == "__main__":
 
-    from_ep = "ihep@ihep"
-    to_ep = "ihep@ihep2"
+    import sys
 
-    from_path = "/home/ihep/paw.metafile.2"
-    to_path = "/home/ihep/paw.metafile.3"
+    if len(sys.argv) != 5:
+        print "python %s from_ep from_path to_ep to_path"%sys.argv[0]
+        sys.exit(-1)
+
+    from_ep = sys.argv[1] or "ihep@ihep"
+    to_ep = sys.argv[3] or "ihep@ihep2"
+
+    from_path = sys.argv[2] or "/home/ihep/paw.metafile.2"
+    to_path = sys.argv[4] or "/home/ihep/paw.metafile.3"
 
     scp = SCPTransferProcess(from_ep, from_path, to_ep, to_path)
 

@@ -9,6 +9,7 @@ import random
 
 from Monitor import gMonitor
 from TransferWorker import DemoTransferWorker
+from TransferFactory import gTransferFactory
 
 MAX_TRANSFER = 2
 
@@ -28,6 +29,10 @@ class Transfer(object):
         if result is None:
             return False
         guid = result["guid"]
+        trans_protocol = result["trans_protocol"]
+        from_ep = gMonitor.get_endpoint_url(result["from_ep"])
+        to_ep = gMonitor.get_endpoint_url(result["to_ep"])
+
         result = gMonitor.get_request_new_one_file(guid)
         if result is None:
             return False
@@ -37,11 +42,22 @@ class Transfer(object):
         guid = result["guid"]
         index = result["file_index"]
 
-        sleep_time = str(random.randint(5, 20))
-        cmd = ["sleep", sleep_time]
+
+        info = {"trans_protocol": trans_protocol,
+                "from_ep": from_ep,
+                "to_ep": to_ep,
+                "from_path": result["from_path"],
+                "to_path": result["to_path"],
+                }
+
+        cmd = gTransferFactory.generate_cmd(info)
+        print cmd
+
+        #sleep_time = str(random.randint(5, 20))
+        #cmd = ["sleep", sleep_time]
 
         time.sleep(0.1)
-        print "Add A New Transfer, will sleep", sleep_time
+        #print "Add A New Transfer, will sleep", sleep_time
         dtw = DemoTransferWorker()
         dtw.create_popen(cmd)
         self.transfer_worker.append( (guid, 

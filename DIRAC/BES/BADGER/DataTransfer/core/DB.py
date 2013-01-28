@@ -135,6 +135,7 @@ class TransferRequestTable(object):
              from_ep text,
              to_ep text,
              user text,
+             trans_protocol text,
              status text,
              submit_time timestamp,
              finish_time timestamp)
@@ -149,15 +150,16 @@ class TransferRequestTable(object):
 
     def create_new_request(self, guid, 
                                  from_ep, to_ep, 
-                                 user, status, 
+                                 user, trans_protocol,
+                                 status, 
                                  submit_time,
                                  ):
         with self.m_conn:
             self.m_conn.execute("""
             insert into trans_req
-            ( guid, from_ep, to_ep, user, status, submit_time)
-            values (?, ?, ?, ?, ?, ?)
-            """, (guid, from_ep, to_ep, user, status,
+            ( guid, from_ep, to_ep, user, trans_protocol, status, submit_time)
+            values (?, ?, ?, ?, ?, ?, ?)
+            """, (guid, from_ep, to_ep, user, trans_protocol, status,
                   submit_time))
 
         return guid
@@ -320,6 +322,7 @@ if __name__ == "__main__":
                                  "lintao#test1",
                                  "lintao#test2",
                                  "lintao",
+                                 "scp", 
                                  "new",
                                  datetime.datetime.now())
 
