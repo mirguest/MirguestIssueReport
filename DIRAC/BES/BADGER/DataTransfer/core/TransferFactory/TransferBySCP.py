@@ -24,7 +24,8 @@ class SCPTransferWorker(ITransferWorker):
             return
         if returncode != 0:
             print "some error happens."
-        print "work done"
+        else:
+            print "work done"
 
     def handle_line(self, line):
         return line
