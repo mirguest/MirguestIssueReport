@@ -22,7 +22,19 @@ class TransferFactory(object):
                     info["to_path"]
                     ]
         return cmd_list
-    pass
+
+    def generate(self, info):
+        protocol = info["trans_protocol"].upper()
+        cmd_list = self.generate_cmd(info)
+        mod = __import__("TransferBy%s"%(protocol),
+                         globals(),
+                         locals(),
+                         ["%sTransferWorker"%(protocol)]
+                         )
+        TR = getattr(mod, "%sTransferWorker"%(protocol))
+        tr = TR()
+        tr.create_popen(cmd_list)
+        return tr
 
 
 gTransferFactory = TransferFactory()

@@ -3,6 +3,7 @@
 # author: lintao
 
 from ITransferProcess import ITransferProcess
+from ITransferWorker import ITransferWorker
 
 class SCPTransferProcess(ITransferProcess):
 
@@ -13,6 +14,21 @@ class SCPTransferProcess(ITransferProcess):
         cmd_list = ["scp", from_url, to_url]
 
         return cmd_list
+
+class SCPTransferWorker(ITransferWorker):
+
+    # Interface
+
+    def handle_exit(self, returncode):
+        if returncode is None:
+            return
+        if returncode != 0:
+            print "some error happens."
+        print "work done"
+
+    def handle_line(self, line):
+        return line
+
 
 
 if __name__ == "__main__":

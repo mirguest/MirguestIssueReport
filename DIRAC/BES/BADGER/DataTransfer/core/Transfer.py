@@ -8,7 +8,6 @@ import time
 import random
 
 from Monitor import gMonitor
-from TransferWorker import DemoTransferWorker
 from TransferFactory import gTransferFactory
 
 MAX_TRANSFER = 2
@@ -24,7 +23,10 @@ class Transfer(object):
         pass
 
     def add_new_transfer(self):
-
+        """
+        If we add a new transfer worker, 
+        this function return True.
+        """
         result = gMonitor.get_new_one_request()
         if result is None:
             return False
@@ -37,11 +39,8 @@ class Transfer(object):
         if result is None:
             return False
 
-        print result
-
         guid = result["guid"]
         index = result["file_index"]
-
 
         info = {"trans_protocol": trans_protocol,
                 "from_ep": from_ep,
@@ -50,16 +49,10 @@ class Transfer(object):
                 "to_path": result["to_path"],
                 }
 
-        cmd = gTransferFactory.generate_cmd(info)
-        print cmd
-
-        #sleep_time = str(random.randint(5, 20))
-        #cmd = ["sleep", sleep_time]
+        dtw = gTransferFactory.generate(info)
 
         time.sleep(0.1)
-        #print "Add A New Transfer, will sleep", sleep_time
-        dtw = DemoTransferWorker()
-        dtw.create_popen(cmd)
+
         self.transfer_worker.append( (guid, 
                                       index, 
                                       dtw) )
@@ -76,16 +69,17 @@ class Transfer(object):
 
     def start(self):
         while True:
+            # Handle the existed transfer worker.
             for worker in self.transfer_worker:
                 retcode = worker[2].proc.poll()
-                #print retcode
+
                 if retcode is not None:
 
                     self.transfer_worker.remove(worker)
-                    #print retcode
+                    # Handle retcode
                     result = worker[2].handle_exit(retcode)
-                    # Handle the Result
-                    print "Finish ", worker[0], worker[1]
+
+                    # Change the status.
                     self.finish_transfer(worker[0], worker[1])
 
                     break
@@ -94,10 +88,9 @@ class Transfer(object):
                     worker[2].handle_waiting()
             else:
                 time.sleep(1)
-                print "Sleeping"
 
+            # Create new transfer worker.
             idle_worker = MAX_TRANSFER - len(self.transfer_worker)
-
             if idle_worker:
                 for i in range(idle_worker):
                     # append new worker
@@ -105,7 +98,6 @@ class Transfer(object):
                         break
                 else:
                     time.sleep(1)
-
                     if idle_worker == MAX_TRANSFER:
                         print "No Transfer Request. Sleeping"
                         time.sleep(5)
