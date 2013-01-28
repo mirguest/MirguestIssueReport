@@ -3,6 +3,7 @@
 # author: lintao
 
 import subprocess
+import sys
 
 class ITransferProcess(object):
     def __init__(self, from_ep, from_path, to_ep, to_path):
@@ -20,11 +21,17 @@ class ITransferProcess(object):
     def transfer(self):
         tr_proc = subprocess.Popen(self.transfer_cmd,
                                    stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE)
-        out, err = tr_proc.communicate()
-        print out
-        print err
-        pass
+                                   stderr=subprocess.PIPE
+                                   )
+        tr_proc.wait()
+        for out in tr_proc.stdout:
+            sys.stdout.write("stdout:"+out)
+            sys.stdout.flush()
+        for err in tr_proc.stderr:
+            sys.stderr.write("stderr:"+err)
+            sys.stderr.flush()
+
+        return tr_proc.returncode
 
     # Interface
 

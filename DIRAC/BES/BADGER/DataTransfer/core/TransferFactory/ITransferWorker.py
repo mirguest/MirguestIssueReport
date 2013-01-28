@@ -5,6 +5,7 @@
 import subprocess
 import time
 import select
+import sys
 
 class ITransferWorker(object):
     """
@@ -20,20 +21,23 @@ class ITransferWorker(object):
 
     def create_popen(self, cmd):
         self._proc = subprocess.Popen(cmd, 
-                                      stdout=subprocess.PIPE)
+                                      stdout=subprocess.PIPE,
+                                      stderr=subprocess.PIPE
+                                      )
         # Make sure that the stdout is to PIPE.
 
     def handle_exit(self, returncode):
         raise NotImplementedError
 
     def handle_stream(self, stream):
+        buffer_line = ""
         try:
-            line = stream.readline()
-
-            return self.handle_line(line)
-
+            for line in stream:
+                buffer_line += self.handle_line(line)
         except:
-            return ""
+            pass
+        finally:
+            return buffer_line
 
     def handle_line(self, line):
         raise NotImplementedError
@@ -41,8 +45,19 @@ class ITransferWorker(object):
     def handle_waiting(self):
         if not self._proc:
             return
-        if select.select( [self._proc.stdout], [], [], 1 )[0]:
-            return self.handle_stream( self._proc.stdout )
+
+        r,w,x = select.select( [self._proc.stdout, self._proc.stderr], 
+                               [], 
+                               [self._proc.stdout, self._proc.stderr]
+                               , 1 )
+        for out in r:
+            # ready for reading
+            sys.stdout.write( self.handle_stream( out ) )
+            sys.stdout.flush()
+        for out in x:
+            # exceptional condition
+            sys.stdout.write( self.handle_stream( out ) )
+            sys.stdout.flush()
 
 class DemoTransferWorker(ITransferWorker):
 

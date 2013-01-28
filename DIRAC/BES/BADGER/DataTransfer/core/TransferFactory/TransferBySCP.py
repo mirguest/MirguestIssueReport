@@ -42,14 +42,9 @@ if __name__ == "__main__":
     from_ep = sys.argv[1] or "ihep@ihep"
     to_ep = sys.argv[3] or "ihep@ihep2"
 
-    from_path = sys.argv[2] or "/home/ihep/paw.metafile.2"
+    from_path = sys.argv[2] or "/home/ihep/paw.metafile.2.no"
     to_path = sys.argv[4] or "/home/ihep/paw.metafile.3"
 
     scp = SCPTransferProcess(from_ep, from_path, to_ep, to_path)
 
-    print scp.from_url
-    print scp.to_url
-
-    print scp.transfer_cmd
-
-    scp.transfer()
+    sys.exit( scp.transfer() )
