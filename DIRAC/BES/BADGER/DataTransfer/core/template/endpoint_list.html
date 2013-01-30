@@ -19,7 +19,9 @@
 {% if result %}
     {% for entry in result %}
         <tr>
-            <td>{{ entry["ep_name"] }}</td>
+            <td>
+                <a href="/endpoint/{{ entry["ep_name"] }}">{{ entry["ep_name"] }}</a>
+            </td>
             <td>{{ entry["description"] }}</td>
             <td>{{ entry["owner"] }}</td>
             <td>{{ entry["url"] }}</td>
