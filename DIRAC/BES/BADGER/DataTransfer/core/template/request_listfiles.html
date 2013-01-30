@@ -32,7 +32,7 @@
 {% if request_result and request_result["status"] in ("open") %}
     <h2>Submit this Request</h2>
     <form action="/request/submit/{{ guid }}" method="post">
-    <input type="submit"/>
+    <input type="submit" value="Submit This Request"/>
     </form>
 {% end %}
 </body>

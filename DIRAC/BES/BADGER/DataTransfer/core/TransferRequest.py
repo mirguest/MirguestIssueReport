@@ -37,7 +37,7 @@ class RequestNewHandler(tornado.web.RequestHandler):
 
         self.redirect("/request/%s"%result)
 
-class RequestListHandler(tornado.web.RequestHandler):
+class RequestListFileHandler(tornado.web.RequestHandler):
     def get(self, guid):
         files_result = gMonitor.list_request_files(guid)
 
@@ -81,7 +81,7 @@ settings = dict(
 application = tornado.web.Application([
     (r"/request/new", RequestNewHandler),
     (r"/request/submit/(.+)", RequestSubmitHandler),
-    (r"/request/(.+)", RequestListHandler),
+    (r"/request/(.+)", RequestListFileHandler),
     (r"/.*", MainHandler),
 ], **settings)
 
