@@ -15,6 +15,7 @@ from Monitor import gMonitor
 
 from EndpointHandler import EndPointListHandler
 from EndpointHandler import EndPointNewHandler
+from EndpointHandler import EndPointUserHandler
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
@@ -96,6 +97,7 @@ application = tornado.web.Application([
     (r"/request/*", RequestListHandler),
     (r"/endpoint/*", EndPointListHandler),
     (r"/endpoint/new", EndPointNewHandler),
+    (r"/endpoint/(.+)", EndPointUserHandler),
     (r"/.*", MainHandler),
 ], **settings)
 

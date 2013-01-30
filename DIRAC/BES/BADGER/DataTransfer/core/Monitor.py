@@ -64,6 +64,9 @@ class Monitor(object):
     def list_endpoints(self):
         return self.m_endpoint.get_all()
 
+    def list_endpoints_by_owner(self, owner):
+        return self.m_endpoint.get_endpoints_by_owner(owner)
+
     def create_endpoint(self, endpoint, description, owner, url):
         self.m_endpoint.create_endpoint(endpoint, description, owner, url)
 

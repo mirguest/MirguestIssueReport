@@ -27,3 +27,12 @@ class EndPointNewHandler(tornado.web.RequestHandler):
         gMonitor.create_endpoint(ep_name, description, owner, url)
 
         self.redirect("/endpoint")
+
+class EndPointUserHandler(tornado.web.RequestHandler):
+
+    def get(self, user):
+
+        result = gMonitor.list_endpoints_by_owner(user)
+        self.render("endpoint_user.html", 
+                    user=user,
+                    result=result)

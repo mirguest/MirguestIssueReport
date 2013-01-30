@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="/static/transfer.css"/>
+</head>
+<body>
+    <h2>Active End Points Owned By {{ user }}</h2>
+{% if result %}
+    {% for entry in result %}
+    <div id="{{ entry["ep_name"].split('#')[1] }}">
+        <h3>{{ entry["ep_name"] }}</h3>
+        <dl>
+            <dt>End Point Name</dt>
+            <dd>{{ entry["ep_name"] }}</dd>
+            <dt>URL</dt>
+            <dd>{{ entry["url"] }}</dd>
+            <dt>Owner</dt>
+            <dd>{{ entry["owner"] }}</dd>
+            <dt>Description</dt>
+            <dd>{{ entry["description"] }}</dd>
+        </dl>
+    </div>
+    {% end %}
+{% end %}
+</body>

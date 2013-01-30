@@ -105,6 +105,13 @@ class EndPointTable(object):
 
         return cursor.fetchone()
 
+    def get_endpoints_by_owner(self, owner):
+        cursor = self.m_conn.cursor()
+
+        cursor.execute("select * from endpoint where owner=?", (owner,))
+        return cursor.fetchall()
+
+
     def check(self, endpoint):
 
         return True if self.get_endpoint(endpoint) else False
