@@ -109,6 +109,11 @@ class EndPointTable(object):
 
         return True if self.get_endpoint(endpoint) else False
             
+    def get_all(self):
+        cursor = self.m_conn.cursor()
+
+        cursor.execute("select * from endpoint")
+        return cursor.fetchall()
 
     def dump_all(self):
         cursor = self.m_conn.cursor()

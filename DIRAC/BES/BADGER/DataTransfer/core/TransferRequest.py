@@ -13,6 +13,8 @@ import tornado.escape
 
 from Monitor import gMonitor
 
+from EndpointHandler import EndPointListHandler
+
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
         self.write('Hello, World')
@@ -91,6 +93,7 @@ application = tornado.web.Application([
     (r"/request/submit/(.+)", RequestSubmitHandler),
     (r"/request/(.+)", RequestListFileHandler),
     (r"/request/*", RequestListHandler),
+    (r"/endpoint/*", EndPointListHandler),
     (r"/.*", MainHandler),
 ], **settings)
 

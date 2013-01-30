@@ -61,6 +61,9 @@ class Monitor(object):
     def submit_open_request(self, guid):
         self.m_transfer_request.modify_status(guid, "new")
 
+    def list_endpoints(self):
+        return self.m_endpoint.get_all()
+
     # End For web API
 
     def create_request(self, from_ep, to_ep, user, trans_protocol, filelists):
