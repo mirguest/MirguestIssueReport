@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="/static/transfer.css"/>
+</head>
+<body>
+
+{% if request_result and request_result["status"] in ("open") %}
+    <h2>Add Files to This Request<h2>
+    <form action="/request/{{ guid }}" method="post">
+        <textarea name="from_to_list" rows="10" cols="76">
+        </textarea>
+        <input type="submit" value="Add File List"/>
+    </form>
+{% end %}
+
+    <h2>Files in this Request</h2>
+    <table>
+        <tr>
+            <th>From</th>
+            <th>To</th>
+        </tr>
+        {% for per_file in files_result %}
+            <tr>
+                <td>{{ per_file["from_path"] }}</td>
+                <td>{{ per_file["to_path"] }}</td>
+            </tr>
+        {% end %}
+    </table>
+
+{% if request_result and request_result["status"] in ("open") %}
+    <h2>Submit this Request</h2>
+    <form action="/request/submit/{{ guid }}" method="post">
+    <input type="submit"/>
+    </form>
+{% end %}
+</body>
+</html>

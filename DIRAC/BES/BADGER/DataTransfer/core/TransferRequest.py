@@ -5,6 +5,8 @@
 # This is the Request Service.
 # Using tornado
 
+import os.path
+
 import tornado.ioloop
 import tornado.web
 import tornado.escape
@@ -17,19 +19,8 @@ class MainHandler(tornado.web.RequestHandler):
 
 class RequestNewHandler(tornado.web.RequestHandler):
     def get(self):
-        self.write("""
-            <html>
-            <body>
-            <form action="/request/new" method="post">
-            User: <input type="text" name="user" />
-            From: <input type="text" name="from_ep" />
-            To: <input type="text" name="to_ep" />
-            Trans: <input type="text" name="trans_protocol" />
-            <input type="submit">
-            </form>
-            </body>
-            </html>
-        """)
+        self.render("request_new.html")
+
     def post(self):
         user = self.get_argument("user")
         from_ep = self.get_argument("from_ep")
@@ -50,48 +41,12 @@ class RequestListHandler(tornado.web.RequestHandler):
     def get(self, guid):
         files_result = gMonitor.list_request_files(guid)
 
-        requst_result = gMonitor.m_transfer_request.get_request(guid)
-        if requst_result and requst_result["status"] in ("open"):
-            # If the status is open, we can modify the file list.
-            self.write('<div>')
-            self.write(requst_result["from_ep"])
-            self.write(' -> ')
-            self.write(requst_result["to_ep"])
-            self.write('</div>')
+        request_result = gMonitor.m_transfer_request.get_request(guid)
 
-            self.write("""
-            <form action="/request/%s" method="post">
-            <textarea name="from_to_list" rows="10" cols="76">"""%guid)
-            self.write("""</textarea> 
-            <input type="submit">
-            </form>
-            """)
-
-        self.write(guid)
-
-        # the current list
-
-        self.write('<table>')
-        self.write('<tr>')
-        self.write('<th>From</th>')
-        self.write('<th>To</th>')
-        self.write('</tr>')
-        for per_file in files_result:
-            self.write('<tr>')
-            self.write('<td>%s</td>'%(per_file["from_path"]))
-            self.write('<td>%s</td>'%(per_file["to_path"]))
-            self.write('</tr>')
-
-        self.write('</table>')
-
-        # Only submit the open
-        if requst_result and requst_result["status"] in ("open"):
-            self.write("""
-            <form action="/request/submit/%s" method="post">
-            <input type="submit"/>
-            </form>
-            """%guid)
-
+        self.render("request_listfiles.html",
+                    guid = guid,
+                    files_result=files_result,
+                    request_result=request_result)
     
     def post(self, guid):
         result = tornado.escape.url_unescape( 
@@ -117,12 +72,18 @@ class RequestSubmitHandler(tornado.web.RequestHandler):
         gMonitor.submit_open_request(guid)
         self.redirect("/request/%s"%guid)
 
+settings = dict(
+        static_path=os.path.join(os.path.dirname(__file__), "static"),
+        template_path=os.path.join(os.path.dirname(__file__), "template"),
+)
+
+
 application = tornado.web.Application([
     (r"/request/new", RequestNewHandler),
     (r"/request/submit/(.+)", RequestSubmitHandler),
     (r"/request/(.+)", RequestListHandler),
     (r"/.*", MainHandler),
-])
+], **settings)
 
 if __name__ == "__main__":
     application.listen(8888)

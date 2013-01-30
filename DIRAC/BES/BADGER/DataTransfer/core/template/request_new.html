@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="/static/transfer.css"/>
+</head>
+<body>
+    <form action="/request/new" method="post">
+        <div class="entry">
+            <label for="user">User</label> 
+            <input type="text" name="user"/>
+        </div>
+        <div class="entry">
+            <label for="from_ep">From</label>
+            <input type="text" name="from_ep"/>
+        </div>
+        <div class="entry">
+            <label for="to_ep">To</label>
+            <input type="text" name="to_ep"/>
+        </div>
+        <div class="entry">
+            <label for="trans_protocol">Trans</label>
+            <select name="trans_protocol">
+                <option value="scp">scp</option>
+            </select>
+        </div>
+        <div>
+        <input type="submit" value="Create Request">
+        </div>
+    </form>
+</body>
+</html>
