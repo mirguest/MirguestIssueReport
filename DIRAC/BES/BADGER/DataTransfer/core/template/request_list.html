@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="/static/transfer.css"/>
+</head>
+<body>
+
+    <h2>List Requests</h2>
+    <table>
+        <tr>
+            <th>GUID</th>
+            <th>User</th>
+            <th>Status</th>
+        </tr>
+{% if result %}
+    {% for entry in result %}
+    <tr>
+        <td>
+            <a href="/request/{{ entry["guid"] }}">{{ entry["guid"] }}</a>
+        </td>
+        <td>{{ entry["user"] }}</td>
+        <td>{{ entry["status"] }}</td>
+    </tr>
+    {% end %}
+{% end %}
+    </table>
+
+</body>
+</html>

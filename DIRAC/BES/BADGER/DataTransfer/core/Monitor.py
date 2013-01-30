@@ -35,7 +35,7 @@ class Monitor(object):
 
     # For web API
 
-    def get_open_request(self, from_ep, to_ep, user, trans_protocol):
+    def create_open_request(self, from_ep, to_ep, user, trans_protocol):
         if self.m_endpoint.check(from_ep) and self.m_endpoint.check(to_ep):
             # generate the uuid
             guid = uuid.uuid1()
@@ -50,6 +50,9 @@ class Monitor(object):
                     datetime.datetime.now())
             self.m_user_transfer.add(user, guid)
             return guid
+
+    def list_request(self, status=None):
+        return self.m_transfer_request.get_all(status)
 
     def list_request_files(self, guid):
         result = self.m_transfer_file.get_all(guid)

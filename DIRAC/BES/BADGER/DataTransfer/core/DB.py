@@ -200,6 +200,22 @@ class TransferRequestTable(object):
 
         return cursor.fetchone()
 
+    def get_all(self, status=None):
+        cursor = self.m_conn.cursor()
+
+        if status:
+            cursor.execute("""
+                select * from trans_req
+                where status=?
+            """, (status,))
+        else:
+            cursor.execute("""
+                select * from trans_req
+            """)
+
+        return cursor.fetchall()
+
+
     def dump_all(self):
         cursor = self.m_conn.cursor()
 
@@ -365,8 +381,6 @@ if __name__ == "__main__":
 
     tflt.create_new_filelist(guid, filelist, "new")
     tflt.dump_all()
-
-    print tflt.get_request_total_files(guid)
 
     tflt.modify_status(guid, 0, "transfer")
     tflt.dump_all()

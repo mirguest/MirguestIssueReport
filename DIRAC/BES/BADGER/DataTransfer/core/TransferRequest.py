@@ -29,7 +29,7 @@ class RequestNewHandler(tornado.web.RequestHandler):
 
         # Handle these INFO.
 
-        result =  gMonitor.get_open_request(from_ep, to_ep,
+        result =  gMonitor.create_open_request(from_ep, to_ep,
                                             user,
                                             trans_protocol)
 
@@ -72,6 +72,14 @@ class RequestSubmitHandler(tornado.web.RequestHandler):
         gMonitor.submit_open_request(guid)
         self.redirect("/request/%s"%guid)
 
+class RequestListHandler(tornado.web.RequestHandler):
+
+    @tornado.web.removeslash
+    def get(self):
+        status = self.get_argument("status", default = None)
+        result = gMonitor.list_request(status)
+        self.render("request_list.html", result=result)
+
 settings = dict(
         static_path=os.path.join(os.path.dirname(__file__), "static"),
         template_path=os.path.join(os.path.dirname(__file__), "template"),
@@ -82,6 +90,7 @@ application = tornado.web.Application([
     (r"/request/new", RequestNewHandler),
     (r"/request/submit/(.+)", RequestSubmitHandler),
     (r"/request/(.+)", RequestListFileHandler),
+    (r"/request/*", RequestListHandler),
     (r"/.*", MainHandler),
 ], **settings)
 
