@@ -5,22 +5,23 @@
     <link rel="stylesheet" type="text/css" href="/static/transfer.css"/>
 </head>
 <body>
+    <h2>Create Request</h2>
     <form action="/request/new" method="post">
         <div class="entry">
             <label for="user">User</label> 
-            <input type="text" name="user"/>
+            <input type="text" name="user" id="user"/>
         </div>
         <div class="entry">
             <label for="from_ep">From</label>
-            <input type="text" name="from_ep"/>
+            <input type="text" name="from_ep" id="from_ep"/>
         </div>
         <div class="entry">
             <label for="to_ep">To</label>
-            <input type="text" name="to_ep"/>
+            <input type="text" name="to_ep" id="to_ep"/>
         </div>
         <div class="entry">
             <label for="trans_protocol">Trans</label>
-            <select name="trans_protocol">
+            <select name="trans_protocol" id="trans_protocol">
                 <option value="scp">scp</option>
             </select>
         </div>

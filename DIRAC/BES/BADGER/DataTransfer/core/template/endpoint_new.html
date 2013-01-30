@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="/static/transfer.css"/>
+</head>
+<body>
+    <h2>Create End Point</h2>
+    <form action="/endpoint/new" method="post">
+        <div class="entry">
+            <label for="owner">Owner</label> 
+            <input type="text" name="owner" id="owner"/>
+        </div>
+        <div class="entry">
+            <label for="ep_name">End Point</label> 
+            <input type="text" name="ep_name" id="ep_name"/>
+        </div>
+        <div class="entry">
+            <label for="url">URL</label> 
+            <input type="text" name="url" id="url"/>
+        </div>
+        <div class="entry">
+            <label for="description">Description</label> 
+            <input type="text" name="description" id="description"/>
+        </div>
+        <div>
+        <input type="submit" value="Create End Point">
+        </div>
+    </form>
+</body>

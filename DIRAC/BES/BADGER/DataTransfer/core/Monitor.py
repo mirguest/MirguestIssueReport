@@ -64,6 +64,9 @@ class Monitor(object):
     def list_endpoints(self):
         return self.m_endpoint.get_all()
 
+    def create_endpoint(self, endpoint, description, owner, url):
+        self.m_endpoint.create_endpoint(endpoint, description, owner, url)
+
     # End For web API
 
     def create_request(self, from_ep, to_ep, user, trans_protocol, filelists):
