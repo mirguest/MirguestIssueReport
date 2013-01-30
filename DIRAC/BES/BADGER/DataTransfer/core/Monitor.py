@@ -55,6 +55,9 @@ class Monitor(object):
         result = self.m_transfer_file.get_all(guid)
         return result
 
+    def submit_open_request(self, guid):
+        self.m_transfer_request.modify_status(guid, "new")
+
     # End For web API
 
     def create_request(self, from_ep, to_ep, user, trans_protocol, filelists):

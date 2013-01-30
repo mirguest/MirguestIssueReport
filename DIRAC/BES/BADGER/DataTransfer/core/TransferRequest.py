@@ -84,7 +84,13 @@ class RequestListHandler(tornado.web.RequestHandler):
 
         self.write('</table>')
 
-
+        # Only submit the open
+        if requst_result and requst_result["status"] in ("open"):
+            self.write("""
+            <form action="/request/submit/%s" method="post">
+            <input type="submit"/>
+            </form>
+            """%guid)
 
     
     def post(self, guid):
@@ -105,9 +111,15 @@ class RequestListHandler(tornado.web.RequestHandler):
 
         self.redirect("/request/%s"%guid)
 
+class RequestSubmitHandler(tornado.web.RequestHandler):
+
+    def post(self, guid):
+        gMonitor.submit_open_request(guid)
+        self.redirect("/request/%s"%guid)
 
 application = tornado.web.Application([
     (r"/request/new", RequestNewHandler),
+    (r"/request/submit/(.+)", RequestSubmitHandler),
     (r"/request/(.+)", RequestListHandler),
     (r"/.*", MainHandler),
 ])
