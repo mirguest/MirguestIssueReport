@@ -7,6 +7,7 @@
 
 import tornado.ioloop
 import tornado.web
+import tornado.escape
 
 from Monitor import gMonitor
 
@@ -43,14 +44,72 @@ class RequestNewHandler(tornado.web.RequestHandler):
 
         # Redirect to the NEW Request GUID.
 
-        self.write(result)
+        self.redirect("/request/%s"%result)
+
+class RequestListHandler(tornado.web.RequestHandler):
+    def get(self, guid):
+        files_result = gMonitor.list_request_files(guid)
+
+        requst_result = gMonitor.m_transfer_request.get_request(guid)
+        if requst_result and requst_result["status"] in ("open"):
+            # If the status is open, we can modify the file list.
+            self.write('<div>')
+            self.write(requst_result["from_ep"])
+            self.write(' -> ')
+            self.write(requst_result["to_ep"])
+            self.write('</div>')
+
+            self.write("""
+            <form action="/request/%s" method="post">
+            <textarea name="from_to_list" rows="10" cols="76">"""%guid)
+            self.write("""</textarea> 
+            <input type="submit">
+            </form>
+            """)
+
+        self.write(guid)
+
+        # the current list
+
+        self.write('<table>')
+        self.write('<tr>')
+        self.write('<th>From</th>')
+        self.write('<th>To</th>')
+        self.write('</tr>')
+        for per_file in files_result:
+            self.write('<tr>')
+            self.write('<td>%s</td>'%(per_file["from_path"]))
+            self.write('<td>%s</td>'%(per_file["to_path"]))
+            self.write('</tr>')
+
+        self.write('</table>')
 
 
+
+    
+    def post(self, guid):
+        result = tornado.escape.url_unescape( 
+                        self.get_argument("from_to_list") )
+        file_list = []
+
+        # Parse the result
+
+        for line in result.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            from_path, to_path = map(lambda x: x.strip(), line.split(","))
+            file_list.append( (from_path, to_path) )
+
+        gMonitor.m_transfer_file.create_new_filelist(guid, file_list, "new")
+
+        self.redirect("/request/%s"%guid)
 
 
 application = tornado.web.Application([
-    (r"/", MainHandler),
     (r"/request/new", RequestNewHandler),
+    (r"/request/(.+)", RequestListHandler),
+    (r"/.*", MainHandler),
 ])
 
 if __name__ == "__main__":

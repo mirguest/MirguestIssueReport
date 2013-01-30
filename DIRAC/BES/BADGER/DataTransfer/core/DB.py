@@ -261,6 +261,22 @@ class TransferFileListTabel(object):
 
         return cursor.fetchone()
 
+    def get_all(self, guid, status=None):
+        cursor = self.m_conn.cursor()
+
+        if status:
+            cursor.execute("""
+                select * from trans_file
+                where guid=? and status=?
+            """, (guid, status))
+        else:
+            cursor.execute("""
+                select * from trans_file
+                where guid=? 
+            """, (guid,))
+
+        return cursor.fetchall()
+
     def get_request_count(self, guid, status=None):
         cursor = self.m_conn.cursor()
 

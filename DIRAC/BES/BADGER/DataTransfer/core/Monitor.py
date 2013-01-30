@@ -51,6 +51,12 @@ class Monitor(object):
             self.m_user_transfer.add(user, guid)
             return guid
 
+    def list_request_files(self, guid):
+        result = self.m_transfer_file.get_all(guid)
+        return result
+
+    # End For web API
+
     def create_request(self, from_ep, to_ep, user, trans_protocol, filelists):
         if self.m_endpoint.check(from_ep) and self.m_endpoint.check(to_ep):
             # generate the uuid
@@ -157,4 +163,5 @@ else:
                            user,
                            trans_protocol, 
                            filelist)
+
 
