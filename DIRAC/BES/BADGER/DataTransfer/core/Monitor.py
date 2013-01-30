@@ -33,6 +33,24 @@ class Monitor(object):
 
     # API
 
+    # For web API
+
+    def get_open_request(self, from_ep, to_ep, user, trans_protocol):
+        if self.m_endpoint.check(from_ep) and self.m_endpoint.check(to_ep):
+            # generate the uuid
+            guid = uuid.uuid1()
+            # create an *open* request
+            guid = self.m_transfer_request.create_new_request(
+                    str(guid),
+                    from_ep,
+                    to_ep,
+                    user,
+                    trans_protocol,
+                    "open",
+                    datetime.datetime.now())
+            self.m_user_transfer.add(user, guid)
+            return guid
+
     def create_request(self, from_ep, to_ep, user, trans_protocol, filelists):
         if self.m_endpoint.check(from_ep) and self.m_endpoint.check(to_ep):
             # generate the uuid
