@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="/static/transfer.css"/>
+</head>
+<body>
+    <h2>Active End Points</h2>
+    <table>
+        <tr>
+            <th>End Point</th>
+            <th>Descritpion</th>
+            <th>Owner</th>
+            <th>URL</th>
+        </tr>
+{% if result %}
+    {% for entry in result %}
+        <tr>
+            <td>{{ entry["ep_name"] }}</td>
+            <td>{{ entry["description"] }}</td>
+            <td>{{ entry["owner"] }}</td>
+            <td>{{ entry["url"] }}</td>
+        </tr>
+    {% end %}
+{% end %}
+    </table>
+</body>
