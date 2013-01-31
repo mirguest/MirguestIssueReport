@@ -13,11 +13,23 @@
         </div>
         <div class="entry">
             <label for="from_ep">From</label>
-            <input type="text" name="from_ep" id="from_ep"/>
+            <select name="from_ep" id="from_ep"/>
+                {% for ep in ep_info %}
+                <option value="{{ ep["ep_name"] }}">
+                    {{ ep["ep_name"] }}
+                </option>
+                {% end %}
+            </select>
         </div>
         <div class="entry">
             <label for="to_ep">To</label>
-            <input type="text" name="to_ep" id="to_ep"/>
+            <select name="to_ep" id="to_ep"/>
+                {% for ep in ep_info %}
+                <option value="{{ ep["ep_name"] }}">
+                    {{ ep["ep_name"] }}
+                </option>
+                {% end %}
+            </select>
         </div>
         <div class="entry">
             <label for="trans_protocol">Trans</label>

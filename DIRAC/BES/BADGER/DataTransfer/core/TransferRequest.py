@@ -23,7 +23,8 @@ class MainHandler(tornado.web.RequestHandler):
 
 class RequestNewHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render("request_new.html")
+        ep_info = gMonitor.list_endpoints()
+        self.render("request_new.html", ep_info=ep_info)
 
     def post(self):
         user = self.get_argument("user")
