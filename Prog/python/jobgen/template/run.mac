@@ -1,0 +1,19 @@
+/dyb2/gen/source/reset
+/dyb2/gen/source/HepEvt/reset
+# Append Source
+{RunMac.SourceAppend}
+
+# Set Position
+{RunMac.SetPosition}
+
+# Water Thickness At Least
+/dyb2/det/acrylic/thickness {RunMac.AcrylicThickness}
+
+# Save File
+/histo/fileName {RunMac.OutputFileName}
+/histo/setSeed {RunMac.Seed}
+
+# Initialize
+/run/initialize
+# Begin Run
+/run/beamOn {RunMac.Run}
