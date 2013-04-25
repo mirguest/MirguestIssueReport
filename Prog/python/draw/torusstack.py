@@ -4,7 +4,7 @@
 
 import matplotlib.pyplot as plt
 
-fig = plt.figure()
+fig = plt.figure(1, figsize=(15,15))
 ax = fig.add_subplot(111,aspect='equal')  
 #ax.set_xlim(-255, 0)
 ax.set_xlim(-370, 370)
@@ -73,4 +73,5 @@ plt.plot(*zip((0, 188), (-198.55, 116.71), (-254,0),
               (-41.35, -422),
              ), marker='D', ls='')
 
+plt.savefig("R3600-TorusStack.png")
 plt.show()
