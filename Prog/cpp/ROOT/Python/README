@@ -1,13 +1,10 @@
 First, write the Hello.h and Hello.cc
-Second, use --->> genreflex: ERROR: No input file specified
-Usage:
-  genreflex headerfile1.h [headerfile2.h] [options] [preprocesor options]
-Try "genreflex --help" for more information. to genenerate helper class:
+Second, genreflex
     $ genreflex Hello.h
 Then, compile the library:
-    $ g++ -o libhello.so -shared Hello_rflx.cpp Hello.cc -pthread -m32 -I/home/ihep/local/root/include -L/home/ihep/local/root/lib -lCore -lCint -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lPostscript -lMatrix -lPhysics -lMathCore -lThread -pthread -lm -ldl -rdynamic
+    $ g++ -o libhello.so -shared Hello_rflx.cpp Hello.cc `root-config --cflags --libs`
 OK, we try use it in python:
-    $ LD_LIBRARY_PATH=.:/home/ihep/local/root/lib:/home/ihep/local/lib::/home/ihep/local/geant4.9.4.p04/lib/Linux-g++:/home/ihep/local/lib:/lib:/home/ihep/bak/pythia6/v6_424/lib/ python
+    $ LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH python
 This make sure the library will load correctly.
     >>> import PyCintex
     >>> PyCintex.loadDict("hello")
