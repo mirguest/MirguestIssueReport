@@ -1,4 +1,4 @@
-First, write the Hello.h and Hello.cc
+First, write the Hello.h and Hello.cc (without namespace)
 Second, genreflex
     $ genreflex Hello.h
 Then, compile the library:
@@ -10,3 +10,19 @@ This make sure the library will load correctly.
     >>> PyCintex.loadDict("hello")
     >>> Hello = PyCintex.makeClass("Hello")
     >>> Hello().hello()
+
+If You use namespace, you can try this:
+    >>> import PyCintex
+    >>> PyCintex.loadDict("hello")
+    >>> gbl = PyCintex.gbl
+    >>> gbl.World
+    <class '__main__.World'>
+    >>> gbl.World.Hello
+    <class '__main__.World::Hello'>
+    >>> gbl.World.Hello()
+    <ROOT.World::Hello object at 0x9b6ee80>
+    >>> x = gbl.World.Hello()
+    >>> x.hello
+    <ROOT.MethodProxy object at 0x9ef668c>
+    >>> x.hello()
+
