@@ -51,6 +51,9 @@ struct Base {
     }
 };
 
+int vf(Base* b) {
+    return b->f();
+}
 
 #include <boost/noncopyable.hpp>
 #include <boost/python.hpp>
@@ -71,7 +74,7 @@ struct BaseWrap: Base, wrapper<Base> {
 BOOST_PYTHON_MODULE(hello)
 {
     def("greet", greet);
-
+    def("vf", vf);
     class_<World>("World", init<std::string>())
         .def("greet", &World::greet)
         .def("set", &World::set)
