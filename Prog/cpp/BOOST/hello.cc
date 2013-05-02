@@ -7,6 +7,9 @@ char const* greet()
 
 struct World
 {
+    World(std::string msg) 
+        : msg(msg) {
+    }
     void set(std::string msg) {
         this->msg = msg;
     }
@@ -23,7 +26,7 @@ BOOST_PYTHON_MODULE(hello)
 {
     def("greet", greet);
 
-    class_<World>("World")
+    class_<World>("World", init<std::string>())
         .def("greet", &World::greet)
         .def("set", &World::set)
     ;
