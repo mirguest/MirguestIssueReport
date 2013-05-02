@@ -27,6 +27,22 @@ struct Var {
     float value;
 };
 
+struct Num
+{
+    Num() 
+        : x() {
+    }
+    float get() const {
+        return x;
+    }
+    void set(float x) {
+        this->x = x;
+    }
+
+private:
+    float x;
+};
+
 #include <boost/python.hpp>
 using namespace boost::python;
 
@@ -42,5 +58,10 @@ BOOST_PYTHON_MODULE(hello)
     class_<Var>("Var", init<std::string>())
         .def_readonly("name", &Var::name)
         .def_readwrite("value", &Var::value)
+    ;
+
+    class_<Num>("Num")
+        .add_property("rovalue", &Num::get)
+        .add_property("value", &Num::get, &Num::set)
     ;
 }
