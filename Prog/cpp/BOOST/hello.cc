@@ -43,8 +43,30 @@ private:
     float x;
 };
 
+struct Base {
+    virtual ~Base() {}
+
+    virtual int f () { 
+        return 0;
+    }
+};
+
+
+#include <boost/noncopyable.hpp>
 #include <boost/python.hpp>
 using namespace boost::python;
+
+struct BaseWrap: Base, wrapper<Base> {
+    int f() {
+        if (override f = this->get_override("f"))
+            return f();
+        return Base::f();
+    }
+
+    int default_f() {
+        return this->Base::f();
+    }
+};
 
 BOOST_PYTHON_MODULE(hello)
 {
@@ -63,5 +85,9 @@ BOOST_PYTHON_MODULE(hello)
     class_<Num>("Num")
         .add_property("rovalue", &Num::get)
         .add_property("value", &Num::get, &Num::set)
+    ;
+
+    class_<BaseWrap, boost::noncopyable>("Base")
+        .def("f", &Base::f, &BaseWrap::default_f)
     ;
 }
