@@ -27,6 +27,42 @@ struct Var {
     float value;
 };
 
+template <typename T> class property {
+private:
+    T value;
+public:
+    T & operator = (const T &i) {
+        return value = i;
+    }
+    // This template class member function template serves the purpose to make
+    // typing more strict. Assignment to this is only possible with exact identical
+    // types.
+    template <typename T2> T2 & operator = (const T2 &i) {
+        T2 &guard = value;
+        throw guard; // Never reached.
+    }
+    operator T const & () const {
+        return value;
+    }
+};
+
+#define PropertyGetterName(name) \
+    get_##name
+
+#define PropertyGetter(Type, Name) \
+public: \
+    const Type PropertyGetterName(Name) () { \
+        return m_##Name; \
+    }
+
+#define PropertyDeclare(Type, Name) \
+private: \
+    Type m_##Name;
+
+#define Property(Type, Name) \
+    PropertyDeclare(Type, Name) \
+    PropertyGetter(Type, Name)
+
 struct Num
 {
     Num() 
@@ -38,6 +74,10 @@ struct Num
     void set(float x) {
         this->x = x;
     }
+
+    property<float> y;
+
+    Property(float, z)
 
 private:
     float x;
@@ -88,6 +128,7 @@ BOOST_PYTHON_MODULE(hello)
     class_<Num>("Num")
         .add_property("rovalue", &Num::get)
         .add_property("value", &Num::get, &Num::set)
+        .add_property("z", &Num::PropertyGetterName(z))
     ;
 
     class_<BaseWrap, boost::noncopyable>("Base")
