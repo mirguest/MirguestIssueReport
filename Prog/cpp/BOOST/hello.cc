@@ -48,6 +48,8 @@ public:
 
 #define PropertyGetterName(name) \
     get_##name
+#define PropertySetterName(name) \
+    set_##name
 
 #define PropertyGetter(Type, Name) \
 public: \
@@ -55,13 +57,20 @@ public: \
         return m_##Name; \
     }
 
+#define PropertySetter(Type, Name) \
+public: \
+    void PropertySetterName(Name) (Type other) { \
+        m_##Name = other; \
+    } 
+
 #define PropertyDeclare(Type, Name) \
 private: \
     Type m_##Name;
 
 #define Property(Type, Name) \
     PropertyDeclare(Type, Name) \
-    PropertyGetter(Type, Name)
+    PropertyGetter(Type, Name) \
+    PropertySetter(Type, Name)
 
 struct Num
 {
@@ -128,7 +137,9 @@ BOOST_PYTHON_MODULE(hello)
     class_<Num>("Num")
         .add_property("rovalue", &Num::get)
         .add_property("value", &Num::get, &Num::set)
-        .add_property("z", &Num::PropertyGetterName(z))
+        .add_property("z", 
+                        &Num::PropertyGetterName(z), 
+                        &Num::PropertySetterName(z))
     ;
 
     class_<BaseWrap, boost::noncopyable>("Base")
