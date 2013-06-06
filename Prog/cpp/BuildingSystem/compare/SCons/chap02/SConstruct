@@ -1,6 +1,13 @@
+# vim: ft=python :
+import os
+import os.path
 libs = Split("boost_python")
 
 print libs
 
-Program('hello.c', LIBS=['world'], LIBPATH=".")
+Program('hello.c', 
+        LIBS=['world'], 
+        LIBPATH=".", 
+        RPATH=Literal(os.path.join('\\$$ORIGIN', '.'))
+        )
 SharedLibrary('world', ['world.c'])
