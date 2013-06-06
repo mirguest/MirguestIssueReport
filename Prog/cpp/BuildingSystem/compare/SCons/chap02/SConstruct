@@ -1,2 +1,6 @@
+libs = Split("boost_python")
+
+print libs
+
 Program('hello.c', LIBS=['world'], LIBPATH=".")
 SharedLibrary('world', ['world.c'])
