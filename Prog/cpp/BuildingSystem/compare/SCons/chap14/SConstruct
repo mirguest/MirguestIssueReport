@@ -2,7 +2,8 @@ env = Environment()
 
 env.Append(CPPPATH=['#prog', '#lib'])
 
-SConscript([
-            'prog/SConscript',
-            'lib/SConscript'
-            ], exports='env')
+dirs = ["prog", "lib"]
+for sub_dir in dirs:
+    SConscript( '%s/SConscript'%sub_dir
+                , exports='env'
+                )
