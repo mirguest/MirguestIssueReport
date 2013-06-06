@@ -1,9 +1,17 @@
-env = Environment()
-
-env.Append(CPPPATH=['#prog', '#lib'])
+import os
 
 dirs = ["prog", "lib"]
+
+env = Environment()
+
+env.Append(CPPPATH=['#%s'%d for d in dirs])
+env.Append(LIBPATH=["#install"])
+
+Export("env")
+
 for sub_dir in dirs:
-    SConscript( '%s/SConscript'%sub_dir
-                , exports='env'
+    products = SConscript( '%s/SConscript'%sub_dir
+                , variant_dir = 'build' + os.sep + sub_dir
+                , duplicate = 0
                 )
+    env.Install('#install', products)

@@ -2,9 +2,9 @@ import os
 import os.path
 Import('env')
 
-env.Program('prog',
+prog = env.Program('prog',
             ['hello.c'], 
             LIBS=['world'],
-            LIBPATH=["#lib"],
-            RPATH=Literal(os.path.join('\\$$ORIGIN', os.pardir, 'lib'))
+            RPATH=Literal(os.path.join('\\$$ORIGIN'))
             )
+Return('prog')

@@ -1,4 +1,6 @@
 
 Import('env')
 
-env.SharedLibrary('world', ['world.c'])
+world = env.SharedLibrary('world', ['world.c'])
+
+Return('world')
