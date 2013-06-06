@@ -1,6 +1,12 @@
 # vim: ft=python :
 import os
 import os.path
+
+import pprint
+env = Environment()
+print dir(env)
+pprint.pprint( env.__dict__ )
+
 libs = Split("boost_python")
 
 print libs

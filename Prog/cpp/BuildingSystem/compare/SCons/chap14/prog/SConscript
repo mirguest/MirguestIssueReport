@@ -1,0 +1,10 @@
+import os
+import os.path
+Import('env')
+
+env.Program('prog',
+            ['hello.c'], 
+            LIBS=['world'],
+            LIBPATH=["#lib"],
+            RPATH=Literal(os.path.join('\\$$ORIGIN', os.pardir, 'lib'))
+            )

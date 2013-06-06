@@ -1,0 +1,4 @@
+
+Import('env')
+
+env.SharedLibrary('world', ['world.c'])

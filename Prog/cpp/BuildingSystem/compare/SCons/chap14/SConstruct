@@ -1,0 +1,8 @@
+env = Environment()
+
+env.Append(CPPPATH=['#prog', '#lib'])
+
+SConscript([
+            'prog/SConscript',
+            'lib/SConscript'
+            ], exports='env')
