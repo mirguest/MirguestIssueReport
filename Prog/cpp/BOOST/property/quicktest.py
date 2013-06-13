@@ -27,5 +27,10 @@ z = d.getz()
 myproperty.setProperty("z", "1,2,3")
 print z.value()
 
+u = d.getu()
+myproperty.setProperty("u", "\"x\": 1, \"y\": 2")
+print u.value()
+
 print "Run dummy:"
 d.run()
+

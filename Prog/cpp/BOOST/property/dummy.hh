@@ -2,6 +2,7 @@
 #define dummy_hh
 
 #include <vector>
+#include <map>
 
 class PropertyBase;
 
@@ -12,6 +13,7 @@ public:
     PropertyBase* getx();
     PropertyBase* gety();
     PropertyBase* getz();
+    PropertyBase* getu();
 
     static void exportPythonAPI();
 
@@ -26,6 +28,9 @@ private:
 
     std::vector<int> z;
     PropertyBase* pb_z;
+
+    std::map<std::string, int> u;
+    PropertyBase* pb_u;
 };
 
 #endif

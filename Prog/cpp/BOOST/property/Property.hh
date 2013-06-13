@@ -149,7 +149,7 @@ public:
     }
 
 private:
-    std::map< Key, T > m_variable;
+    std::map< Key, T >& m_variable;
 };
 
 // API to 
