@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include <sstream>
 
 #include <iostream>
@@ -89,6 +90,25 @@ private:
     std::vector<T>& m_variable;
 };
 
+template<typename Key, typename T>
+class Property< std::map< Key, T > >: public PropertyBase {
+public:
+    Property(std::string key, std::map< Key, T >& variable)
+        : PropertyBase(key, ""), m_variable(variable) {
+
+    }
+
+    virtual void modify_value(std::string new_value) {
+        // Magic Here
+        std::cout << "In Map." << std::endl;
+
+        std::cout << "Size: " << m_variable.size();
+    }
+
+private:
+    std::map< Key, T > m_variable;
+};
+
 // API to 
 // * declare property
 // * set property
@@ -103,6 +123,13 @@ PropertyBase* declareProperty(std::string key, T& var) {
 template<typename T>
 PropertyBase* declareProperty(std::string key, std::vector< T >& var) {
     PropertyBase* pb = new Property< std::vector< T > >(key, var);
+    PropertyManager::instance().add(pb);
+    return pb;
+}
+
+template<typename Key, typename T>
+PropertyBase* declareProperty(std::string key, std::map< Key, T >& var) {
+    PropertyBase* pb = new Property< std::map< Key, T > >(key, var);
     PropertyManager::instance().add(pb);
     return pb;
 }
