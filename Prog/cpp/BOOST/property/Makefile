@@ -8,7 +8,7 @@ libProperty: Property.hh Property.cc
 	g++ -fPIC -shared -o libProperty.so Property.o
 
 libDummy: dummy.hh dummy.cc
-	g++ -fPIC -c -I. dummy.cc 
+	g++ -fPIC -c -I. dummy.cc `pkg-config --cflags python`
 	g++ -fPIC -shared -o libDummy.so dummy.o
 
 myproperty: libProperty libDummy exportProperty.cc

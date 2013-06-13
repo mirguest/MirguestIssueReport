@@ -31,9 +31,6 @@ BOOST_PYTHON_MODULE(myproperty)
 
     ;
 
-    class_<dummy, boost::noncopyable>("dummy")
-        .def("getx", &dummy::getx,
-                return_value_policy<reference_existing_object>())
-    ;
+    dummy::exportPythonAPI();
 
 }
