@@ -2,6 +2,7 @@
 #define Property_hh
 
 #include <string>
+#include <sstream>
 
 class PropertyBase {
 public:
@@ -32,6 +33,9 @@ public:
     virtual void modify_value(std::string new_value) {
         // Magic is here
         // using some parser to modify the value
+        std::stringstream ss;
+        ss << new_value;
+        ss >> m_variable;
     }
 
 private:
@@ -48,8 +52,5 @@ PropertyBase* declareProperty(std::string key, T& var) {
     return new Property<T>(key, var);
 }
 
-void setProperty(PropertyBase* pb, std::string value) {
-    pb->modify_value(value);
-}
-
+void setProperty(PropertyBase* pb, std::string value); 
 #endif

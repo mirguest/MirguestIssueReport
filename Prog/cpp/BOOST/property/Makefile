@@ -1,8 +1,20 @@
 
 all: libs test
 
-libs: Property.hh
+libs: libProperty myproperty libDummy
+
+libProperty: Property.hh Property.cc
+	g++ -fPIC -c -I. Property.cc
+	g++ -fPIC -shared -o libProperty.so Property.o
+
+libDummy: dummy.hh dummy.cc
+	g++ -fPIC -c -I. dummy.cc 
+	g++ -fPIC -shared -o libDummy.so dummy.o
+
+myproperty: libProperty libDummy exportProperty.cc
+	g++ -fPIC -c -I. exportProperty.cc `pkg-config --cflags python`
+	g++ -fPIC -shared -o myproperty.so exportProperty.o -L. -lProperty -lDummy -lboost_python `pkg-config --libs python`
 
 test: libs testProperty.cc 
-	g++ -c -I. testProperty.cc
-	g++ -o testProperty testProperty.o
+	g++ -fPIC -c -I. testProperty.cc
+	g++ -fPIC -o testProperty testProperty.o -L. -lProperty
