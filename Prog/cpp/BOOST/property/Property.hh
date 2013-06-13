@@ -36,6 +36,9 @@ public:
         std::stringstream ss;
         ss << new_value;
         ss >> m_variable;
+        if (ss.good()) {
+            m_value = new_value;
+        }
     }
 
 private:

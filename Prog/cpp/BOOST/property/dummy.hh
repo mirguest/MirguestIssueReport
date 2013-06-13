@@ -7,6 +7,8 @@ class dummy {
 public:
     dummy() ;
 
+    PropertyBase* getx();
+
 private:
     int x;
     PropertyBase* pb_x;

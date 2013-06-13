@@ -24,9 +24,16 @@ BOOST_PYTHON_MODULE(myproperty)
     class_<BasePropertyBase, boost::noncopyable>("PropertyBase", 
             init<std::string, std::string>())
         .def("modify_value", pure_virtual(&PropertyBase::modify_value))
+        .def("key", &PropertyBase::key,
+                return_value_policy<copy_const_reference>())
+        .def("value", &PropertyBase::value,
+                return_value_policy<copy_const_reference>())
+
     ;
 
     class_<dummy, boost::noncopyable>("dummy")
+        .def("getx", &dummy::getx,
+                return_value_policy<reference_existing_object>())
     ;
 
 }
