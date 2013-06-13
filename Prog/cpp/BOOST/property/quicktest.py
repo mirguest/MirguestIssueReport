@@ -22,3 +22,10 @@ myproperty.setProperty("x", "42")
 myproperty.setProperty("y", "56.78")
 print x.value()
 print y.value()
+
+z = d.getz()
+myproperty.setProperty("z", "1,2,3")
+print z.value()
+
+print "Run dummy:"
+d.run()

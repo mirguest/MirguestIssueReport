@@ -1,6 +1,8 @@
 #ifndef dummy_hh
 #define dummy_hh
 
+#include <vector>
+
 class PropertyBase;
 
 class dummy {
@@ -9,8 +11,11 @@ public:
 
     PropertyBase* getx();
     PropertyBase* gety();
+    PropertyBase* getz();
 
     static void exportPythonAPI();
+
+    bool run();
 
 private:
     int x;
@@ -18,6 +23,9 @@ private:
 
     float y;
     PropertyBase* pb_y;
+
+    std::vector<int> z;
+    PropertyBase* pb_z;
 };
 
 #endif

@@ -68,6 +68,7 @@ public:
     virtual void modify_value(std::string new_value) {
         // Magic Here !!!
         std::cout << "In Vector." << std::endl;
+        m_value = new_value;
         m_variable.clear();
         std::vector< std::string > tmp_vec;
         boost::split(tmp_vec, 
