@@ -6,6 +6,8 @@
 
 #include <iostream>
 
+#include "PropertyManager.hh"
+
 class PropertyBase {
 public:
     PropertyBase(std::string key, std::string value) 
@@ -59,8 +61,11 @@ private:
 
 template<typename T>
 PropertyBase* declareProperty(std::string key, T& var) {
-    return new Property<T>(key, var);
+    PropertyBase* pb = new Property<T>(key, var);
+    PropertyManager::instance().add(pb);
+    return pb;
 }
 
 void setProperty(PropertyBase* pb, std::string value); 
+void setProperty(std::string key, std::string value);
 #endif

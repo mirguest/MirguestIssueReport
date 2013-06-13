@@ -3,9 +3,10 @@ all: libs test
 
 libs: libProperty myproperty libDummy
 
-libProperty: Property.hh Property.cc
+libProperty: Property.hh Property.cc PropertyManager.hh PropertyManager.cc
 	g++ -fPIC -c -I. Property.cc
-	g++ -fPIC -shared -o libProperty.so Property.o
+	g++ -fPIC -c -I. PropertyManager.cc
+	g++ -fPIC -shared -o libProperty.so Property.o PropertyManager.o
 
 libDummy: dummy.hh dummy.cc
 	g++ -fPIC -c -I. dummy.cc `pkg-config --cflags python`
