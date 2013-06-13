@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include "Property.hh"
 
 int main () {
@@ -13,4 +14,9 @@ int main () {
 
     std::cout << i << std::endl;
     std::cout << f << std::endl;
+
+    std::vector<int> vi;
+    PropertyBase* pb_vi = declareProperty("key_vector_int", vi);
+    std::cout << pb_vi << std::endl;
+    setProperty(pb_vi, "1,2,3");
 }

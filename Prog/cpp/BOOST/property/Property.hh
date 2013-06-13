@@ -2,9 +2,12 @@
 #define Property_hh
 
 #include <string>
+#include <vector>
 #include <sstream>
 
 #include <iostream>
+
+#include <boost/algorithm/string.hpp>
 
 #include "PropertyManager.hh"
 
@@ -54,6 +57,36 @@ private:
     T& m_variable;
 };
 
+template<typename T>
+class Property< std::vector< T > >: public PropertyBase  {
+public:
+    Property(std::string key, std::vector< T >& variable)
+        : PropertyBase(key, ""), m_variable(variable) {
+
+    }
+
+    virtual void modify_value(std::string new_value) {
+        // Magic Here !!!
+        std::cout << "In Vector." << std::endl;
+        m_variable.clear();
+        std::vector< std::string > tmp_vec;
+        boost::split(tmp_vec, 
+                     new_value, 
+                     boost::is_any_of(" ,"));
+        T tmp_var;
+        for (int i=0; i < tmp_vec.size(); ++i) {
+            std::stringstream ss;
+            ss << tmp_vec[i];
+            ss >> tmp_var;
+            m_variable.push_back(tmp_var);
+        }
+
+        std::cout << "Size: " << m_variable.size() << std::endl;
+
+    }
+private:
+    std::vector<T>& m_variable;
+};
 
 // API to 
 // * declare property
@@ -62,6 +95,13 @@ private:
 template<typename T>
 PropertyBase* declareProperty(std::string key, T& var) {
     PropertyBase* pb = new Property<T>(key, var);
+    PropertyManager::instance().add(pb);
+    return pb;
+}
+
+template<typename T>
+PropertyBase* declareProperty(std::string key, std::vector< T >& var) {
+    PropertyBase* pb = new Property< std::vector< T > >(key, var);
     PropertyManager::instance().add(pb);
     return pb;
 }
