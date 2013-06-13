@@ -4,6 +4,8 @@
 #include <string>
 #include <sstream>
 
+#include <iostream>
+
 class PropertyBase {
 public:
     PropertyBase(std::string key, std::string value) 
@@ -33,12 +35,17 @@ public:
     virtual void modify_value(std::string new_value) {
         // Magic is here
         // using some parser to modify the value
+        std::cout << "Begin" << std::endl;
         std::stringstream ss;
         ss << new_value;
         ss >> m_variable;
-        if (ss.good()) {
+        if (not ss.fail()) {
+            std::cout << "ss is Good" << std::endl;
             m_value = new_value;
         }
+        std::cout << "End" << std::endl;
+        std::cout << "T var: " << m_variable << std::endl;
+
     }
 
 private:
