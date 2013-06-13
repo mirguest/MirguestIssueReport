@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <map>
 #include "Property.hh"
 
 int main () {
@@ -19,4 +20,10 @@ int main () {
     PropertyBase* pb_vi = declareProperty("key_vector_int", vi);
     std::cout << pb_vi << std::endl;
     setProperty(pb_vi, "1,2,3");
+
+    std::map< std::string, double > msd;
+    PropertyBase* pb_msd = declareProperty("key_map_str_double", msd);
+    setProperty(pb_msd, "'key1':1.2, 'key2':3.4");
+
+
 }

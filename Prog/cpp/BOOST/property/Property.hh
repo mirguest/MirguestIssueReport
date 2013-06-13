@@ -90,6 +90,9 @@ private:
     std::vector<T>& m_variable;
 };
 
+#include <boost/spirit/include/qi.hpp>    
+#include <boost/fusion/adapted/std_pair.hpp>
+
 template<typename Key, typename T>
 class Property< std::map< Key, T > >: public PropertyBase {
 public:
@@ -101,8 +104,48 @@ public:
     virtual void modify_value(std::string new_value) {
         // Magic Here
         std::cout << "In Map." << std::endl;
+        m_variable.clear();
 
-        std::cout << "Size: " << m_variable.size();
+        std::map<std::string,std::string> contents;
+        std::string::iterator first = new_value.begin();
+        std::string::iterator last  = new_value.end();
+        // using boost spirit
+        using namespace boost::spirit;
+        const bool result = qi::phrase_parse(first,last, 
+                *(
+                    *((qi::lit('\'') | qi::lit('"'))) >>
+                    *(qi::char_-":"-"'"-"\"") >>
+                    *((qi::lit('\'') | qi::lit('"'))) >>
+                    qi::lit(":") >> 
+                    *((qi::lit('\'') | qi::lit('"'))) >>
+                    *(qi::char_-","-"'"-"\"") >>
+                    *((qi::lit('\'') | qi::lit('"'))) >>
+                    -(qi::lit(",")) ),
+                ascii::space, contents);                                  
+        if (result) {
+            std::cout << "parse ok" << std::endl;
+        } else {
+            return;
+        }
+        // end
+        Key tmp_key;
+        T tmp_value;
+        std::stringstream ss;
+        for (std::map<std::string, std::string>::iterator it=contents.begin();
+                it !=contents.end(); ++it) {
+            ss.clear();
+            ss << it->first ;
+            ss >> tmp_key;
+            ss.clear();
+            ss << it->second ;
+            ss >> tmp_value;
+
+            m_variable[tmp_key] = tmp_value;
+            
+        }
+
+
+        std::cout << "Size: " << m_variable.size() << std::endl;
     }
 
 private:
