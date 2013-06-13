@@ -33,4 +33,6 @@ BOOST_PYTHON_MODULE(myproperty)
 
     dummy::exportPythonAPI();
 
+    def("setProperty", (void (*)(std::string, std::string))setProperty);
+
 }
