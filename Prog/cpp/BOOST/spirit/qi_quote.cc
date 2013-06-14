@@ -9,7 +9,9 @@ int main() {
 
     std::string str1("'hello, world'");
     std::string str2("\"hello, world\"");
-    std::string str3("'hello,\' world'");
+    std::string str3("'hello,\" world'");
+    std::string str4("'hello,\\\' world'");
+    std::cout << "str4: " << str4 << std::endl;
 
     qi::rule<std::string::iterator, 
              std::string(), 
@@ -55,6 +57,15 @@ int main() {
     result.clear();
     strbegin = str3.begin();
     r = qi::phrase_parse(strbegin, str3.end(),
+            quoted_string,
+            ascii::space,
+            result);
+    std::cout << r << std::endl;
+    std::cout << result << std::endl;
+
+    result.clear();
+    strbegin = str4.begin();
+    r = qi::phrase_parse(strbegin, str4.end(),
             quoted_string,
             ascii::space,
             result);
