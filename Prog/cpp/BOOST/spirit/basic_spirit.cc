@@ -1,6 +1,10 @@
 #include <iostream>
 #include <boost/spirit/include/qi.hpp>         // Parsing
 
+void f(double x) {
+    std::cout << "get " << x << std::endl;
+}
+
 using namespace boost::spirit;
 int main() {
     int value = 0;
@@ -18,5 +22,14 @@ int main() {
             qi::space,
             p1, p2);
     std::cout << p1 << ", " << p2 << std::endl;
+
+    str = "1.0";
+    strbegin = str.begin();
+    double d;
+    qi::phrase_parse(strbegin, str.end(),
+            qi::double_[f],
+            qi::space);
+
+
     
 }
