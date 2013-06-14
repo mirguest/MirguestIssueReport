@@ -1,13 +1,9 @@
 #include <iostream>
 #include <boost/spirit/include/qi.hpp>         // Parsing
+#include <boost/spirit/include/phoenix.hpp>
+#include <boost/fusion/adapted.hpp>
 
 using namespace boost::spirit;
-
-using qi::int_;
-using qi::lit;
-using qi::double_;
-using qi::lexeme;
-using ascii::char_;
 
 int main() {
 
@@ -20,9 +16,9 @@ int main() {
              ascii::space_type> quoted_string;
     char qq;
     quoted_string %= qi::lexeme[
-                     (lit("'")|lit("\""))
-                  >> +(char_ - lit("'")|lit("\""))
-                  >> lit("'")|lit("\"")
+                     (qi::lit("'")|qi::lit("\""))
+                  >> +(ascii::char_ - qi::lit("'")|qi::lit("\""))
+                  >> qi::lit("'")|qi::lit("\"")
                      ];
 
     std::string result;
