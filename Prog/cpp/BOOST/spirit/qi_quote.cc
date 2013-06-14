@@ -20,6 +20,15 @@ int main() {
                   >> +(ascii::char_ - qi::lit("'")|qi::lit("\""))
                   >> qi::lit("'")|qi::lit("\"")
                      ];
+    quoted_string %= qi::lexeme[
+                     (qi::lit("'")
+                  >> +(qi::lit("\\\'")|(ascii::char_ - qi::lit("'")))
+                  >> qi::lit("'"))
+                     |
+                     (qi::lit("\"")
+                  >> +(qi::lit("\\\"")|(ascii::char_ - qi::lit("\"")))
+                  >> qi::lit("\""))
+                     ];
 
     std::string result;
 
