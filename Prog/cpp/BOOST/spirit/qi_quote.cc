@@ -20,9 +20,9 @@ int main() {
              ascii::space_type> quoted_string;
     char qq;
     quoted_string %= qi::lexeme[
-                     '"'
-                  >> +(char_ - '"')
-                  >> '"'
+                     (lit("'")|lit("\""))
+                  >> +(char_ - lit("'")|lit("\""))
+                  >> lit("'")|lit("\"")
                      ];
 
     std::string result;
