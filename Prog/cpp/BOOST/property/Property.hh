@@ -10,6 +10,7 @@
 
 #include <boost/algorithm/string.hpp>
 
+#include "HelperParse.hh"
 #include "PropertyManager.hh"
 
 class PropertyBase {
@@ -42,10 +43,8 @@ public:
         // Magic is here
         // using some parser to modify the value
         std::cout << "Begin" << std::endl;
-        std::stringstream ss;
-        ss << new_value;
-        ss >> m_variable;
-        if (not ss.fail()) {
+        bool b = Helper::parseScalar(new_value, m_variable);
+        if (b) {
             std::cout << "ss is Good" << std::endl;
             m_value = new_value;
         }
