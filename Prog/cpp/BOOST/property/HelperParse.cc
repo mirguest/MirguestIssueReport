@@ -50,7 +50,25 @@ bool parseQuoted(const std::string& input, std::string& output) {
             quoted_string,
             ascii::space,
             output);
-    return r;
+    return r && (strbegin==input.end());
+}
+
+template<>
+bool
+parseScalar<std::string>(const std::string& input, std::string& output) {
+    std::string noquote_str;
+    bool b = parseQuoted(input, noquote_str);
+    if (b) {
+        // parse the quote str successfully
+    } else {
+        // maybe no quote exists
+        noquote_str = input;
+    }
+
+    output = noquote_str;
+
+    return true;
+
 }
 
 }

@@ -2,6 +2,7 @@
 #define HelperParse_hh
 
 #include <string>
+#include <sstream>
 
 namespace Helper {
 
@@ -9,7 +10,29 @@ namespace Helper {
 bool parseQuoted(const std::string& input, std::string& output);
 
 // Parse Scalar
+//
+template<typename T>
+bool
+parseScalar(const std::string& input, T& output) {
+    std::string noquote_str;
+    bool b = parseQuoted(input, noquote_str);
+    if (b) {
+        // parse the quote str successfully
+    } else {
+        // maybe no quote exists
+        noquote_str = input;
+    }
 
+    std::stringstream ss;
+    ss << noquote_str;
+    ss >> output;
+
+    return not ss.fail();
+}
+
+template<>
+bool
+parseScalar<std::string>(const std::string& input, std::string& output);
 // Parse Vector
 
 // Parse Dict
