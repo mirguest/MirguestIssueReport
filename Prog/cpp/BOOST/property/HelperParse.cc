@@ -7,8 +7,8 @@ namespace Helper {
 
 using namespace boost::spirit;
 
-bool parseQuoted(std::string input, std::string& output) {
-    qi::rule<std::string::iterator, 
+bool parseQuoted(const std::string& input, std::string& output) {
+    qi::rule<std::string::const_iterator, 
              std::string(), 
              ascii::space_type> quoted_string;
     quoted_string %= qi::lexeme[
@@ -21,7 +21,7 @@ bool parseQuoted(std::string input, std::string& output) {
                   >> qi::lit("\""))
                      ];
 
-    std::string::iterator strbegin;
+    std::string::const_iterator strbegin;
     strbegin = input.begin();
 
     bool r = qi::phrase_parse(strbegin, input.end(),

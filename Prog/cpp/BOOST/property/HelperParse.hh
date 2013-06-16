@@ -5,9 +5,14 @@
 
 namespace Helper {
 
-bool parseQuoted(std::string input, std::string output);
+// Helper
+bool parseQuoted(const std::string& input, std::string& output);
 
+// Parse Scalar
 
+// Parse Vector
+
+// Parse Dict
 }
 
 #endif
