@@ -2,6 +2,23 @@
 #include <vector>
 #include <map>
 #include "Property.hh"
+#include "HelperParse.hh"
+
+void test_parseQuoted() {
+    std::cout << "Begin Test Quoted String" << std::endl;
+    std::string s_1("\"hello, world\"");
+    std::string s_2("'hello, world'");
+
+    std::string result_1;
+    std::string result_2;
+
+    Helper::parseQuoted(s_1, result_1);
+    Helper::parseQuoted(s_2, result_2);
+
+    std::cout << result_1 << std::endl;
+    std::cout << result_2 << std::endl;
+    std::cout << "End Test Quoted String" << std::endl;
+}
 
 int main () {
     int i = 0;
@@ -25,5 +42,6 @@ int main () {
     PropertyBase* pb_msd = declareProperty("key_map_str_double", msd);
     setProperty(pb_msd, "'key1':1.2, 'key2':3.4");
 
+    test_parseQuoted();
 
 }
