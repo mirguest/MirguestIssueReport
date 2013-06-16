@@ -5,16 +5,29 @@
 
 using namespace boost::spirit;
 
+struct esc_parser:qi::symbols<char,char>
+{
+    esc_parser()
+    {
+        add("\\t",'\t')
+            ("\\n",'\n')
+            ("\\\"",'"')
+            // etc.
+            ;
+     }
+}; 
+
 bool quick_parse(std::string str) {
 
     qi::rule<std::string::iterator, 
              std::string(), 
              ascii::space_type> quoted_string;
+    esc_parser escaped;
     quoted_string %= qi::lexeme[
                   // single quote
                      (qi::lit("'")
                   >> +(
-                        (ascii::char_("\\\'"))
+                        escaped
                         |
                         (ascii::char_ - qi::lit("'")))
                   >> qi::lit("'"))
@@ -22,7 +35,7 @@ bool quick_parse(std::string str) {
                   // double quote
                      (qi::lit("\"")
                   >> +(
-                        (ascii::char_("\\\""))
+                        escaped
                         |
                         (ascii::char_ - qi::lit("\"")))
                   >> qi::lit("\""))
