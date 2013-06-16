@@ -11,7 +11,6 @@ int main() {
     std::string str2("\"hello, world\"");
     std::string str3("'hello,\" world'");
     std::string str4("'hello,\\\' world'");
-    std::cout << "str4: " << str4 << std::endl;
 
     qi::rule<std::string::iterator, 
              std::string(), 
@@ -42,6 +41,7 @@ int main() {
             quoted_string,
             ascii::space,
             result);
+    std::cout << "str1: " << str1 << std::endl;
     std::cout << r << std::endl;
     std::cout << result << std::endl;
 
@@ -51,6 +51,7 @@ int main() {
             quoted_string,
             ascii::space,
             result);
+    std::cout << "str2: " << str2 << std::endl;
     std::cout << r << std::endl;
     std::cout << result << std::endl;
 
@@ -60,6 +61,7 @@ int main() {
             quoted_string,
             ascii::space,
             result);
+    std::cout << "str3: " << str3 << std::endl;
     std::cout << r << std::endl;
     std::cout << result << std::endl;
 
@@ -69,6 +71,7 @@ int main() {
             quoted_string,
             ascii::space,
             result);
+    std::cout << "str4: " << str4 << std::endl;
     std::cout << r << std::endl;
     std::cout << result << std::endl;
 }
