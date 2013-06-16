@@ -17,17 +17,12 @@ int main() {
              ascii::space_type> quoted_string;
     char qq;
     quoted_string %= qi::lexeme[
-                     (qi::lit("'")|qi::lit("\""))
-                  >> +(ascii::char_ - qi::lit("'")|qi::lit("\""))
-                  >> qi::lit("'")|qi::lit("\"")
-                     ];
-    quoted_string %= qi::lexeme[
                      (qi::lit("'")
-                  >> +(qi::lit("\\\'")|(ascii::char_ - qi::lit("'")))
+                  >> +("\\\'"|(ascii::char_ - qi::lit("'")))
                   >> qi::lit("'"))
                      |
                      (qi::lit("\"")
-                  >> +(qi::lit("\\\"")|(ascii::char_ - qi::lit("\"")))
+                  >> +("\\\""|(ascii::char_ - qi::lit("\"")))
                   >> qi::lit("\""))
                      ];
 
