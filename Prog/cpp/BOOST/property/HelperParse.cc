@@ -71,4 +71,11 @@ parseScalar<std::string>(const std::string& input, std::string& output) {
 
 }
 
+template<>
+bool
+parseVector<std::string>(const std::string& input, 
+                         std::vector<std::string>& output) {
+
+}
+
 }
