@@ -12,6 +12,7 @@ struct esc_parser:qi::symbols<char,char>
         add("\\t",'\t')
             ("\\n",'\n')
             ("\\\"",'"')
+            ("\\'",'\'')
             // etc.
             ;
      }
