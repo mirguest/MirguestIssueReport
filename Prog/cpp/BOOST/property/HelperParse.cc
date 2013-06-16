@@ -12,12 +12,20 @@ bool parseQuoted(const std::string& input, std::string& output) {
              std::string(), 
              ascii::space_type> quoted_string;
     quoted_string %= qi::lexeme[
+                  // single quote
                      (qi::lit("'")
-                  >> +(qi::lit("\\\'")|(ascii::char_ - qi::lit("'")))
+                  >> +(
+                        (ascii::char_("\\\'"))
+                        |
+                        (ascii::char_ - qi::lit("'")))
                   >> qi::lit("'"))
                      |
+                  // double quote
                      (qi::lit("\"")
-                  >> +(qi::lit("\\\"")|(ascii::char_ - qi::lit("\"")))
+                  >> +(
+                        (ascii::char_("\\\""))
+                        |
+                        (ascii::char_ - qi::lit("\"")))
                   >> qi::lit("\""))
                      ];
 
