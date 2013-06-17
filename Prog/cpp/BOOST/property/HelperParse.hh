@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include <sstream>
 #include <iostream>
 
@@ -73,6 +74,17 @@ parseVector<std::string>(const std::string& input,
                          std::vector<std::string>& output);
 
 // Parse Dict
+//
+template<typename Key, typename T>
+bool
+parseDict(const std::string& input, std::map< Key, T >& output) {
+
+}
+
+template<>
+bool
+parseDict<std::string, std::string>(const std::string& input,
+                            std::map< std::string, std::string >& output);
 }
 
 #endif

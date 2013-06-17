@@ -110,4 +110,11 @@ parseVector<std::string>(const std::string& input,
     return false;
 }
 
+template<>
+bool
+parseDict<std::string, std::string>(const std::string& input,
+                            std::map< std::string, std::string >& output) {
+
+}
+
 }
