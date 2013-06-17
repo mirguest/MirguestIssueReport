@@ -101,33 +101,14 @@ public:
     virtual void modify_value(std::string new_value) {
         // Magic Here
         std::cout << "In Map." << std::endl;
-        m_variable.clear();
-
-        std::map<std::string,std::string> contents;
-        bool result = Helper::parseDict(new_value, contents);
-        if (result) {
-            std::cout << "parse ok" << std::endl;
-        } else {
-            std::cout << "parse failed" << std::endl;
-            return;
+        std::map< Key, T > output;
+        bool b = Helper::parseDict(new_value, output);
+        if (b) {
+            // Clear the vector first, then set the variable
+            // just swap???
+            m_variable.swap(output);
+            m_value = new_value;
         }
-        // end
-        Key tmp_key;
-        T tmp_value;
-        std::stringstream ss;
-        for (std::map<std::string, std::string>::iterator it=contents.begin();
-                it !=contents.end(); ++it) {
-            ss.clear();
-            ss << it->first ;
-            ss >> tmp_key;
-            ss.clear();
-            ss << it->second ;
-            ss >> tmp_value;
-
-            m_variable[tmp_key] = tmp_value;
-            
-        }
-
 
         std::cout << "Size: " << m_variable.size() << std::endl;
     }

@@ -78,6 +78,37 @@ parseVector<std::string>(const std::string& input,
 template<typename Key, typename T>
 bool
 parseDict(const std::string& input, std::map< Key, T >& output) {
+    std::map<std::string,std::string> contents;
+    bool result = Helper::parseDict(input, contents);
+    if (result) {
+        std::cout << "parse ok" << std::endl;
+    } else {
+        std::cout << "parse failed" << std::endl;
+        return false;
+    }
+    // end
+    Key tmp_key;
+    T tmp_value;
+    std::stringstream ss;
+    for (std::map<std::string, std::string>::iterator it=contents.begin();
+            it !=contents.end(); ++it) {
+        ss.clear();
+        ss << it->first ;
+        ss >> tmp_key;
+        if (ss.fail()) {
+            return false;
+        }
+        ss.clear();
+        ss << it->second ;
+        ss >> tmp_value;
+        if (ss.fail()) {
+            return false;
+        }
+
+        output[tmp_key] = tmp_value;
+        
+    }
+    return true;
 
 }
 
