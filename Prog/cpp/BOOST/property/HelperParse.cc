@@ -113,7 +113,25 @@ parseVector<std::string>(const std::string& input,
 template<>
 bool
 parseDict<std::string, std::string>(const std::string& input,
-                            std::map< std::string, std::string >& output) {
+                    std::map< std::string, std::string >& output) {
+    std::string::const_iterator first = input.begin();
+    std::string::const_iterator last  = input.end();
+    // using boost spirit
+    const bool result = qi::phrase_parse(first,last, 
+            qi::lit("{") >>
+            *(
+                -((qi::lit('\'') | qi::lit('"'))) >>
+                *(qi::char_-":"-"'"-"\"") >>
+                -((qi::lit('\'') | qi::lit('"'))) >>
+                qi::lit(":") >> 
+                -((qi::lit('\'') | qi::lit('"'))) >>
+                *(qi::char_-","-"'"-"\"") >>
+                -((qi::lit('\'') | qi::lit('"'))) >>
+                -(qi::lit(",")) )
+            >> qi::lit("}"),
+            ascii::space, output);                                  
+
+    return result and (first == last);
 
 }
 

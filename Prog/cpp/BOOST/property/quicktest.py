@@ -28,7 +28,7 @@ myproperty.setProperty("z", str(range(5)))
 print z.value()
 
 u = d.getu()
-myproperty.setProperty("u", "\"x\": 1, \"y\": 2")
+myproperty.setProperty("u", str({"x": 1, "y": 2}))
 print u.value()
 
 print "Run dummy:"
