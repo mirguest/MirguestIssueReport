@@ -20,6 +20,34 @@ void test_parseQuoted() {
     std::cout << "End Test Quoted String" << std::endl;
 }
 
+template<typename T>
+void quick_show_vector(std::vector<T>& v) {
+    for (typename std::vector<T>::iterator it=v.begin();
+         it != v.end();
+         ++it) {
+        std::cout << *it << ", ";
+    }
+    std::cout << std::endl;
+}
+
+void test_parseVector() {
+    std::cout << "Begin Test Vector String" << std::endl;
+    std::string s_1("[\"hello\", \"world\"]");
+    std::string s_2("[1,2,3]");
+
+    std::vector< std::string > result_1;
+    std::vector< std::string > result_2;
+
+    Helper::parseVector(s_1, result_1);
+    Helper::parseVector(s_2, result_2);
+
+    quick_show_vector(result_1);
+    quick_show_vector(result_2);
+
+    std::cout << "End Test Quoted String" << std::endl;
+
+}
+
 int main () {
     int i = 0;
     float f = 0.0;
@@ -43,5 +71,7 @@ int main () {
     setProperty(pb_msd, "'key1':1.2, 'key2':3.4");
 
     test_parseQuoted();
+
+    test_parseVector();
 
 }

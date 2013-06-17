@@ -25,8 +25,10 @@ bool parseQuoted(const std::string& input, std::string& output) {
              std::string(), 
              ascii::space_type> quoted_string;
     esc_parser escaped;
-    quoted_string %= qi::lexeme[
+    quoted_string %= *qi::space 
+                  >> qi::lexeme[
                   // single quote
+                     
                      (qi::lit("'")
                   >> +(
                         escaped
@@ -41,7 +43,8 @@ bool parseQuoted(const std::string& input, std::string& output) {
                         |
                         (ascii::char_ - qi::lit("\"")))
                   >> qi::lit("\""))
-                     ];
+                     ]
+                  >> *qi::space;
 
     std::string::const_iterator strbegin;
     strbegin = input.begin();
@@ -75,7 +78,23 @@ template<>
 bool
 parseVector<std::string>(const std::string& input, 
                          std::vector<std::string>& output) {
+    qi::rule<std::string::const_iterator, 
+             std::vector<std::string>(), 
+             ascii::space_type> vector_string;
+    vector_string %= qi::lexeme[
+                        (qi::lit("[")) >>
+                        ( +(ascii::char_-","-"]") % qi::lit(',')) >>
+                        (qi::lit("]"))
+                     ];
 
+    std::string::const_iterator strbegin;
+    strbegin = input.begin();
+
+    bool r = qi::phrase_parse(strbegin, input.end(),
+            vector_string,
+            ascii::space,
+            output);
+    return r && (strbegin==input.end());
 }
 
 }
