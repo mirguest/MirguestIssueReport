@@ -108,6 +108,7 @@ public:
         if (result) {
             std::cout << "parse ok" << std::endl;
         } else {
+            std::cout << "parse failed" << std::endl;
             return;
         }
         // end

@@ -64,9 +64,14 @@ test_parseDict() {
     std::string s_1("{'hello':'world'}");
     std::map<std::string, std::string> r_1;
 
+    std::string s_2("{'hello': 1}");
+    std::map<std::string, std::string> r_2;
+
     Helper::parseDict(s_1, r_1);
+    Helper::parseDict(s_2, r_2);
 
     quick_show_dict(r_1);
+    quick_show_dict(r_2);
     std::cout << "End Test Dict String" << std::endl;
 }
 

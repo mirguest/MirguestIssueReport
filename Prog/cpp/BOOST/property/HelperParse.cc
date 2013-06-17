@@ -121,11 +121,11 @@ parseDict<std::string, std::string>(const std::string& input,
             qi::lit("{") >>
             *(
                 -((qi::lit('\'') | qi::lit('"'))) >>
-                *(qi::char_-":"-"'"-"\"") >>
+                *(qi::char_-":"-"'"-"\""-"}") >>
                 -((qi::lit('\'') | qi::lit('"'))) >>
                 qi::lit(":") >> 
                 -((qi::lit('\'') | qi::lit('"'))) >>
-                *(qi::char_-","-"'"-"\"") >>
+                *(qi::char_-","-"'"-"\""-"}") >>
                 -((qi::lit('\'') | qi::lit('"'))) >>
                 -(qi::lit(",")) )
             >> qi::lit("}"),
