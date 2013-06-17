@@ -1,11 +1,16 @@
 #include "HelperParse.hh"
+#include <algorithm>
 #include <boost/spirit/include/qi.hpp>         // Parsing
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/fusion/adapted.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/bind.hpp>
 
 namespace Helper {
 
-using namespace boost::spirit;
+namespace qi = boost::spirit::qi;
+namespace ascii = boost::spirit::ascii;
+using namespace boost::algorithm;
 
 struct esc_parser:qi::symbols<char,char>
 {
@@ -94,6 +99,10 @@ parseVector<std::string>(const std::string& input,
             vector_string,
             ascii::space,
             output);
+
+    std::for_each(output.begin(), output.end(), 
+                    boost::bind(&trim< std::string >, _1, std::locale()));
+
     return r && (strbegin==input.end());
 }
 
