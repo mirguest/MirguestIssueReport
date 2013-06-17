@@ -24,7 +24,7 @@ print x.value()
 print y.value()
 
 z = d.getz()
-myproperty.setProperty("z", "1,2,3")
+myproperty.setProperty("z", str(range(5)))
 print z.value()
 
 u = d.getu()

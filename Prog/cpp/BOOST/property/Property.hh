@@ -68,18 +68,19 @@ public:
     virtual void modify_value(std::string new_value) {
         // Magic Here !!!
         std::cout << "In Vector." << std::endl;
-        m_value = new_value;
-        m_variable.clear();
-        std::vector< std::string > tmp_vec;
-        boost::split(tmp_vec, 
-                     new_value, 
-                     boost::is_any_of(" ,"));
-        T tmp_var;
-        for (int i=0; i < tmp_vec.size(); ++i) {
-            std::stringstream ss;
-            ss << tmp_vec[i];
-            ss >> tmp_var;
-            m_variable.push_back(tmp_var);
+
+        std::vector<T> output;
+        std::cout << new_value << std::endl;
+        bool b = Helper::parseVector(new_value, output);
+        std::cout << "output size: "
+                  << output.size()
+                  << std::endl;
+        std::cout << "parse result: " << b << std::endl;
+        if (b) {
+            // Clear the vector first, then set the variable
+            // just swap???
+            m_variable.swap(output);
+            m_value = new_value;
         }
 
         std::cout << "Size: " << m_variable.size() << std::endl;

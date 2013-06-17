@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <iostream>
 
 namespace Helper {
 
@@ -41,7 +42,29 @@ template<typename T>
 bool
 parseVector(const std::string& input, std::vector<T>& output) {
     // First, parse the string version
+    std::vector<std::string> str_vector;
+    bool b = parseVector(input, str_vector);
+    if (not b) {
+        // Fail to parse
+        std::cout << "Failed to parse vector<str>" << std::endl;
+        return b;
+    }
     // Then, convert to the T version.
+    T tmp_var;
+    for (std::vector<std::string>::iterator it=str_vector.begin();
+            it != str_vector.end();
+            ++it) {
+        std::stringstream ss;
+        ss << (*it);
+        ss >> tmp_var;
+        if (not ss.fail()) {
+            output.push_back(tmp_var);
+        } else {
+            // Failed
+            return false;
+        }
+    }
+    return true;
 }
 
 template<>

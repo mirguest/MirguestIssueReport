@@ -100,10 +100,14 @@ parseVector<std::string>(const std::string& input,
             ascii::space,
             output);
 
-    std::for_each(output.begin(), output.end(), 
+    if (r && (strbegin==input.end())) {
+
+        std::for_each(output.begin(), output.end(), 
                     boost::bind(&trim< std::string >, _1, std::locale()));
 
-    return r && (strbegin==input.end());
+        return true;
+    }
+    return false;
 }
 
 }
