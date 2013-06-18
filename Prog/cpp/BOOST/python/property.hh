@@ -21,6 +21,8 @@ protected:
 
 };
 
+// Scalar
+
 template<typename T>
 class Property: public MyProperty {
 public:
@@ -41,6 +43,8 @@ public:
 private:
     T& m_var;
 };
+
+// Vector
 
 // API
 template<typename T>

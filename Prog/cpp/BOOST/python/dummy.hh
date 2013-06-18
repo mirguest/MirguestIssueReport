@@ -1,5 +1,6 @@
 #ifndef dummy_hh
 #define dummy_hh
+#include <vector>
 
 class MyProperty;
 
@@ -10,6 +11,8 @@ public:
     MyProperty* getx();
     MyProperty* gety();
 
+    MyProperty* getvx();
+
     static void exportPythonAPI();
 
     bool run();
@@ -18,6 +21,9 @@ private:
     MyProperty* pb_x;
     double y;
     MyProperty* pb_y;
+
+    std::vector<int> v_x;
+    MyProperty* pb_v_x;
 };
 
 #endif

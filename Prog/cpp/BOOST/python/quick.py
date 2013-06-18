@@ -12,4 +12,7 @@ x.modify(10)
 y = d.gety()
 y.modify(12.34)
 
+vx = d.getvx()
+vx.modify(range(5))
+
 d.run()

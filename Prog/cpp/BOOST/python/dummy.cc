@@ -17,12 +17,25 @@ dummy::gety() {
     return pb_y;
 }
 
+MyProperty*
+dummy::getvx() {
+    return pb_v_x;
+}
+
 bool
 dummy::run() {
     // Display x
     std::cout << "x: " << x << std::endl;
     // Display y
     std::cout << "y: " << y << std::endl;
+
+    // Display vx
+    for(std::vector<int>::iterator it = v_x.begin();
+            it != v_x.end();
+            ++it) {
+        std::cout << *it << " ";
+    }
+    std::cout << std::endl;
 }
 
 #include <boost/python.hpp>
@@ -35,6 +48,8 @@ dummy::exportPythonAPI() {
         .def("getx", &dummy::getx,
                 return_value_policy<reference_existing_object>())
         .def("gety", &dummy::gety,
+                return_value_policy<reference_existing_object>())
+        .def("getvx", &dummy::getvx,
                 return_value_policy<reference_existing_object>())
         .def("run", &dummy::run)
     ;
