@@ -10,8 +10,13 @@ MyProperty::show() {
     std::cout << str << std::endl;
 }
 
+// Wraper for PYTHON
+
 struct BasePropertyBase: public MyProperty, bp::wrapper<MyProperty>
 {
+    BasePropertyBase(std::string key, bp::object value)
+        : MyProperty(key, value)
+    {}
 
     void modify(bp::object& new_value) {
         this->get_override("modify")(new_value);
@@ -20,7 +25,8 @@ struct BasePropertyBase: public MyProperty, bp::wrapper<MyProperty>
 
 BOOST_PYTHON_MODULE(hello)
 {
-    bp::class_<BasePropertyBase, boost::noncopyable>("MyProperty")
+    bp::class_<BasePropertyBase, boost::noncopyable>("MyProperty",
+            bp::init<std::string, bp::object>())
         .def("modify", bp::pure_virtual(&MyProperty::modify))
         .def("show", &MyProperty::show)
     ;
