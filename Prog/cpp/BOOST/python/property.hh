@@ -8,7 +8,7 @@ namespace bp = boost::python;
 class MyProperty {
 public:
 
-    void modify(bp::object& other);
+    virtual void modify(bp::object& other) = 0;
     void show(); 
 
 

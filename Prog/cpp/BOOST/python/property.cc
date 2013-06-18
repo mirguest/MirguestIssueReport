@@ -1,11 +1,7 @@
 #include <iostream>
 #include <string>
+#include <boost/noncopyable.hpp>
 #include "property.hh"
-
-void
-MyProperty::modify(bp::object& other) {
-    m_value = other;
-}
 
 void
 MyProperty::show() {
@@ -14,10 +10,18 @@ MyProperty::show() {
     std::cout << str << std::endl;
 }
 
+struct BasePropertyBase: public MyProperty, bp::wrapper<MyProperty>
+{
+
+    void modify(bp::object& new_value) {
+        this->get_override("modify")(new_value);
+    }
+};
+
 BOOST_PYTHON_MODULE(hello)
 {
-    bp::class_<MyProperty>("MyProperty")
-        .def("modify", &MyProperty::modify)
+    bp::class_<BasePropertyBase, boost::noncopyable>("MyProperty")
+        .def("modify", bp::pure_virtual(&MyProperty::modify))
         .def("show", &MyProperty::show)
     ;
 }
