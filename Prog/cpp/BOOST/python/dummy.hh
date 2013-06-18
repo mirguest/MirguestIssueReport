@@ -8,6 +8,7 @@ public:
     dummy();
 
     MyProperty* getx();
+    MyProperty* gety();
 
     static void exportPythonAPI();
 
@@ -15,6 +16,8 @@ public:
 private:
     int x;
     MyProperty* pb_x;
+    double y;
+    MyProperty* pb_y;
 };
 
 #endif

@@ -9,4 +9,7 @@ d = hello.dummy()
 x = d.getx()
 x.modify(10)
 
+y = d.gety()
+y.modify(12.34)
+
 d.run()
