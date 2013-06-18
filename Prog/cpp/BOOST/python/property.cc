@@ -2,6 +2,7 @@
 #include <string>
 #include <boost/noncopyable.hpp>
 #include "property.hh"
+#include "dummy.hh"
 
 void
 MyProperty::show() {
@@ -30,4 +31,5 @@ BOOST_PYTHON_MODULE(hello)
         .def("modify", bp::pure_virtual(&MyProperty::modify))
         .def("show", &MyProperty::show)
     ;
+    dummy::exportPythonAPI();
 }

@@ -26,10 +26,20 @@ class Property: public MyProperty {
 public:
     Property(std::string key, T& obj)
         : MyProperty(key, bp::object(obj))
+          , m_var(obj)
     {}
     void modify(bp::object& other) {
 
     }
+private:
+    T& m_var;
 };
+
+// API
+template<typename T>
+MyProperty* declareProperty(std::string key, T& var) {
+    MyProperty* pb = new Property<T>(key, var);
+    return pb;
+}
 
 #endif
