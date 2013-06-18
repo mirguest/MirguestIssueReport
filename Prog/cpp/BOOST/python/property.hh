@@ -29,7 +29,14 @@ public:
           , m_var(obj)
     {}
     void modify(bp::object& other) {
+        bp::extract<T> tmp_var(other);
+        if (tmp_var.check()) {
+            // check the value is ok
+            m_var = tmp_var();
+            m_value = other;
+        } else {
 
+        }
     }
 private:
     T& m_var;
