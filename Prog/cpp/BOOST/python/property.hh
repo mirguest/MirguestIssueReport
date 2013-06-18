@@ -3,6 +3,7 @@
 
 #include <boost/python.hpp>
 #include <string>
+#include <vector>
 
 namespace bp = boost::python;
 
@@ -46,10 +47,30 @@ private:
 
 // Vector
 
+template<typename T>
+class Property< std::vector< T > >: public MyProperty {
+public:
+    Property(std::string key, std::vector< T >& obj)
+        : MyProperty(key, bp::list())
+          , m_var(obj)
+    {}
+    void modify(bp::object& other) {
+
+    }
+private:
+    std::vector< T >& m_var;
+};
+
 // API
 template<typename T>
 MyProperty* declareProperty(std::string key, T& var) {
     MyProperty* pb = new Property<T>(key, var);
+    return pb;
+}
+
+template<typename T>
+MyProperty* declareProperty(std::string key, std::vector<T>& var) {
+    MyProperty* pb = new Property< std::vector<T> >(key, var);
     return pb;
 }
 

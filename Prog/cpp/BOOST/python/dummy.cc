@@ -5,6 +5,7 @@
 dummy::dummy() {
     pb_x = declareProperty("x", x);
     pb_y = declareProperty("y", y);
+    pb_v_x = declareProperty("vx", v_x);
 }
 
 MyProperty*
