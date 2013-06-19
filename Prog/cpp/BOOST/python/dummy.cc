@@ -3,12 +3,13 @@
 #include "property.hh"
 
 dummy::dummy() {
-    pb_x = declareProperty("x", x);
-    pb_y = declareProperty("y", y);
-    pb_v_x = declareProperty("vx", v_x);
-    pb_v_y = declareProperty("vy", v_y);
-    pb_m_x = declareProperty("mx", m_x);
-    pb_m_y = declareProperty("my", m_y);
+    std::string name("dummy");
+    pb_x = declareProperty(name, "x", x);
+    pb_y = declareProperty(name, "y", y);
+    pb_v_x = declareProperty(name, "vx", v_x);
+    pb_v_y = declareProperty(name, "vy", v_y);
+    pb_m_x = declareProperty(name, "mx", m_x);
+    pb_m_y = declareProperty(name, "my", m_y);
 }
 
 MyProperty*

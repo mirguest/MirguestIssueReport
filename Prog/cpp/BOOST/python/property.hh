@@ -127,22 +127,33 @@ private:
     std::map< Key, T >& m_var;
 };
 
+#include "PropertyManager.hh"
+
 // API
 template<typename T>
-MyProperty* declareProperty(std::string key, T& var) {
+MyProperty* declareProperty(std::string objname, 
+                            std::string key, 
+                            T& var) {
     MyProperty* pb = new Property<T>(key, var);
+    PropertyManager::instance().add(objname, pb);
     return pb;
 }
 
 template<typename T>
-MyProperty* declareProperty(std::string key, std::vector<T>& var) {
+MyProperty* declareProperty(std::string objname, 
+                            std::string key,
+                            std::vector<T>& var) {
     MyProperty* pb = new Property< std::vector<T> >(key, var);
+    PropertyManager::instance().add(objname, pb);
     return pb;
 }
 
 template<typename Key, typename T>
-MyProperty* declareProperty(std::string key, std::map< Key, T >& var) {
+MyProperty* declareProperty(std::string objname, 
+                            std::string key, 
+                            std::map< Key, T >& var) {
     MyProperty* pb = new Property< std::map< Key, T > >(key, var);
+    PropertyManager::instance().add(objname, pb);
     return pb;
 }
 
