@@ -88,6 +88,35 @@ public:
         }
     }
     void modify(bp::object& other) {
+        bp::extract<bp::dict> other_dict_check(other);
+        m_var.clear();
+        if (other_dict_check.check()) {
+            bp::dict other_dict = other_dict_check();
+            bp::list iterkeys = (bp::list)other_dict.iterkeys();
+            for(bp::ssize_t i = 0; i < bp::len(iterkeys); ++i) {
+                bp::object key_obj = iterkeys[i];
+                bp::extract<Key> key_check(key_obj);
+                if (key_check.check()) {
+
+                } else {
+                    // TODO: raise Error?
+                    continue;
+                }
+                bp::object value_obj = other_dict[key_obj];
+                bp::extract<T> value_check(value_obj);
+                if (value_check.check()) {
+
+                } else {
+                    // TODO: raise Error?
+                    continue;
+                }
+
+                // setting the map
+                m_var[ key_check() ] = value_check();
+            }
+        } else {
+
+        }
 
     }
 private:
