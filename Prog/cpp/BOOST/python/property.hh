@@ -17,6 +17,10 @@ public:
     virtual void modify(bp::object& other) = 0;
     void show(); 
 
+    const std::string& key() {
+        return m_key;
+    }
+
 
 protected:
     std::string m_key;
