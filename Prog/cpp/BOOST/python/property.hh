@@ -5,6 +5,7 @@
 #include <boost/python/stl_iterator.hpp>
 #include <string>
 #include <vector>
+#include <map>
 
 namespace bp = boost::python;
 
@@ -72,6 +73,22 @@ private:
     std::vector< T >& m_var;
 };
 
+// Map
+template<typename Key, typename T>
+class Property< std::map< Key, T > >: public MyProperty {
+public:
+    Property(std::string key, std::map< Key, T >& obj)
+        : MyProperty(key, bp::dict())
+          , m_var(obj)
+    {
+    }
+    void modify(bp::object& other) {
+
+    }
+private:
+    std::map< Key, T >& m_var;
+};
+
 // API
 template<typename T>
 MyProperty* declareProperty(std::string key, T& var) {
@@ -82,6 +99,12 @@ MyProperty* declareProperty(std::string key, T& var) {
 template<typename T>
 MyProperty* declareProperty(std::string key, std::vector<T>& var) {
     MyProperty* pb = new Property< std::vector<T> >(key, var);
+    return pb;
+}
+
+template<typename Key, typename T>
+MyProperty* declareProperty(std::string key, std::map< Key, T >& var) {
+    MyProperty* pb = new Property< std::map< Key, T > >(key, var);
     return pb;
 }
 
