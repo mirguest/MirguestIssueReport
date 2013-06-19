@@ -122,6 +122,7 @@ public:
                 // setting the map
                 m_var[ key_check() ] = value_check();
             }
+            m_value = other_dict;
         } else {
 
         }
