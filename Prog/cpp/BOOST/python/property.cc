@@ -54,5 +54,8 @@ BOOST_PYTHON_MODULE(hello)
         .def("modify", bp::pure_virtual(&MyProperty::modify))
         .def("show", &MyProperty::show)
     ;
+    bp::def("getProperty", &getProperty,
+            bp::return_value_policy<bp::reference_existing_object>());
+    bp::def("setProperty", &setProperty);
     dummy::exportPythonAPI();
 }
