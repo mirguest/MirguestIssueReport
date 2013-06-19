@@ -2,6 +2,7 @@
 #define property_hh
 
 #include <boost/python.hpp>
+#include <boost/python/stl_iterator.hpp>
 #include <string>
 #include <vector>
 
@@ -61,7 +62,10 @@ public:
         }
     }
     void modify(bp::object& other) {
-        bp::list tmp_var;
+        bp::stl_input_iterator<T> begin(other), end;
+        m_var.clear();
+        m_var.insert(m_var.end(), begin, end);
+        m_value = other;
 
     }
 private:
