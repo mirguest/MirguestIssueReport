@@ -6,6 +6,7 @@ dummy::dummy() {
     pb_x = declareProperty("x", x);
     pb_y = declareProperty("y", y);
     pb_v_x = declareProperty("vx", v_x);
+    pb_v_y = declareProperty("vy", v_y);
 }
 
 MyProperty*
@@ -23,6 +24,11 @@ dummy::getvx() {
     return pb_v_x;
 }
 
+MyProperty*
+dummy::getvy() {
+    return pb_v_y;
+}
+
 bool
 dummy::run() {
     // Display x
@@ -31,8 +37,18 @@ dummy::run() {
     std::cout << "y: " << y << std::endl;
 
     // Display vx
+    std::cout << "vx: ";
     for(std::vector<int>::iterator it = v_x.begin();
             it != v_x.end();
+            ++it) {
+        std::cout << *it << " ";
+    }
+    std::cout << std::endl;
+
+    // Display vy
+    std::cout << "vy: ";
+    for(std::vector<double>::iterator it = v_y.begin();
+            it != v_y.end();
             ++it) {
         std::cout << *it << " ";
     }
@@ -51,6 +67,8 @@ dummy::exportPythonAPI() {
         .def("gety", &dummy::gety,
                 return_value_policy<reference_existing_object>())
         .def("getvx", &dummy::getvx,
+                return_value_policy<reference_existing_object>())
+        .def("getvy", &dummy::getvy,
                 return_value_policy<reference_existing_object>())
         .def("run", &dummy::run)
     ;

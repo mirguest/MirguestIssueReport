@@ -15,4 +15,7 @@ y.modify(12.34)
 vx = d.getvx()
 vx.modify(range(5))
 
+vy = d.getvy()
+vy.modify([1.23*i for i in range(5)])
+
 d.run()

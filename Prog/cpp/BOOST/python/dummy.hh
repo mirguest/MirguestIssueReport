@@ -12,6 +12,7 @@ public:
     MyProperty* gety();
 
     MyProperty* getvx();
+    MyProperty* getvy();
 
     static void exportPythonAPI();
 
@@ -24,6 +25,8 @@ private:
 
     std::vector<int> v_x;
     MyProperty* pb_v_x;
+    std::vector<double> v_y;
+    MyProperty* pb_v_y;
 };
 
 #endif
