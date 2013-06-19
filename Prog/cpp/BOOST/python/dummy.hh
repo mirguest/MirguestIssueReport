@@ -1,6 +1,7 @@
 #ifndef dummy_hh
 #define dummy_hh
 #include <vector>
+#include <map>
 
 class MyProperty;
 
@@ -13,6 +14,9 @@ public:
 
     MyProperty* getvx();
     MyProperty* getvy();
+
+    MyProperty* getmx();
+    MyProperty* getmy();
 
     static void exportPythonAPI();
 
@@ -27,6 +31,11 @@ private:
     MyProperty* pb_v_x;
     std::vector<double> v_y;
     MyProperty* pb_v_y;
+
+    std::map< std::string, int > m_x;
+    MyProperty* pb_m_x;
+    std::map< std::string, double > m_y;
+    MyProperty* pb_m_y;
 };
 
 #endif

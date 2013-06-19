@@ -7,6 +7,8 @@ dummy::dummy() {
     pb_y = declareProperty("y", y);
     pb_v_x = declareProperty("vx", v_x);
     pb_v_y = declareProperty("vy", v_y);
+    pb_m_x = declareProperty("mx", m_x);
+    pb_m_y = declareProperty("my", m_y);
 }
 
 MyProperty*
@@ -27,6 +29,16 @@ dummy::getvx() {
 MyProperty*
 dummy::getvy() {
     return pb_v_y;
+}
+
+MyProperty*
+dummy::getmx() {
+    return pb_m_x;
+}
+
+MyProperty*
+dummy::getmy() {
+    return pb_m_y;
 }
 
 bool
@@ -53,6 +65,24 @@ dummy::run() {
         std::cout << *it << " ";
     }
     std::cout << std::endl;
+
+    // Display mx
+    std::cout << "mx: ";
+    for(std::map<std::string, int>::iterator it = m_x.begin();
+            it != m_x.end();
+            ++it) {
+        std::cout << it->first << ": " << it->second << " ";
+    }
+    std::cout << std::endl;
+
+    // Display my
+    std::cout << "my: ";
+    for(std::map<std::string, double>::iterator it = m_y.begin();
+            it != m_y.end();
+            ++it) {
+        std::cout << it->first << ": " << it->second << " ";
+    }
+    std::cout << std::endl;
 }
 
 #include <boost/python.hpp>
@@ -69,6 +99,10 @@ dummy::exportPythonAPI() {
         .def("getvx", &dummy::getvx,
                 return_value_policy<reference_existing_object>())
         .def("getvy", &dummy::getvy,
+                return_value_policy<reference_existing_object>())
+        .def("getmx", &dummy::getmx,
+                return_value_policy<reference_existing_object>())
+        .def("getmy", &dummy::getmy,
                 return_value_policy<reference_existing_object>())
         .def("run", &dummy::run)
     ;
