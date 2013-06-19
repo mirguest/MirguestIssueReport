@@ -53,8 +53,15 @@ public:
     Property(std::string key, std::vector< T >& obj)
         : MyProperty(key, bp::list())
           , m_var(obj)
-    {}
+    {
+        for(typename std::vector<T>::iterator it = obj.begin();
+                it != obj.end();
+                ++it) {
+            m_value.attr("append")(*it);
+        }
+    }
     void modify(bp::object& other) {
+        bp::list tmp_var;
 
     }
 private:
