@@ -81,6 +81,11 @@ public:
         : MyProperty(key, bp::dict())
           , m_var(obj)
     {
+        for(typename std::map< Key, T >::iterator it=obj.begin();
+                it != obj.end();
+                ++it) {
+            m_value[ it->first ] = it->second;
+        }
     }
     void modify(bp::object& other) {
 
