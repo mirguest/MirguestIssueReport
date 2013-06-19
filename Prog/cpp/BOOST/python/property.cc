@@ -53,6 +53,10 @@ BOOST_PYTHON_MODULE(hello)
             bp::init<std::string, bp::object>())
         .def("modify", bp::pure_virtual(&MyProperty::modify))
         .def("show", &MyProperty::show)
+        .def("key", &MyProperty::key,
+            bp::return_value_policy<bp::copy_const_reference>())
+        .def("value", &MyProperty::value,
+            bp::return_value_policy<bp::copy_non_const_reference>())
     ;
     bp::def("getProperty", &getProperty,
             bp::return_value_policy<bp::reference_existing_object>());

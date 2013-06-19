@@ -21,6 +21,10 @@ public:
         return m_key;
     }
 
+    bp::object& value() {
+        return m_value;
+    }
+
 
 protected:
     std::string m_key;
