@@ -11,6 +11,29 @@ MyProperty::show() {
     std::cout << str << std::endl;
 }
 
+MyProperty*
+getProperty(std::string objname,
+            std::string key) {
+    MyProperty* pb = PropertyManager::instance().get(objname, key);
+    return pb;
+}
+
+bool
+setProperty(std::string objname,
+            std::string key,
+            bp::object& value) {
+
+    MyProperty* pb = PropertyManager::instance().get(objname, key);
+
+    if (pb == NULL) {
+        // can't find the property
+        return false;
+    }
+
+    pb->modify(value);
+
+}
+
 // Wraper for PYTHON
 
 struct BasePropertyBase: public MyProperty, bp::wrapper<MyProperty>

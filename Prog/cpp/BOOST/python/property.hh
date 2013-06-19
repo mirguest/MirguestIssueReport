@@ -157,4 +157,10 @@ MyProperty* declareProperty(std::string objname,
     return pb;
 }
 
+// property setter/getter
+MyProperty* getProperty(std::string objename,
+                        std::string key);
+bool setProperty(std::string objname,
+                 std::string key,
+                 bp::object& value);
 #endif
