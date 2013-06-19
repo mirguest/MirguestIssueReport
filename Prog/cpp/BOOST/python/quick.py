@@ -18,4 +18,10 @@ vx.modify(range(5))
 vy = d.getvy()
 vy.modify([1.23*i for i in range(5)])
 
+mx = d.getmx()
+mx.modify({str(i):i for i in range(5)})
+
+my = d.getmy()
+my.modify({str(i):1.23*i for i in range(5)})
+
 d.run()
