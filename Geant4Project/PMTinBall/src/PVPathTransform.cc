@@ -75,5 +75,9 @@ PVPathTransform::getGTL(const std::vector<G4VPhysicalVolume*>& pv) {
 
 void 
 PVPathTransform::quick_test() {
+    std::string path = "/expHall/PMTTube";
+    std::vector<std::string> result_path = parsePath(path);
+    std::vector<G4VPhysicalVolume*> result_pv = convertPathToPV(result_path);
 
+    G4AffineTransform gtl = getGTL(result_pv);
 }
