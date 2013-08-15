@@ -13,6 +13,8 @@ class PVPathTransform {
 
 public:
 
+    void quick_test();
+
     std::vector<std::string> parsePath(std::string);
     std::vector<G4VPhysicalVolume*> convertPathToPV(const std::vector<std::string>&);
 

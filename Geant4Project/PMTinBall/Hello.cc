@@ -18,6 +18,8 @@
 #include "Hello_EventAction.hh"
 #include "Hello_SteppingAction.hh"
 
+#include "PVPathTransform.hh"
+
 int main(int argc, char** argv) {
     G4RunManager* runManager = new G4RunManager;
 
@@ -45,6 +47,10 @@ int main(int argc, char** argv) {
     
     // Initialize G4 Kernel
     runManager -> Initialize();
+
+    // Test 
+    PVPathTransform pvpt;
+    pvpt.quick_test();
 
 #ifdef G4VIS_USE
     G4VisManager* visManager = new G4VisExecutive;

@@ -72,3 +72,8 @@ PVPathTransform::getGTL(const std::vector<G4VPhysicalVolume*>& pv) {
 
     return result;
 }
+
+void 
+PVPathTransform::quick_test() {
+
+}
