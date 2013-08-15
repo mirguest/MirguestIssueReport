@@ -21,6 +21,9 @@ PVPathTransform::parsePath(std::string path)
 
     std::stringstream ss(path);
     std::string item;
+    char c;
+    ss.get(c);
+
     while(std::getline(ss, item, '/')) {
         result.push_back(item);
     }
@@ -40,6 +43,7 @@ PVPathTransform::convertPathToPV(const std::vector<std::string>& path)
 
     G4VPhysicalVolume* tmp_pv=NULL;
     for (; it != end; ++it) {
+        G4cout << *it << G4endl;
         tmp_pv = pvs->GetVolume(*it);
         if (tmp_pv) {
             result.push_back(tmp_pv);
@@ -80,4 +84,8 @@ PVPathTransform::quick_test() {
     std::vector<G4VPhysicalVolume*> result_pv = convertPathToPV(result_path);
 
     G4AffineTransform gtl = getGTL(result_pv);
+
+    G4ThreeVector tv;
+    gtl.ApplyPointTransform(tv);
+    G4cout << tv << G4endl;
 }
