@@ -33,8 +33,8 @@ Hello_DetectorConstruction::Construct()
   makeWorldLogical();
   makeWorldPhysical();
 
-  //makePMTLogical();
-  //makePMTPhysical();
+  makePMTLogical();
+  makePMTPhysical();
 
   return experimentalHall_phys;
 }
@@ -225,6 +225,7 @@ Hello_DetectorConstruction::makePMTPhysical()
                                       false, 
                                       copyno); 
       ++copyno;
+      return pmttube_phys;
     }
   }
 
