@@ -13,7 +13,7 @@
 #include "G4Colour.hh"
 #include "G4VisAttributes.hh"
 
-
+#include <sstream>
 
 Hello_DetectorConstruction::Hello_DetectorConstruction()
 {
@@ -217,10 +217,14 @@ Hello_DetectorConstruction::makePMTPhysical()
       rot.rotateZ(phi);
       G4Transform3D trans(rot, pos);
 
+      G4String pmtname;
+      std::stringstream ss;
+      ss << "PMTTube_" << copyno;
+      ss >> pmtname;
       pmttube_phys = new G4PVPlacement(
                                       trans,
                                       pmttube_log,
-                                      "PMTTube",
+                                      pmtname,
                                       experimentalHall_log, 
                                       false, 
                                       copyno); 
