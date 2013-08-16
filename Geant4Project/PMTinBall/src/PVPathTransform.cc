@@ -166,10 +166,12 @@ PVPathTransform::quick_test_2(const std::string& path) {
     bool exists = checkInCache(path, exists_path, residual_path);
 
     G4cout << "Exists Path: " << exists_path << G4endl;
-    std::copy(residual_path.begin(), 
-              residual_path.end(), 
-              std::ostream_iterator<std::string>(G4cout, " "));
-    G4cout << std::endl;
+    if (residual_path.size()) {
+        std::copy(residual_path.begin(), 
+                  residual_path.end(), 
+                  std::ostream_iterator<std::string>(G4cout, " "));
+        G4cout << std::endl;
+    }
 
     // Begin to get the transform
     G4VPhysicalVolume* volume_start = NULL;
