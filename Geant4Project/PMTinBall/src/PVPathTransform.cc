@@ -7,6 +7,7 @@
 
 #include "G4VPhysicalVolume.hh"
 #include "G4PhysicalVolumeStore.hh"
+#include "globals.hh"
 
 std::vector<std::string>
 PVPathTransform::parsePath(std::string path) 
@@ -85,7 +86,17 @@ PVPathTransform::quick_test() {
 
     G4AffineTransform gtl = getGTL(result_pv);
 
-    G4ThreeVector tv(0,0,0);
-    gtl.ApplyPointTransform(tv);
-    G4cout << tv << G4endl;
+    // global to local
+    G4cout << "Global to Local:" << G4endl;
+    G4ThreeVector tvg(0,0,10.0*m+68.5*cm/2);
+    G4cout << "Global: "<< tvg << G4endl;
+    gtl.ApplyPointTransform(tvg);
+    G4cout << "Local:" << tvg << G4endl;
+
+    // local to global
+    G4cout << "Local to Global:" << G4endl;
+    G4ThreeVector tvl(0,0,0);
+    G4cout << "Local:" << tvl << G4endl;
+    gtl.Inverse().ApplyPointTransform(tvl);
+    G4cout << "Global:" << tvl << G4endl;
 }

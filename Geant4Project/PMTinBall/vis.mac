@@ -11,7 +11,7 @@
 #/vis/scene/add/trajectories
 #/vis/scene/add/hits
 
-#/vis/viewer/set/viewpointThetaPhi 35 35
+/vis/viewer/set/viewpointThetaPhi 45 45
 
 
 #/run/beamOn 1
