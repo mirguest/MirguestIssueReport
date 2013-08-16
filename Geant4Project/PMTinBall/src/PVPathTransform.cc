@@ -9,6 +9,9 @@
 #include "G4PhysicalVolumeStore.hh"
 #include "globals.hh"
 
+#include "G4TransportationManager.hh"
+#include "G4Navigator.hh"
+
 std::vector<std::string>
 PVPathTransform::parsePath(std::string path) 
 {
@@ -61,8 +64,19 @@ PVPathTransform::convertPathToPV(const std::vector<std::string>& path)
 G4AffineTransform
 PVPathTransform::getGTL(const std::vector<G4VPhysicalVolume*>& pv) {
     G4AffineTransform result;
+    // 0. check size of pv
+    if (not pv.size()) {
+        return result;
+    }
     // TODO
     // 1. check the first pv is world
+    G4Navigator* nav = G4TransportationManager::GetTransportationManager()
+                            ->GetNavigatorForTracking();
+    G4VPhysicalVolume* world = nav->GetWorldVolume();
+
+    if (pv[0] != world) {
+        throw new std::runtime_error("The '"+pv[0]->GetName()+"' is not world PV");
+    }
     // 2. check the relation between pv
 
     // 3. compute the affine transform
