@@ -16,6 +16,7 @@
 #include "G4Navigator.hh"
 
 PVPathTransform::Path2Trans PVPathTransform::s_p2t;
+PVPathTransform::Path2PV PVPathTransform::s_p2pv;
 
 std::vector<std::string>
 PVPathTransform::parsePath(std::string path) 
@@ -131,8 +132,14 @@ PVPathTransform::quick_test() {
     gtl.Inverse().ApplyPointTransform(tvl);
     G4cout << "Global:" << tvl << G4endl;
 
+    G4ThreeVector tv(0,0,0);
 
-    quick_test_2();
+    G4AffineTransform gtl2 = quick_test_2(path);
+    show_test_info(gtl2, tv);
+    G4AffineTransform gtl3 = quick_test_2(path);
+    show_test_info(gtl3, tv);
+    G4AffineTransform gtl4 = quick_test_2(path);
+    show_test_info(gtl4, tv);
 }
 
 G4AffineTransform
@@ -149,19 +156,50 @@ PVPathTransform::LocalToGlobal(const std::string& path) {
     return GlobalToLocal(path).Inverse();
 }
 
-void 
-PVPathTransform::quick_test_2() {
-    std::string path = "/World/SteelBall/LS/Module_3/PMT_5";
+G4AffineTransform
+PVPathTransform::quick_test_2(const std::string& path) {
+    //std::string path = "/World/SteelBall/LS/Module_3/PMT_5";
+    //std::string path = "/expHall/PMTTube_1";
     std::string exists_path;
     std::vector<std::string> residual_path;
 
-    checkInCache(path, exists_path, residual_path);
+    bool exists = checkInCache(path, exists_path, residual_path);
 
     G4cout << "Exists Path: " << exists_path << G4endl;
     std::copy(residual_path.begin(), 
               residual_path.end(), 
               std::ostream_iterator<std::string>(G4cout, " "));
     G4cout << std::endl;
+
+    // Begin to get the transform
+    G4VPhysicalVolume* volume_start = NULL;
+    G4VPhysicalVolume* tmp_pv = NULL;
+    G4AffineTransform at_start;
+
+    if (exists) {
+        volume_start = s_p2pv[exists_path];
+        at_start = s_p2t[exists_path];
+    }
+
+    G4PhysicalVolumeStore* pvs = G4PhysicalVolumeStore::GetInstance();
+    // Loop the residual path
+    while(residual_path.size()) {
+        std::string current_base = residual_path.back();
+        residual_path.pop_back();
+        tmp_pv = pvs->GetVolume(current_base);
+
+        at_start.InverseProduct(
+                    G4AffineTransform(at_start),
+                    G4AffineTransform(
+                        tmp_pv->GetRotation(),
+                        tmp_pv->GetTranslation()
+                    )
+                );
+        exists_path += "/"+current_base;
+        s_p2t[exists_path] = at_start;
+        s_p2pv[exists_path] = tmp_pv;
+    }
+    return at_start;
 }
 
 // return true if find the exists_path in cache
@@ -198,3 +236,13 @@ PVPathTransform::checkInCache(const std::string& input_path,
     return result;
 }
 
+
+void 
+PVPathTransform::show_test_info(const G4AffineTransform& gtl, 
+                                G4ThreeVector tv) {
+    // local to global
+    G4cout << "Local to Global:" << G4endl;
+    G4cout << "Local:" << tv << G4endl;
+    gtl.Inverse().ApplyPointTransform(tv);
+    G4cout << "Global:" << tv << G4endl;
+}

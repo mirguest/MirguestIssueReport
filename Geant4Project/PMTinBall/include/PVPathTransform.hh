@@ -14,8 +14,10 @@ class PVPathTransform {
 
 public:
     typedef std::map< std::string, G4AffineTransform > Path2Trans;
+    typedef std::map< std::string, G4VPhysicalVolume* > Path2PV;
     void quick_test();
-    void quick_test_2();
+    G4AffineTransform quick_test_2(const std::string& path);
+    void show_test_info(const G4AffineTransform&, G4ThreeVector tv);
 
     G4AffineTransform GlobalToLocal(const std::string&);
     G4AffineTransform LocalToGlobal(const std::string&);
@@ -31,6 +33,7 @@ private:
                       std::vector<std::string>& residual_path);
 private:
     static Path2Trans s_p2t;
+    static Path2PV s_p2pv;
 };
 
 #endif
