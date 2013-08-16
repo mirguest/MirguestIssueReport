@@ -140,6 +140,14 @@ PVPathTransform::quick_test() {
     show_test_info(gtl3, tv);
     G4AffineTransform gtl4 = quick_test_2(path);
     show_test_info(gtl4, tv);
+
+    std::string path2 = "/expHall/PMTTube_2";
+    G4AffineTransform gtl5 = quick_test_2(path2);
+    show_test_info(gtl5, tv);
+    G4AffineTransform gtl6 = quick_test_2(path2);
+    show_test_info(gtl6, tv);
+    G4AffineTransform gtl7 = quick_test_2(path2);
+    show_test_info(gtl7, tv);
 }
 
 G4AffineTransform
