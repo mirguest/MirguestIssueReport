@@ -85,7 +85,7 @@ PVPathTransform::quick_test() {
 
     G4AffineTransform gtl = getGTL(result_pv);
 
-    G4ThreeVector tv;
+    G4ThreeVector tv(0,0,0);
     gtl.ApplyPointTransform(tv);
     G4cout << tv << G4endl;
 }

@@ -5,7 +5,7 @@
 #/vis/viewer/set/autoRefresh false
 
 /vis/drawVolume
-
+/vis/scene/add/axes 0 0 0 500 mm
 /vis/viewer/zoom 1
 
 #/vis/scene/add/trajectories
