@@ -188,6 +188,22 @@ PVPathTransform::quick_test_2(const std::string& path) {
         residual_path.pop_back();
         tmp_pv = pvs->GetVolume(current_base);
 
+        if (volume_start==NULL) {
+            // check tmp_pv is world?
+        } else {
+            // check whether volume_start is the mother of tmp_pv
+            G4LogicalVolume* lv = volume_start->GetLogicalVolume();
+            // TODO
+            // we can use IsAncestor to skip pvs' name
+            if (lv->IsDaughter(tmp_pv)) {
+                // It's OK
+            } else {
+                throw new std::runtime_error("The '"+tmp_pv->GetName()
+                                            +"' is not the daughter of PV "
+                                            +volume_start->GetName());
+            }
+        }
+
         at_start.InverseProduct(
                     G4AffineTransform(at_start),
                     G4AffineTransform(
@@ -198,6 +214,7 @@ PVPathTransform::quick_test_2(const std::string& path) {
         exists_path += "/"+current_base;
         s_p2t[exists_path] = at_start;
         s_p2pv[exists_path] = tmp_pv;
+        volume_start = tmp_pv;
     }
     return at_start;
 }
