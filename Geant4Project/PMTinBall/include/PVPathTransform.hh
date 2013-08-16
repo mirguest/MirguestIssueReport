@@ -1,6 +1,7 @@
 #ifndef PVPathTransform_hh
 #define PVPathTransform_hh
 
+#include <map>
 #include <vector>
 #include <string>
 
@@ -12,7 +13,7 @@ class G4VPhysicalVolume;
 class PVPathTransform {
 
 public:
-
+    typedef std::map< std::string, G4AffineTransform > Path2Trans;
     void quick_test();
 
     G4AffineTransform GlobalToLocal(const std::string&);
@@ -23,6 +24,8 @@ public:
 
     G4AffineTransform getGTL(const std::vector<G4VPhysicalVolume*>&);
 
+private:
+    static Path2Trans s_p2t;
 };
 
 #endif

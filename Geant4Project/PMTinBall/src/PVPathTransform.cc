@@ -13,6 +13,8 @@
 #include "G4TransportationManager.hh"
 #include "G4Navigator.hh"
 
+PVPathTransform::Path2Trans PVPathTransform::s_p2t;
+
 std::vector<std::string>
 PVPathTransform::parsePath(std::string path) 
 {
