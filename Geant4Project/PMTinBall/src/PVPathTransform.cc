@@ -4,6 +4,8 @@
 #include <sstream>
 #include <exception>
 #include <stdexcept>
+#include <algorithm>
+#include <iterator>
 
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
@@ -128,6 +130,9 @@ PVPathTransform::quick_test() {
     G4cout << "Local:" << tvl << G4endl;
     gtl.Inverse().ApplyPointTransform(tvl);
     G4cout << "Global:" << tvl << G4endl;
+
+
+    quick_test_2();
 }
 
 G4AffineTransform
@@ -143,3 +148,53 @@ G4AffineTransform
 PVPathTransform::LocalToGlobal(const std::string& path) {
     return GlobalToLocal(path).Inverse();
 }
+
+void 
+PVPathTransform::quick_test_2() {
+    std::string path = "/World/SteelBall/LS/Module_3/PMT_5";
+    std::string exists_path;
+    std::vector<std::string> residual_path;
+
+    checkInCache(path, exists_path, residual_path);
+
+    G4cout << "Exists Path: " << exists_path << G4endl;
+    std::copy(residual_path.begin(), 
+              residual_path.end(), 
+              std::ostream_iterator<std::string>(G4cout, " "));
+    G4cout << std::endl;
+}
+
+// return true if find the exists_path in cache
+// else return false
+bool
+PVPathTransform::checkInCache(const std::string& input_path, 
+                              std::string& exists_path,
+                              std::vector<std::string>& residual_path) {
+    bool result = false;
+
+    std::string path = input_path;
+    std::string base;
+    while(path.size()>1) {
+        // 0. the path starts with '/'
+        // 1. check the path exists in cache
+        if (s_p2t.count(path)) {
+            exists_path = path;
+            result = true;
+            break;
+        }
+        // 2. get the dirname of path
+        unsigned found = path.find_last_of('/');
+        if (found == std::string::npos or found > path.size()) {
+            // can't find any more
+            break;
+        }
+        base = path.substr(found+1);
+        G4cout << __LINE__ << " BASE: " << base << G4endl;
+        residual_path.push_back(base);
+        path = path.substr(0, found);
+        G4cout << __LINE__ << " PATH: " << path << G4endl;
+    }
+
+    return result;
+}
+
