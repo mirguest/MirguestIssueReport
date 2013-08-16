@@ -229,7 +229,9 @@ Hello_DetectorConstruction::makePMTPhysical()
                                       false, 
                                       copyno); 
       ++copyno;
-      return pmttube_phys;
+      if (copyno>10) {
+          return pmttube_phys;
+      }
     }
   }
 

@@ -107,7 +107,7 @@ PVPathTransform::getGTL(const std::vector<G4VPhysicalVolume*>& pv) {
 
 void 
 PVPathTransform::quick_test() {
-    std::string path = "/expHall/PMTTube_0";
+    std::string path = "/expHall/PMTTube_1";
     std::vector<std::string> result_path = parsePath(path);
     std::vector<G4VPhysicalVolume*> result_pv = convertPathToPV(result_path);
 
