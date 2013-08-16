@@ -127,3 +127,17 @@ PVPathTransform::quick_test() {
     gtl.Inverse().ApplyPointTransform(tvl);
     G4cout << "Global:" << tvl << G4endl;
 }
+
+G4AffineTransform
+PVPathTransform::GlobalToLocal(const std::string& path) {
+    std::vector<std::string> result_path = parsePath(path);
+    std::vector<G4VPhysicalVolume*> result_pv = convertPathToPV(result_path);
+
+    G4AffineTransform gtl = getGTL(result_pv);
+    return gtl;
+}
+
+G4AffineTransform
+PVPathTransform::LocalToGlobal(const std::string& path) {
+    return GlobalToLocal(path).Inverse();
+}

@@ -15,6 +15,9 @@ public:
 
     void quick_test();
 
+    G4AffineTransform GlobalToLocal(const std::string&);
+    G4AffineTransform LocalToGlobal(const std::string&);
+
     std::vector<std::string> parsePath(std::string);
     std::vector<G4VPhysicalVolume*> convertPathToPV(const std::vector<std::string>&);
 
