@@ -5,6 +5,7 @@
 #include <exception>
 #include <stdexcept>
 
+#include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4PhysicalVolumeStore.hh"
 #include "globals.hh"
@@ -78,6 +79,18 @@ PVPathTransform::getGTL(const std::vector<G4VPhysicalVolume*>& pv) {
         throw new std::runtime_error("The '"+pv[0]->GetName()+"' is not world PV");
     }
     // 2. check the relation between pv
+    for (int i=0; i<pv.size()-1; ++i) {
+        G4LogicalVolume* lv = pv[i]->GetLogicalVolume();
+        // TODO
+        // we can use IsAncestor to skip pvs' name
+        if (lv->IsDaughter(pv[i+1])) {
+            // It's OK
+        } else {
+            throw new std::runtime_error("The '"+pv[i+1]->GetName()
+                                        +"' is not the daughter of PV "
+                                        +pv[i]->GetName());
+        }
+    }
 
     // 3. compute the affine transform
     // From the second PV
