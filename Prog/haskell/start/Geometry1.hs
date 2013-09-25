@@ -1,4 +1,4 @@
-module Geometry
+module Geometry1
 ( sphereVolume
 , sphereArea
 , cubeVolume
