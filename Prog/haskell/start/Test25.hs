@@ -4,10 +4,10 @@ data Tree a =
     deriving (Show, Read, Eq)
 
 singleton :: a -> Tree a
-singleton x = Node x EmptyTree EmtryTree
+singleton x = Node x EmptyTree EmptyTree
 
 treeInsert :: (Ord a) => a -> Tree a -> Tree a
-treeInsert x EmtryTree = singleton x
+treeInsert x EmptyTree = singleton x
 treeInsert x (Node a left right)
     | x == a = Node x left right
     | x < a  = Node a (treeInsert x left) right
