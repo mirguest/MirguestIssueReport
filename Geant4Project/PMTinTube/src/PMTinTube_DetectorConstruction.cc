@@ -15,6 +15,8 @@
 #include "G4VisAttributes.hh"
 
 #include "G4GeometryManager.hh"
+#include "G4TwoVector.hh"
+#include "G4GenericTrap.hh"
 
 #include <cmath>
 
@@ -36,8 +38,9 @@ G4VPhysicalVolume*
 PMTinTube_DetectorConstruction::Construct()
 {
     CreateLogicalWorld();
-    CreateLogicalPMTTube();
-    CreateLogicalOpticalTrd();
+    //CreateLogicalPMTTube();
+    //CreateLogicalOpticalTrd();
+    CreateLogicalTrap();
 
     return world_physi;
 }
@@ -489,4 +492,27 @@ PMTinTube_DetectorConstruction::UIOptTrdHeight(G4double height)
     }
 
 
+}
+
+void
+PMTinTube_DetectorConstruction::CreateLogicalTrap()
+{
+    std::vector<G4TwoVector> verticles;
+    verticles.push_back(G4TwoVector(-30,-30));
+    verticles.push_back(G4TwoVector(-30,30));
+    verticles.push_back(G4TwoVector(30,30));
+    verticles.push_back(G4TwoVector(30,-30));
+    verticles.push_back(G4TwoVector(0,0));
+    verticles.push_back(G4TwoVector(0,0));
+    verticles.push_back(G4TwoVector(0,0));
+    verticles.push_back(G4TwoVector(0,0));
+    G4VSolid* trap_solid = new G4GenericTrap("Trap", 25, verticles);
+    G4LogicalVolume* trap_log = new G4LogicalVolume(trap_solid, Al, "Trap_log");
+    G4Transform3D trans;
+    new G4PVPlacement(trans, 
+                      trap_log,
+                      "Trap_phys",
+                      world_logic,
+                      false,
+                      0);
 }

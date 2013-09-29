@@ -45,6 +45,8 @@ class PMTinTube_DetectorConstruction : public G4VUserDetectorConstruction
         void CreateLogicalPMTTube();
         void CreateLogicalOpticalTrd();
 
+        void CreateLogicalTrap();
+
     private:
         /* calculate */
         G4int GetMaxiumNinCircle(G4double r_tube,
