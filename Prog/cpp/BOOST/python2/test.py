@@ -9,5 +9,11 @@ import base
 import svc
 
 x = svc.create_svc()
+print x
 print x.init()
 print x.xxx()
+
+y = svc.create_if()
+print y
+print y.init()
+print y.xxx()
