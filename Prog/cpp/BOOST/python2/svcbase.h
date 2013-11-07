@@ -3,7 +3,8 @@
 
 class svcbase {
 public:
-    virtual ~svcbase()=0;
+    svcbase();
+    virtual ~svcbase();
     virtual bool init()=0;
 };
 

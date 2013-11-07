@@ -18,7 +18,7 @@ interface* createInterface() {
 }
 
 BOOST_PYTHON_MODULE(svc) {
-    
+    import("base");
     def("create_svc", &createSvc,
         return_value_policy<reference_existing_object>())
     ;

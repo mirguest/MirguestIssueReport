@@ -5,6 +5,10 @@ interface::~interface() {
 
 }
 
+svcbase::svcbase()
+{
+}
+
 svcbase::~svcbase() {
 
 }
