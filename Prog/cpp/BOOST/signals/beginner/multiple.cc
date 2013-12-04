@@ -17,6 +17,10 @@ struct World
     }
 };
 
+void f() {
+    std::cout << "f()" <<std::endl;
+}
+
 int main() {
     boost::signal<void ()> sig;
 
@@ -24,6 +28,7 @@ int main() {
     World world;
     sig.connect(hello);
     sig.connect(world);
+    sig.connect(f);
 
     sig();
 }
