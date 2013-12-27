@@ -38,7 +38,11 @@ StagingArea::clear() {
 
 bool
 StagingArea::commit() {
+    if ( m_buffer.size() == 0 ) {
+        return false;
+    }
     m_repo->create_snapshot( m_buffer );
     clear();
+    return true;
 }
 
