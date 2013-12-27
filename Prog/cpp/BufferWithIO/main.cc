@@ -67,9 +67,28 @@ void test_staging_add_new()
 
 }
 
+void test_staging_async() {
+    Repo repo;
+    StagingArea SA(&repo);
+
+    for (int i = 0; i < 10; ++i) {
+        SA.commit();
+        if (i % 2 == 0) {
+            std::cout << "Loading DetSim Header: " 
+                      << SA.read("/Event/Sim/SimHeader")
+                      << std::endl;
+        }
+        std::cout << "Loading ElecSim Header: "
+                  << SA.read("/Event/Sim/ElecHeader")
+                  << std::endl;
+    }
+    SA.commit();
+}
+
 int main() {
     test_snapshot();
     test_repo();
     test_staging();
     test_staging_add_new();
+    test_staging_async();
 }
