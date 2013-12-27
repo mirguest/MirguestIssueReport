@@ -26,11 +26,50 @@ void test_staging()
     Repo repo;
     StagingArea SA(&repo);
 
-    SA.read("/Event/Sim/SimHeader");
+    // first commit
+    std::cout << "First Commit" << std::endl;
+    for (int i = 0; i < 5; ++i) {
+        std::cout << SA.read("/Event/Sim/SimHeader") << std::endl;
+    }
+    SA.commit();
+    // second commit
+    std::cout << "Second Commit" << std::endl;
+    for (int i = 0; i < 5; ++i) {
+        std::cout << SA.read("/Event/Sim/SimHeader") << std::endl;
+    }
+    SA.commit();
+}
+
+void test_staging_add_new()
+{
+    Repo repo;
+    StagingArea SA(&repo);
+
+    // first commit
+    std::cout << "First Commit" << std::endl;
+    for (int i = 0; i < 5; ++i) {
+        std::cout << SA.read("/Event/Sim/SimHeader") << std::endl;
+    }
+    SA.commit();
+    // second commit
+    std::cout << "Second Commit With another object" << std::endl;
+    for (int i = 0; i < 5; ++i) {
+        std::cout << SA.read("/Event/Sim/SimHeader") << std::endl;
+        std::cout << SA.read("/Event/Sim/ElecHeader") << std::endl;
+    }
+    SA.commit();
+    std::cout << "Third Commit With another object" << std::endl;
+    for (int i = 0; i < 5; ++i) {
+        std::cout << SA.read("/Event/Sim/SimHeader") << std::endl;
+        std::cout << SA.read("/Event/Sim/ElecHeader") << std::endl;
+    }
+    SA.commit();
+
 }
 
 int main() {
     test_snapshot();
     test_repo();
     test_staging();
+    test_staging_add_new();
 }
