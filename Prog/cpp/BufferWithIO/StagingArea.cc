@@ -20,7 +20,8 @@ StagingArea::read(StagingArea::Path& path) {
     // if not exists, load the data from Repo
     Index result = m_repo->get_latest(path);
     if ( result == -1 ) {
-        m_buffer[path] = -1;
+        // If there is nothing in repo, create a new one.
+        m_buffer[path] = 0;
     } else {
         // increase the count
         m_buffer[path] = result + 1;
