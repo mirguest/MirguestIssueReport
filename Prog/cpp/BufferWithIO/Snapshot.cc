@@ -7,6 +7,14 @@ Snapshot::Snapshot()
 }
 
 bool
+Snapshot::load(const Snapshot& other)
+{
+    m_snapshot = other.m_snapshot;
+    m_is_committed = false;
+    return true;
+}
+
+bool
 Snapshot::add(Snapshot::Path& path, Snapshot::Index index)
 {
     // check can commit

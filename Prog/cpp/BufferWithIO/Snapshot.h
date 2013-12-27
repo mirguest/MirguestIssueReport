@@ -9,6 +9,7 @@ class Snapshot {
         typedef const std::string Path;
 
         Snapshot();
+        bool load(const Snapshot&);
 
         bool add(Path& path, Index);
         Index get(Path&) const;

@@ -3,6 +3,7 @@
 
 #include <list>
 #include "Snapshot.h"
+#include "StagingArea.h"
 
 class Repo {
     public:
@@ -10,6 +11,8 @@ class Repo {
         typedef Snapshot::Path Path;
 
         Index get_latest(Path& path) const;
+
+        bool create_snapshot(StagingArea::PTH2IDX& buffer);
         
     private:
         std::list<Snapshot> m_all_hist;

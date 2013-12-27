@@ -23,7 +23,8 @@ void test_repo() {
 
 void test_staging()
 {
-    StagingArea SA;
+    Repo repo;
+    StagingArea SA(&repo);
 
     SA.read("/Event/Sim/SimHeader");
 }
