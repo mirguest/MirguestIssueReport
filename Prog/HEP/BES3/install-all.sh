@@ -725,6 +725,23 @@ function install-geant4-gdml-sync-from-src-to-download {
   done 
 	popd
 }
+
+function install-geant4-gdml-patch {
+	pushd $DOWNLOADDIR/$(install-geant4-gdml-source-dir)
+	patch -p0 << EOF
+--- Common/Saxana/src/GDMLEntityResolver.cpp.orig	2014-03-28 19:21:57.000000001 +0800
++++ Common/Saxana/src/GDMLEntityResolver.cpp	2014-03-28 19:22:30.000000001 +0800
+@@ -10,6 +10,7 @@
+ #include <string>
+ #include <stdlib.h>
+ #include <unistd.h>
++#include <linux/limits.h>
+ 
+ using namespace xercesc;
+ using std::string;
+EOF
+	popd
+}
 function install-geant4-gdml-configure {
 	pushd $DOWNLOADDIR/$(install-geant4-gdml-source-dir)
 	./configure --prefix=$(install-geant4-gdml-install-prefix) \
@@ -808,10 +825,6 @@ function install-external-all-lcg {
 			echo install-$pkg does not exist!
 		fi
 	done
-
-	install-lcg
-	setup-lcg
-	lcg-make
 }
 
 function install-external-all-bes {
@@ -829,6 +842,12 @@ function install-external-all-bes {
 	done
 }
 
+function install-external-all-lcgcmt {
+	install-lcg
+	setup-lcg
+	lcg-make
+}
+
 function install-external-all-gaudi {
 	install-gaudi-download
 	setup-gaudi
@@ -843,7 +862,8 @@ function install-external-all-gaudi {
 function install-external-all {
 	install-external-all-contrib
 	install-external-all-lcg
+	install-external-all-bes
+	install-external-all-lcgcmt
 
 	install-external-all-gaudi
-	install-external-all-bes
 }
