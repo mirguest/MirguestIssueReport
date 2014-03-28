@@ -148,6 +148,42 @@ function install-lcg-package-name() {
 function install-lcg-download-url() {
   echo http://service-spi.web.cern.ch/service-spi/external/distribution/LCGCMT_65a.tar.gz
 }
+
+function install-lcg-patch-lcg-settings {
+cat << EOF > bespatch/lcg-settings.patch
+--- LCGCMT_65a/LCG_Settings/cmt/requirements	2014-03-07 20:24:47.000000001 +0800
++++ LCGCMT_65a/LCG_Settings/cmt/requirements	2014-03-07 20:29:25.000000001 +0800
+@@ -3,11 +3,13 @@
+ 
+ include_path none
+ 
+-macro LCG_releases    "\$(LCG_Settings_root)/../../.." \\
++#macro LCG_releases    "\$(LCG_Settings_root)/../../.." \\
++macro LCG_releases    "\${EXTERNALLIBDIR}/external" \\
+       ATLAS&NIGHTLIES "/afs/cern.ch/sw/lcg/app/nightlies/\$(LCG_NGT_SLT_NAME)/\$(LCG_NGT_DAY_NAME)" \\
+       ATLAS           "\${SITEROOT}/sw/lcg/app/releases"
+ 
+-macro LCG_external  "\$(LCG_Settings_root)/../../../../../external" \\
++#macro LCG_external  "\$(LCG_Settings_root)/../../../../../external" \\
++macro LCG_external  "\${EXTERNALLIBDIR}/external" \\
+       target-gcc48  "\$(LCG_Settings_root)/../../../../../experimental" \\
+       ATLAS         "\${SITEROOT}/sw/lcg/external"
+
+EOF
+patch -p0  < $EXTERNALLIBDIR/LCGCMT/bespatch/lcg-settings.patch
+}
+function install-lcg-patch {
+	pushd $EXTERNALLIBDIR/LCGCMT
+	# AT THE TOP TREE
+	if [ ! -d "bespatch" ];
+	then
+		mkdir bespatch
+	fi
+	install-lcg-patch-lcg-settings
+
+	popd
+}
+
 function install-lcg-real() {
   echo $FUNCNAME  
   if [ ! -f "$DOWNLOADDIR/$(install-lcg-package-name)" ];
@@ -166,6 +202,7 @@ function install-lcg-real() {
   then
     cp -r LCGCMT $EXTERNALLIBDIR/
   fi
+	install-lcg-patch
   popd
 }
 function install-lcg {
@@ -319,14 +356,14 @@ function install-GSL {
 }
 
 #install CASTOR
-function install-CASTOR-package-name {
+function install-castor-package-name {
   echo CASTOR_2.1.13-6__LCG_x86_64-slc6-gcc46-opt.tar.gz
 }
-function install-CASTOR-download-url {
+function install-castor-download-url {
   echo http://service-spi.web.cern.ch/service-spi/external/distribution/CASTOR_2.1.13-6__LCG_x86_64-slc6-gcc46-opt.tar.gz
 }
 function install-CASTOR {
-  install-PKG CASTOR
+  install-PKG castor
 }
 
 function install-mysql-package-name {
@@ -753,9 +790,6 @@ function install-external-all-contrib {
 	setup-gcc
 	install-cmt
 	setup-cmt
-	install-lcg
-	setup-lcg
-	lcg-make
 }
 
 function install-external-all-lcg {
@@ -769,10 +803,15 @@ function install-external-all-lcg {
 		type -t install-$pkg >& /dev/null
 		if [ "$?" = 0 ]; then
 			echo call install-$pkg
+			install-$pkg
 		else
 			echo install-$pkg does not exist!
 		fi
 	done
+
+	install-lcg
+	setup-lcg
+	lcg-make
 }
 
 function install-external-all-bes {
@@ -783,13 +822,28 @@ function install-external-all-bes {
 		type -t install-$pkg >& /dev/null
 		if [ "$?" = 0 ]; then
 			echo call install-$pkg
+			install-$pkg
 		else
 			echo install-$pkg does not exist!
 		fi
 	done
 }
 
+function install-external-all-gaudi {
+	install-gaudi-download
+	setup-gaudi
+
+	pushd $EXTERNALLIBDIR/gaudi/GaudiRelease/cmt
+	cmt br cmt config
+	source setup.sh
+	cmt br cmt make
+	popd
+}
+
 function install-external-all {
 	install-external-all-contrib
 	install-external-all-lcg
+
+	install-external-all-gaudi
+	install-external-all-bes
 }
