@@ -11,6 +11,7 @@ export DOWNLOADDIR=$DEVROOT/download
 export EXTERNALLIBDIR=$DEVROOT/ExternalLib
 export CONTRIBDIR=$DEVROOT/contrib
 export CMTCONFIG=x86_64-slc6-gcc46-opt
+export BOSSDIR=$DEVROOT/boss
 
 if [ ! -d $DOWNLOADDIR ];
 then
@@ -197,10 +198,16 @@ function lcg-make {
 }
   
 #get Gaudi
-
-##git clone http://git.cern.ch/pub/gaudi
-#cd gaudi
-#git checkout -b GAUDI_v23r9 remotes/origin/svn/tags/GAUDI_v23r9
+function install-gaudi-download {
+	pushd $EXTERNALLIBDIR
+	if [ ! -d "gaudi" ]; 
+	then
+		git clone http://git.cern.ch/pub/gaudi
+		cd gaudi
+		git checkout -b GAUDI_v23r9 remotes/origin/svn/tags/GAUDI_v23r9
+	fi
+	popd 
+}
 
 function setup-gaudi {
   setup-lcg
@@ -283,6 +290,12 @@ function install-RELAX {
   install-PKG RELAX
 }
 
+function install-ROOT-env {
+	export ROOTSYS=$EXTERNALLIBDIR/external/ROOT/5.34.09/${CMTCONFIG}/root
+	export PATH=$ROOTSYS/bin:$PATH
+	export LD_LIBRARY_PATH=$ROOTSYS/lib/:$LD_LIBRARY_PATH
+}
+
 function install-ROOT-package-name {
   echo ROOT_5.34.09__LCG_x86_64-slc6-gcc46-opt.tar.gz
 }
@@ -303,6 +316,17 @@ function install-GSL-download-url {
 }
 function install-GSL {
   install-PKG GSL
+}
+
+#install CASTOR
+function install-CASTOR-package-name {
+  echo CASTOR_2.1.13-6__LCG_x86_64-slc6-gcc46-opt.tar.gz
+}
+function install-CASTOR-download-url {
+  echo http://service-spi.web.cern.ch/service-spi/external/distribution/CASTOR_2.1.13-6__LCG_x86_64-slc6-gcc46-opt.tar.gz
+}
+function install-CASTOR {
+  install-PKG CASTOR
 }
 
 function install-mysql-package-name {
@@ -327,6 +351,10 @@ function install-CLHEP {
 }
 
 # XercesC
+
+function install-XercesC-package-version {
+  echo 3.1.1p1
+}
 
 function install-XercesC-package-name {
   echo XercesC_3.1.1p1__LCG_x86_64-slc6-gcc46-opt.tar.gz
@@ -435,4 +463,333 @@ function install-Boost-download-url {
 
 function install-Boost {
   install-PKG Boost
+}
+
+function install-HepMC-package-name {
+	echo HepMC_2.06.08__LCG_x86_64-slc6-gcc46-opt.tar.gz
+}
+
+function install-HepMC-download-url {
+	echo http://service-spi.web.cern.ch/service-spi/external/distribution/HepMC_2.06.08__LCG_x86_64-slc6-gcc46-opt.tar.gz
+}
+
+function install-HepMC {
+	install-PKG HepMC
+}
+
+function install-cernlib-package-name {
+	echo cernlib_2006a__LCG_x86_64-slc6-gcc46-opt.tar.gz
+}
+
+function install-cernlib-download-url {
+	echo http://service-spi.web.cern.ch/service-spi/external/distribution/cernlib_2006a__LCG_x86_64-slc6-gcc46-opt.tar.gz
+}
+
+function install-cernlib {
+	install-PKG cernlib
+}
+
+function install-lapack-package-name {
+	echo lapack_3.4.0__LCG_x86_64-slc6-gcc46-opt.tar.gz
+}
+function install-lapack-download-url {
+  echo http://service-spi.web.cern.ch/service-spi/external/distribution/lapack_3.4.0__LCG_x86_64-slc6-gcc46-opt.tar.gz
+}
+
+function install-lapack {
+	install-PKG lapack
+}
+
+function install-blas-package-name {
+	echo blas_20110419__LCG_x86_64-slc6-gcc46-opt.tar.gz
+}
+
+function install-blas-download-url {
+	echo service-spi.web.cern.ch/service-spi/external/distribution/blas_20110419__LCG_x86_64-slc6-gcc46-opt.tar.gz
+}
+
+function install-blas {
+	install-PKG blas
+}
+
+# install GEANT4
+# NOTE: we use the modified version of geant4!
+## install CLHEP 
+## install GEANT4
+## install GDML
+
+function install-geant4-clhep-package-version {
+	echo 2.0.4.5
+}
+function install-geant4-clhep-package-name {
+	echo clhep-2.0.4.5.tgz
+}
+function install-geant4-clhep-download-url {
+	echo http://proj-clhep.web.cern.ch/proj-clhep/DISTRIBUTION/tarFiles/clhep-2.0.4.5.tgz
+}
+function install-geant4-clhep-install-prefix {
+  echo $EXTERNALLIBDIR/external/clhep/2.0.4.5/$CMTCONFIG
+}
+function install-geant4-clhep {
+  echo $FUNCNAME  
+  if [ ! -f "$DOWNLOADDIR/$(install-geant4-clhep-package-name)" ];
+  then
+    pushd $DOWNLOADDIR
+    wget $(install-geant4-clhep-download-url)
+    popd 
+  fi
+
+  pushd $DOWNLOADDIR
+	if [ ! -d "2.0.4.5" ];
+	then
+		tar zxvf $(install-geant4-clhep-package-name)
+	fi
+
+	pushd 2.0.4.5/CLHEP/
+	if [ ! -d "$(install-geant4-clhep-install-prefix)" ];
+	then
+		mkdir -p $(install-geant4-clhep-install-prefix)
+	fi
+	./configure --prefix=$(install-geant4-clhep-install-prefix)
+	make
+	make install
+	popd
+	popd
+	
+}
+
+## install geant4
+function install-geant4-geant4-install-prefix {
+  echo $EXTERNALLIBDIR/external/geant4/4.9.3p01/$CMTCONFIG
+}
+function install-geant4-geant4-source-dir {
+	echo geant4.9.3p01
+}
+
+function install-geant4-geant4-source-copy-from {
+	echo /afs/ihep.ac.cn/bes3/offline/ExternalLib/packages/geant4/4.9.3.p01/x86_64-slc5-gcc43-opt/geant4.9.3.p01
+}
+function install-geant4-geant4-env-setup {
+	export G4SYSTEM="Linux-g++"
+	export G4DEBUG=""
+	export G4LIB_BUILD_SHARED="1"
+	# FOR BUILDING
+	export G4INSTALL="$DOWNLOADDIR/$(install-geant4-geant4-source-dir)"
+
+	export CLHEP_native_version="$(install-geant4-clhep-package-version)"
+	export CLHEP_BASE_DIR="$(install-geant4-clhep-install-prefix)"
+
+	export G4VIS_USE="1"
+	export G4VIS_USE_OPENGLX="1"
+	export G4VIS_BUILD_OPENGLX_DRIVER="1"
+
+	export G4LIB_BUILD_GDML="1"
+	export XERCESCROOT=$EXTERNALLIBDIR/external/XercesC/$(install-XercesC-package-version)/$CMTCONFIG
+
+}
+
+function install-geant4-geant4-env {
+	install-geant4-geant4-env-setup
+	export G4INSTALL="$(install-geant4-geant4-install-prefix)"
+
+	export LD_LIBRARY_PATH=$G4INSTALL/lib/$G4SYSTEM:$LD_LIBRARY_PATH
+	export LD_LIBRARY_PATH=$CLHEP_BASE_DIR/lib:$LD_LIBRARY_PATH
+	export LD_LIBRARY_PATH=$XERCESCROOT/lib:$LD_LIBRARY_PATH
+
+	export G4LEVELGAMMADATA=$G4INSTALL/data/PhotonEvaporation2.0
+	export G4RADIOACTIVEDATA=$G4INSTALL/data/RadioactiveDecay3.2
+	export G4LEDATA=$G4INSTALL/data/G4EMLOW6.9
+	export G4NEUTRONHPDATA=$G4INSTALL/data/G4NDL3.13
+	export G4ABLADATA=$G4INSTALL/data/G4ABLA3.0
+	export G4REALSURFACEDATA=$G4INSTALL/data/RealSurface1.0
+
+}
+function install-geant4-geant4-to-prefix {
+	if [ ! -d "$(install-geant4-geant4-install-prefix)" ];
+	then
+		mkdir -p $(install-geant4-geant4-install-prefix)
+	fi
+	pushd $(install-geant4-geant4-install-prefix)
+	local sourcecodefrom=$DOWNLOADDIR/$(install-geant4-geant4-source-dir)
+	rsync -avz $sourcecodefrom/config .
+	rsync -avz $sourcecodefrom/ReleaseNotes .
+	rsync -avz $sourcecodefrom/examples .
+	rsync -avz $sourcecodefrom/source .
+	rsync -avz $sourcecodefrom/environments .
+	rsync -avz $sourcecodefrom/Configure .
+	rsync -avz $sourcecodefrom/data .
+	rsync -avz $sourcecodefrom/include .
+	rsync -avz $sourcecodefrom/lib .
+	popd
+
+}
+function install-geant4-geant4 {
+	echo $FUNCNAME
+
+	# sync data from old directory
+	if [ ! -d "$DOWNLOADDIR/$(install-geant4-geant4-source-dir)" ];
+	then 
+		mkdir -p $DOWNLOADDIR/$(install-geant4-geant4-source-dir)
+	fi
+	pushd $DOWNLOADDIR/$(install-geant4-geant4-source-dir)
+	local sourcecodefrom=$(install-geant4-geant4-source-copy-from)
+	rsync -avz $sourcecodefrom/config .
+	rsync -avz $sourcecodefrom/ReleaseNotes .
+	rsync -avz $sourcecodefrom/examples .
+	rsync -avz $sourcecodefrom/source .
+	rsync -avz $sourcecodefrom/environments .
+	rsync -avz $sourcecodefrom/Configure .
+	rsync -avz $sourcecodefrom/data .
+
+	install-geant4-geant4-env-setup
+
+	pushd source
+	make 
+	make includes
+	make global
+	popd
+
+	install-geant4-geant4-to-prefix
+
+	popd
+
+}
+
+# install GDML
+function install-geant4-gdml-package-version {
+	echo 2.8.0
+}
+function install-geant4-gdml-source-dir {
+	echo BesGDML2.8.0
+}
+function install-geant4-gdml-install-prefix {
+  echo $EXTERNALLIBDIR/external/BesGDML/$(install-geant4-gdml-package-version)/$CMTCONFIG
+}
+
+function install-geant4-gdml-source-copy-from {
+	echo /afs/ihep.ac.cn/bes3/offline/ExternalLib/packages/BesGDML/2.8.0/x86_64-slc5-gcc43-opt/CPPGDML
+}
+
+function install-geant4-gdml-sync-from-src-to-download {
+	if [ ! -d "$DOWNLOADDIR/$(install-geant4-gdml-source-dir)" ];
+	then
+		mkdir $DOWNLOADDIR/$(install-geant4-gdml-source-dir)
+	fi
+	pushd $DOWNLOADDIR/$(install-geant4-gdml-source-dir)
+	local sourcecodefrom=$(install-geant4-gdml-source-copy-from)
+	local entry=""
+	local syncentries="aclocal.m4 ac.sh CERNConfigure.csh CERNConfigure.sh ChangeLog"
+	syncentries="$syncentries Common config config.log config.status configure configure.in"
+	syncentries="$syncentries Examples G4Binding GNUmakefile README ROOTBinding"
+	syncentries="$syncentries SLACConfigure.sh STEPBinding"
+	for entry in $syncentries
+	do
+	rsync -avz $sourcecodefrom/$entry .
+  done 
+	popd
+}
+function install-geant4-gdml-configure {
+	pushd $DOWNLOADDIR/$(install-geant4-gdml-source-dir)
+	./configure --prefix=$(install-geant4-gdml-install-prefix) \
+							--with-xercesc=$XERCESCROOT \
+							--with-clhep=$CLHEP_BASE_DIR \
+							--with-geant4=$(install-geant4-geant4-install-prefix) \
+							--enable-geant4-granular-libs
+
+	popd
+}
+
+function install-geant4-gdml {
+	echo $FUNCNAME
+
+	install-geant4-gdml-sync-from-src-to-download
+	# setup geant4 environment 
+	install-geant4-geant4-env
+	install-ROOT-env
+	# configure this package
+  install-geant4-gdml-configure
+	# make and make install
+	pushd $DOWNLOADDIR/$(install-geant4-gdml-source-dir)
+	make 
+	make install
+	popd
+}
+
+#install boss
+function boss-version() {
+  echo 6.6.4
+}
+function BesRelease-version {
+  echo BesRelease-01-02-22
+}
+
+function setup-cvs {
+  export CVSROOT=':pserver:maqm@koala.ihep.ac.cn:/bes/bes'
+	export CVSIGNORE='setup.* cleanup.* x86_64-slc5-gcc46* *.make Makefile Linux* *~ rh73_gcc32 i386* '
+}
+function checkout-boss {
+	setup-cvs
+  setup-boss
+  if [ ! -d $BOSSDIR/$(boss-version) ];
+	  then
+		  mkdir $BOSSDIR/$(boss-version)
+  fi
+  cd $BOSSDIR/$(boss-version)
+	cmt co -r $(BesRelease-version) BesRelease
+	cmt co -requirements BesRelease/*/cmt/requirements
+}
+
+function setup-boss {
+  setup-gaudi
+	export SITEROOT=$DEVROOT
+	export CMTCVSOFFSET="BossCvs"
+  # Set boss area
+	export BesArea=$BOSSDIR/$(boss-version)
+	export CMTPATH=$BesArea:$CMTPATH
+}
+
+function install-external-all-contrib {
+	install-gcc
+	setup-gcc
+	install-cmt
+	setup-cmt
+	install-lcg
+	setup-lcg
+	lcg-make
+}
+
+function install-external-all-lcg {
+	local lcgpkg="python HepPDT RELAX ROOT GSL CASTOR mysql CLHEP"
+	lcgpkg="$lcgpkg XercesC uuid AIDA CppUnit xrootd GCCXML libunwind"
+	lcgpkg="$lcgpkg tcmalloc pytools Boost HepMC cernlib lapack blas"
+
+	local pkg=""
+	for pkg in $lcgpkg
+	do
+		type -t install-$pkg >& /dev/null
+		if [ "$?" = 0 ]; then
+			echo call install-$pkg
+		else
+			echo install-$pkg does not exist!
+		fi
+	done
+}
+
+function install-external-all-bes {
+	local lcgpkg="geant4-clhep geant4-geant4 geant4-gdml"
+	local pkg=""
+	for pkg in $lcgpkg
+	do
+		type -t install-$pkg >& /dev/null
+		if [ "$?" = 0 ]; then
+			echo call install-$pkg
+		else
+			echo install-$pkg does not exist!
+		fi
+	done
+}
+
+function install-external-all {
+	install-external-all-contrib
+	install-external-all-lcg
 }
