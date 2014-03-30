@@ -740,6 +740,20 @@ function install-geant4-gdml-patch {
  using namespace xercesc;
  using std::string;
 EOF
+	patch -p0 << EOF
+--- GNUmakefile.orig	2010-11-17 15:04:51.000000001 +0800
++++ GNUmakefile	2014-03-30 19:45:43.000000001 +0800
+@@ -122,7 +122,7 @@
+ 	cp -vR \$(PROJECT_BUILD_AREA)/\$(PLATFORM)/bin/* \$(bindir)
+ 
+ # install includes
+-install_headers := \$(shell find . -name *.h)
++install_headers := \$(shell find . -name *.h -o -name *.hh)
+ install_include:
+ 	for i in \$(install_headers); do \\
+ 		i_dir=`dirname $$i`; \\
+EOF
+
 	popd
 }
 function install-geant4-gdml-configure {
