@@ -171,28 +171,45 @@ cat << EOF > bespatch/lcg-settings.patch
 
 EOF
 patch -p0  < $EXTERNALLIBDIR/LCGCMT/bespatch/lcg-settings.patch
+cat << EOF > bespatch/lcg-clhep.patch
+--- LCGCMT_65a/LCG_Configuration/cmt/requirements	2014-03-07 20:24:56.000000001 +0800
++++ LCGCMT_65a/LCG_Configuration/cmt/requirements	2014-03-28 12:17:53.000000001 +0800
+@@ -31,7 +31,8 @@
+       target-mac                         "2.1.9-4"
+ macro cernlib_config_version             "2006a"
+ macro cgsigsoap_config_version           "1.3.3-1"
+-macro CLHEP_config_version               "1.9.4.7"
++#macro CLHEP_config_version               "1.9.4.7"
++macro CLHEP_config_version               "2.0.4.5"
+ macro cmake_config_version               "2.8.9"
+ macro cmt_config_version                 "v1r20p20081118"
+ macro coin3d_config_version              "3.1.3p2"
+
+EOF
+patch -p0  < $EXTERNALLIBDIR/LCGCMT/bespatch/lcg-clhep.patch
 }
 function install-lcg-patch {
-	pushd $EXTERNALLIBDIR/LCGCMT
+	pushd $EXTERNALLIBDIR/LCGCMT >& /dev/null
 	# AT THE TOP TREE
 	if [ ! -d "bespatch" ];
 	then
 		mkdir bespatch
 	fi
+	echo ===== PATCH LCGCMT
 	install-lcg-patch-lcg-settings
 
-	popd
+	popd >& /dev/null
 }
 
 function install-lcg-real() {
   echo $FUNCNAME  
   if [ ! -f "$DOWNLOADDIR/$(install-lcg-package-name)" ];
   then
-    pushd $DOWNLOADDIR
+    pushd $DOWNLOADDIR >& /dev/null
     wget $(install-lcg-download-url)
-    popd
+    popd >& /dev/null
   fi
-  pushd $DOWNLOADDIR
+  pushd $DOWNLOADDIR >& /dev/null
   # tar zxvf
   if [ ! -d "LCGCMT" ];
   then
@@ -203,21 +220,20 @@ function install-lcg-real() {
     cp -r LCGCMT $EXTERNALLIBDIR/
   fi
 	install-lcg-patch
-  popd
+  popd >& /dev/null
 }
 function install-lcg {
   setup-cmt
-  pushd $DEVROOT
   if [ ! -d $EXTERNALLIBDIR ];
   then
     mkdir $EXTERNALLIBDIR
   fi
-  pushd $EXTERNALLIBDIR
+  pushd $EXTERNALLIBDIR >& /dev/null
   if [ ! -d LCGCMT ];
   then
     install-lcg-real
   fi
-  popd
+  popd >& /dev/null
 }
 function setup-lcg {
   setup-cmt
@@ -781,6 +797,91 @@ function install-geant4-gdml {
 	make 
 	make install
 	popd
+}
+
+# DIM: for DistBoss
+function install-dim-package-version {
+	echo v19r11
+}
+
+function install-dim-package-name {
+	echo dim_$(install-dim-package-version).zip
+}
+
+function install-dim-download-url {
+	echo http://dim.web.cern.ch/dim/$(install-dim-package-name)
+}
+
+function install-dim-install-prefix {
+	echo $EXTERNALLIBDIR/external/DIM/dim_$(install-dim-package-version)/$CMTCONFIG
+}
+
+function install-dim-setup-env {
+	export OS=Linux
+	export DIMDIR=$DOWNLOADDIR/dim_$(install-dim-package-version)
+	export ODIR=linux
+	alias TestServer=$DIMDIR/$ODIR/testServer
+	alias TestClient=$DIMDIR/$ODIR/testClient
+	alias Test_server=$DIMDIR/$ODIR/test_server
+	alias Test_client=$DIMDIR/$ODIR/test_client
+	alias Dns=$DIMDIR/$ODIR/dns
+	alias Dim_get_service=$DIMDIR/$ODIR/dim_get_service
+	alias Dim_send_command=$DIMDIR/$ODIR/dim_send_command
+	alias DimBridge=$DIMDIR/$ODIR/DimBridge
+	alias Did=$DIMDIR/$ODIR/did
+}
+
+function install-dim-env {
+	export OS=Linux
+	export DIMDIR=$(install-dim-install-prefix)
+	export ODIR=linux
+	alias TestServer=$DIMDIR/$ODIR/testServer
+	alias TestClient=$DIMDIR/$ODIR/testClient
+	alias Test_server=$DIMDIR/$ODIR/test_server
+	alias Test_client=$DIMDIR/$ODIR/test_client
+	alias Dns=$DIMDIR/$ODIR/dns
+	alias Dim_get_service=$DIMDIR/$ODIR/dim_get_service
+	alias Dim_send_command=$DIMDIR/$ODIR/dim_send_command
+	alias DimBridge=$DIMDIR/$ODIR/DimBridge
+	alias Did=$DIMDIR/$ODIR/did
+
+	export LD_LIBRARY_PATH=$DIMDIR/$ODIR:$LD_LIBRARY_PATH
+}
+
+function install-dim-sync-to-install {
+	local installprefix=$(install-dim-install-prefix)
+	if [ ! -d $installprefix ];
+	then
+		mkdir -p $installprefix
+	fi
+	# sync the whole directory
+	rsync -avz dim $installprefix
+	rsync -avz linux $installprefix --exclude "*.o"
+}
+
+function install-dim {
+	echo $FUNCNAME
+  if [ ! -f "$DOWNLOADDIR/$(install-dim-package-name)" ];
+  then
+    pushd $DOWNLOADDIR >& /dev/null
+    wget $(install-dim-download-url)
+    popd >& /dev/null
+  fi
+
+	pushd $DOWNLOADDIR >& /dev/null
+	if [ ! -d "dim_$(install-dim-package-version)" ];
+	then
+		unzip $(install-dim-package-name)
+	fi
+	pushd dim_$(install-dim-package-version)
+	install-dim-setup-env
+	make clean
+	make
+	make
+	install-dim-sync-to-install
+	popd
+	popd >& /dev/null
+
 }
 
 #install boss
