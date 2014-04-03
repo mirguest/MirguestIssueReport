@@ -1,5 +1,6 @@
 
 void read() {
+		TFile* f = new TFile("test.root");
 
     ifstream ift("test.bin", ios::binary);
 
@@ -8,6 +9,8 @@ void read() {
 
     TBufferFile root_buffer(TBuffer::kRead);
     root_buffer.SetBuffer(tmpbuffer, 100000, kFALSE);
+
+		TVirtualStreamerInfo* tvsi = root_buffer.GetInfo();
 
     TTree* tree = new TTree;
 

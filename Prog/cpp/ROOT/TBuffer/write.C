@@ -26,4 +26,8 @@ void write() {
 
     oft.write(root_buffer.Buffer(), root_buffer.BufferSize());
     oft.close();
+
+		TFile f("test.root", "recreate");
+		tree->Write();
+		f.Close();
 }
