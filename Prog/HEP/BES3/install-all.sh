@@ -392,6 +392,19 @@ function install-mysql-download-url {
 function install-mysql {
   install-PKG mysql
 }
+# sqlite
+function install-sqlite-package-name {
+  echo sqlite_3070900__LCG_x86_64-slc6-gcc46-opt.tar.gz 
+}
+function install-sqlite-download-url {
+  echo http://service-spi.web.cern.ch/service-spi/external/distribution/$(install-sqlite-package-name)
+}
+
+function install-sqlite {
+  install-PKG sqlite
+}
+
+
 function install-clhep-package-name {
   echo CLHEP_1.9.4.7__LCG_x86_64-slc6-gcc46-opt.tar.gz
 }
@@ -884,6 +897,115 @@ function install-dim {
 
 }
 
+# XML-RPC 1.06.40@SLC5
+# But it does not work very well @SLC6.
+function install-xmlrpc-package-version {
+	#echo 1.06.40
+	echo 1.25.27
+}
+function install-xmlrpc-package-name {
+	echo xmlrpc-c-$(install-xmlrpc-package-version).tgz
+}
+
+function install-xmlrpc-install-prefix {
+	echo $EXTERNALLIBDIR/external/xmlrpc-c/xmlrpc-c-$(install-xmlrpc-package-version)/$CMTCONFIG
+}
+function install-xmlrpc-download-url {
+	#echo downloads.sourceforge.net/project/xmlrpc-c/Xmlrpc-c%20Super%20Stable/1.06.40/xmlrpc-c-1.06.40.tgz
+	echo downloads.sourceforge.net/project/xmlrpc-c/Xmlrpc-c%20Super%20Stable/1.25.27/$(install-xmlrpc-package-name)
+}
+
+function install-xmlrpc-configure {
+	./configure --prefix=$(install-xmlrpc-install-prefix)
+}
+function install-xmlrpc {
+	echo $FUNCNAME
+  if [ ! -f "$DOWNLOADDIR/$(install-xmlrpc-package-name)" ];
+  then
+    pushd $DOWNLOADDIR >& /dev/null
+    wget $(install-xmlrpc-download-url)
+    popd >& /dev/null
+  fi
+	pushd $DOWNLOADDIR >& /dev/null
+
+	if [ ! -d "xmlrpc-c-$(install-xmlrpc-package-version)" ];
+	then
+		tar zxvf $(install-xmlrpc-package-name)
+	fi
+
+	pushd xmlrpc-c-$(install-xmlrpc-package-version)
+	install-xmlrpc-configure
+	make
+	make install
+	popd
+
+	popd >& /dev/null
+}
+
+# install genbes
+function install-genbes-version {
+	echo genbes-00-00-11
+}
+function install-genbes-install-prefix {
+	echo $EXTERNALLIBDIR/external/genbes/$(install-genbes-version)
+}
+function install-genbes-source-copy-from {
+	echo /afs/.ihep.ac.cn/bes3/offline/ExternalLib/packages/genbes/genbes-00-00-11
+}
+function install-genbes-sync-from-source-to-downdload {
+	pushd $DOWNLOADDIR/genbes/$(install-genbes-version)
+	local sourcecodefrom=$(install-genbes-source-copy-from)
+	rsync -avz $sourcecodefrom/cmt .
+	rsync -avz $sourcecodefrom/src .
+	popd
+}
+function install-genbes-sync-from-download-to-install {
+	if [ ! -d "$(install-genbes-install-prefix)" ];
+	then
+		mkdir -p $(install-genbes-install-prefix)
+	fi
+	pushd $(install-genbes-install-prefix)
+	local sourcecodefrom=$DOWNLOADDIR/genbes/$(install-genbes-version)
+	rsync -avz $sourcecodefrom/cmt .
+	rsync -avz $sourcecodefrom/src .
+	popd
+}
+function install-genbes-build-all-lib-setup-env {
+	setup-boss
+	local tmpcmtpath=$EXTERNALLIBDIR/external
+	export CMTPATH=$tmpcmtpath:$CMTPATH
+}
+function install-genbes-build-all-lib {
+  install-genbes-build-all-lib-setup-env
+	pushd $(install-genbes-install-prefix)/cmt
+	if [ ! -d $(install-genbes-install-prefix)/$CMTCONFIG ];
+	then
+		cmt config
+	fi
+	for pkg in $(grep ^library requirements | cut -d ' ' -f 2);
+	do
+		echo building $pkg
+		make $pkg >& mylog.$pkg; 
+	done
+	popd
+}
+
+function install-genbes {
+	echo $FUNCNAME
+	if [ ! -d "$DOWNLOADDIR/genbes/$(install-genbes-version)" ];
+	then
+		mkdir -p $DOWNLOADDIR/genbes/$(install-genbes-version)
+	fi
+
+	pushd $DOWNLOADDIR/genbes/$(install-genbes-version)
+		# sync data first
+		install-genbes-sync-from-source-to-downdload 
+		install-genbes-sync-from-download-to-install 
+		# builing the library
+		#install-genbes-build-all-lib
+	popd
+}
+
 #install boss
 function boss-version() {
   echo 6.6.4
@@ -925,7 +1047,7 @@ function install-external-all-contrib {
 }
 
 function install-external-all-lcg {
-	local lcgpkg="python HepPDT RELAX ROOT GSL CASTOR mysql CLHEP"
+	local lcgpkg="python HepPDT RELAX ROOT GSL CASTOR mysql sqlite CLHEP"
 	lcgpkg="$lcgpkg XercesC uuid AIDA CppUnit xrootd GCCXML libunwind"
 	lcgpkg="$lcgpkg tcmalloc pytools Boost HepMC cernlib lapack blas"
 
@@ -944,6 +1066,7 @@ function install-external-all-lcg {
 
 function install-external-all-bes {
 	local lcgpkg="geant4-clhep geant4-geant4 geant4-gdml"
+	lcgpkg="$lcgpkg dim xmlrpc"
 	local pkg=""
 	for pkg in $lcgpkg
 	do
