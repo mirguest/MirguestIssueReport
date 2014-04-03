@@ -1,6 +1,10 @@
 
 void read() {
+		const char* olddir = gDirectory->GetPath();
 		TFile* f = new TFile("test.root");
+		f->Close();
+		gDirectory->cd(olddir);
+
 
     ifstream ift("test.bin", ios::binary);
 
