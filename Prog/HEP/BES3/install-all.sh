@@ -171,28 +171,45 @@ cat << EOF > bespatch/lcg-settings.patch
 
 EOF
 patch -p0  < $EXTERNALLIBDIR/LCGCMT/bespatch/lcg-settings.patch
+cat << EOF > bespatch/lcg-clhep.patch
+--- LCGCMT_65a/LCG_Configuration/cmt/requirements	2014-03-07 20:24:56.000000001 +0800
++++ LCGCMT_65a/LCG_Configuration/cmt/requirements	2014-03-28 12:17:53.000000001 +0800
+@@ -31,7 +31,8 @@
+       target-mac                         "2.1.9-4"
+ macro cernlib_config_version             "2006a"
+ macro cgsigsoap_config_version           "1.3.3-1"
+-macro CLHEP_config_version               "1.9.4.7"
++#macro CLHEP_config_version               "1.9.4.7"
++macro CLHEP_config_version               "2.0.4.5"
+ macro cmake_config_version               "2.8.9"
+ macro cmt_config_version                 "v1r20p20081118"
+ macro coin3d_config_version              "3.1.3p2"
+
+EOF
+patch -p0  < $EXTERNALLIBDIR/LCGCMT/bespatch/lcg-clhep.patch
 }
 function install-lcg-patch {
-	pushd $EXTERNALLIBDIR/LCGCMT
+	pushd $EXTERNALLIBDIR/LCGCMT >& /dev/null
 	# AT THE TOP TREE
 	if [ ! -d "bespatch" ];
 	then
 		mkdir bespatch
 	fi
+	echo ===== PATCH LCGCMT
 	install-lcg-patch-lcg-settings
 
-	popd
+	popd >& /dev/null
 }
 
 function install-lcg-real() {
   echo $FUNCNAME  
   if [ ! -f "$DOWNLOADDIR/$(install-lcg-package-name)" ];
   then
-    pushd $DOWNLOADDIR
+    pushd $DOWNLOADDIR >& /dev/null
     wget $(install-lcg-download-url)
-    popd
+    popd >& /dev/null
   fi
-  pushd $DOWNLOADDIR
+  pushd $DOWNLOADDIR >& /dev/null
   # tar zxvf
   if [ ! -d "LCGCMT" ];
   then
@@ -203,21 +220,20 @@ function install-lcg-real() {
     cp -r LCGCMT $EXTERNALLIBDIR/
   fi
 	install-lcg-patch
-  popd
+  popd >& /dev/null
 }
 function install-lcg {
   setup-cmt
-  pushd $DEVROOT
   if [ ! -d $EXTERNALLIBDIR ];
   then
     mkdir $EXTERNALLIBDIR
   fi
-  pushd $EXTERNALLIBDIR
+  pushd $EXTERNALLIBDIR >& /dev/null
   if [ ! -d LCGCMT ];
   then
     install-lcg-real
   fi
-  popd
+  popd >& /dev/null
 }
 function setup-lcg {
   setup-cmt
@@ -376,6 +392,19 @@ function install-mysql-download-url {
 function install-mysql {
   install-PKG mysql
 }
+# sqlite
+function install-sqlite-package-name {
+  echo sqlite_3070900__LCG_x86_64-slc6-gcc46-opt.tar.gz 
+}
+function install-sqlite-download-url {
+  echo http://service-spi.web.cern.ch/service-spi/external/distribution/$(install-sqlite-package-name)
+}
+
+function install-sqlite {
+  install-PKG sqlite
+}
+
+
 function install-clhep-package-name {
   echo CLHEP_1.9.4.7__LCG_x86_64-slc6-gcc46-opt.tar.gz
 }
@@ -783,6 +812,200 @@ function install-geant4-gdml {
 	popd
 }
 
+# DIM: for DistBoss
+function install-dim-package-version {
+	echo v19r11
+}
+
+function install-dim-package-name {
+	echo dim_$(install-dim-package-version).zip
+}
+
+function install-dim-download-url {
+	echo http://dim.web.cern.ch/dim/$(install-dim-package-name)
+}
+
+function install-dim-install-prefix {
+	echo $EXTERNALLIBDIR/external/DIM/dim_$(install-dim-package-version)/$CMTCONFIG
+}
+
+function install-dim-setup-env {
+	export OS=Linux
+	export DIMDIR=$DOWNLOADDIR/dim_$(install-dim-package-version)
+	export ODIR=linux
+	alias TestServer=$DIMDIR/$ODIR/testServer
+	alias TestClient=$DIMDIR/$ODIR/testClient
+	alias Test_server=$DIMDIR/$ODIR/test_server
+	alias Test_client=$DIMDIR/$ODIR/test_client
+	alias Dns=$DIMDIR/$ODIR/dns
+	alias Dim_get_service=$DIMDIR/$ODIR/dim_get_service
+	alias Dim_send_command=$DIMDIR/$ODIR/dim_send_command
+	alias DimBridge=$DIMDIR/$ODIR/DimBridge
+	alias Did=$DIMDIR/$ODIR/did
+}
+
+function install-dim-env {
+	export OS=Linux
+	export DIMDIR=$(install-dim-install-prefix)
+	export ODIR=linux
+	alias TestServer=$DIMDIR/$ODIR/testServer
+	alias TestClient=$DIMDIR/$ODIR/testClient
+	alias Test_server=$DIMDIR/$ODIR/test_server
+	alias Test_client=$DIMDIR/$ODIR/test_client
+	alias Dns=$DIMDIR/$ODIR/dns
+	alias Dim_get_service=$DIMDIR/$ODIR/dim_get_service
+	alias Dim_send_command=$DIMDIR/$ODIR/dim_send_command
+	alias DimBridge=$DIMDIR/$ODIR/DimBridge
+	alias Did=$DIMDIR/$ODIR/did
+
+	export LD_LIBRARY_PATH=$DIMDIR/$ODIR:$LD_LIBRARY_PATH
+}
+
+function install-dim-sync-to-install {
+	local installprefix=$(install-dim-install-prefix)
+	if [ ! -d $installprefix ];
+	then
+		mkdir -p $installprefix
+	fi
+	# sync the whole directory
+	rsync -avz dim $installprefix
+	rsync -avz linux $installprefix --exclude "*.o"
+}
+
+function install-dim {
+	echo $FUNCNAME
+  if [ ! -f "$DOWNLOADDIR/$(install-dim-package-name)" ];
+  then
+    pushd $DOWNLOADDIR >& /dev/null
+    wget $(install-dim-download-url)
+    popd >& /dev/null
+  fi
+
+	pushd $DOWNLOADDIR >& /dev/null
+	if [ ! -d "dim_$(install-dim-package-version)" ];
+	then
+		unzip $(install-dim-package-name)
+	fi
+	pushd dim_$(install-dim-package-version)
+	install-dim-setup-env
+	make clean
+	make
+	make
+	install-dim-sync-to-install
+	popd
+	popd >& /dev/null
+
+}
+
+# XML-RPC 1.06.40@SLC5
+# But it does not work very well @SLC6.
+function install-xmlrpc-package-version {
+	#echo 1.06.40
+	echo 1.25.27
+}
+function install-xmlrpc-package-name {
+	echo xmlrpc-c-$(install-xmlrpc-package-version).tgz
+}
+
+function install-xmlrpc-install-prefix {
+	echo $EXTERNALLIBDIR/external/xmlrpc-c/xmlrpc-c-$(install-xmlrpc-package-version)/$CMTCONFIG
+}
+function install-xmlrpc-download-url {
+	#echo downloads.sourceforge.net/project/xmlrpc-c/Xmlrpc-c%20Super%20Stable/1.06.40/xmlrpc-c-1.06.40.tgz
+	echo downloads.sourceforge.net/project/xmlrpc-c/Xmlrpc-c%20Super%20Stable/1.25.27/$(install-xmlrpc-package-name)
+}
+
+function install-xmlrpc-configure {
+	./configure --prefix=$(install-xmlrpc-install-prefix)
+}
+function install-xmlrpc {
+	echo $FUNCNAME
+  if [ ! -f "$DOWNLOADDIR/$(install-xmlrpc-package-name)" ];
+  then
+    pushd $DOWNLOADDIR >& /dev/null
+    wget $(install-xmlrpc-download-url)
+    popd >& /dev/null
+  fi
+	pushd $DOWNLOADDIR >& /dev/null
+
+	if [ ! -d "xmlrpc-c-$(install-xmlrpc-package-version)" ];
+	then
+		tar zxvf $(install-xmlrpc-package-name)
+	fi
+
+	pushd xmlrpc-c-$(install-xmlrpc-package-version)
+	install-xmlrpc-configure
+	make
+	make install
+	popd
+
+	popd >& /dev/null
+}
+
+# install genbes
+function install-genbes-version {
+	echo genbes-00-00-11
+}
+function install-genbes-install-prefix {
+	echo $EXTERNALLIBDIR/external/genbes/$(install-genbes-version)
+}
+function install-genbes-source-copy-from {
+	echo /afs/.ihep.ac.cn/bes3/offline/ExternalLib/packages/genbes/genbes-00-00-11
+}
+function install-genbes-sync-from-source-to-downdload {
+	pushd $DOWNLOADDIR/genbes/$(install-genbes-version)
+	local sourcecodefrom=$(install-genbes-source-copy-from)
+	rsync -avz $sourcecodefrom/cmt .
+	rsync -avz $sourcecodefrom/src .
+	popd
+}
+function install-genbes-sync-from-download-to-install {
+	if [ ! -d "$(install-genbes-install-prefix)" ];
+	then
+		mkdir -p $(install-genbes-install-prefix)
+	fi
+	pushd $(install-genbes-install-prefix)
+	local sourcecodefrom=$DOWNLOADDIR/genbes/$(install-genbes-version)
+	rsync -avz $sourcecodefrom/cmt .
+	rsync -avz $sourcecodefrom/src .
+	popd
+}
+function install-genbes-build-all-lib-setup-env {
+	setup-boss
+	local tmpcmtpath=$EXTERNALLIBDIR/external
+	export CMTPATH=$tmpcmtpath:$CMTPATH
+}
+function install-genbes-build-all-lib {
+  install-genbes-build-all-lib-setup-env
+	pushd $(install-genbes-install-prefix)/cmt
+	if [ ! -d $(install-genbes-install-prefix)/$CMTCONFIG ];
+	then
+		cmt config
+	fi
+	for pkg in $(grep ^library requirements | cut -d ' ' -f 2);
+	do
+		echo building $pkg
+		make $pkg >& mylog.$pkg; 
+	done
+	popd
+}
+
+function install-genbes {
+	echo $FUNCNAME
+	if [ ! -d "$DOWNLOADDIR/genbes/$(install-genbes-version)" ];
+	then
+		mkdir -p $DOWNLOADDIR/genbes/$(install-genbes-version)
+	fi
+
+	pushd $DOWNLOADDIR/genbes/$(install-genbes-version)
+		# sync data first
+		install-genbes-sync-from-source-to-downdload 
+		install-genbes-sync-from-download-to-install 
+		# builing the library
+		#install-genbes-build-all-lib
+	popd
+}
+
 #install boss
 function boss-version() {
   echo 6.6.4
@@ -824,7 +1047,7 @@ function install-external-all-contrib {
 }
 
 function install-external-all-lcg {
-	local lcgpkg="python HepPDT RELAX ROOT GSL CASTOR mysql CLHEP"
+	local lcgpkg="python HepPDT RELAX ROOT GSL CASTOR mysql sqlite CLHEP"
 	lcgpkg="$lcgpkg XercesC uuid AIDA CppUnit xrootd GCCXML libunwind"
 	lcgpkg="$lcgpkg tcmalloc pytools Boost HepMC cernlib lapack blas"
 
@@ -843,6 +1066,7 @@ function install-external-all-lcg {
 
 function install-external-all-bes {
 	local lcgpkg="geant4-clhep geant4-geant4 geant4-gdml"
+	lcgpkg="$lcgpkg dim xmlrpc"
 	local pkg=""
 	for pkg in $lcgpkg
 	do
