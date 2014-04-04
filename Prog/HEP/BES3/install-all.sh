@@ -807,6 +807,7 @@ function install-geant4-gdml {
   install-geant4-gdml-configure
 	# make and make install
 	pushd $DOWNLOADDIR/$(install-geant4-gdml-source-dir)
+	install-geant4-gdml-patch
 	make 
 	make install
 	popd
