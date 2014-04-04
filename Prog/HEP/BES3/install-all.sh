@@ -1006,6 +1006,69 @@ function install-genbes {
 	popd
 }
 
+# install BESCLHEP-Alist and BESCLHEP-String
+function install-BESCLHEP-Alist-version {
+	echo Alist-00-00-06
+}
+function install-BESCLHEP-String-version {
+	echo String-00-00-05
+}
+
+## install prefix
+function install-BESCLHEP-XXX-install-prefix {
+	local pkg=$1
+	local ver=$(install-BESCLHEP-$pkg-version)
+	echo $EXTERNALLIBDIR/external/CLHEP/$pkg/$ver
+}
+function install-BESCLHEP-Alist-install-prefix {
+	echo $(install-BESCLHEP-XXX-install-prefix Alist)
+}
+function install-BESCLHEP-String-install-prefix {
+	echo $(install-BESCLHEP-XXX-install-prefix String)
+}
+## copy from
+function install-BESCLHEP-XXX-source-copy-from {
+	local pkg=$1
+	local ver=$(install-BESCLHEP-$pkg-version)
+	echo /afs/.ihep.ac.cn/bes3/offline/ExternalLib/packages/CLHEP/$pkg/$ver
+}
+function install-BESCLHEP-Alist-source-copy-from {
+	echo $(install-BESCLHEP-XXX-source-copy-from Alist)
+}
+function install-BESCLHEP-String-source-copy-from {
+	echo $(install-BESCLHEP-XXX-source-copy-from String)
+}
+function install-BESCLHEP-XXX {
+	local pkg=${1:-Alist}
+	if [ ! -d $(install-BESCLHEP-$pkg-install-prefix) ];
+	then
+		mkdir -p $(install-BESCLHEP-$pkg-install-prefix)
+	fi
+	# sync
+	pushd $(install-BESCLHEP-$pkg-install-prefix)
+	local sourcecodefrom=$(install-BESCLHEP-$pkg-source-copy-from)
+	rsync -avz $sourcecodefrom/cmt .
+	rsync -avz $sourcecodefrom/CLHEP .
+	# building the code
+	setup-boss
+	local tmpcmtpath=$EXTERNALLIBDIR/external/CLHEP
+	export CMTPATH=$tmpcmtpath:$CMTPATH
+		pushd cmt
+		cmt br cmt config
+		source setup.sh
+		cmt br cmt make
+		popd
+	popd
+
+}
+
+function install-BESCLHEP-Alist {
+	install-BESCLHEP-XXX Alist
+}
+function install-BESCLHEP-String {
+	install-BESCLHEP-XXX String
+}
+
 #install boss
 function boss-version() {
   echo 6.6.4
