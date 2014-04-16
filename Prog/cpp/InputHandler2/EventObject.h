@@ -3,7 +3,7 @@
 
 class EventObject {
 public:
-
+    virtual ~EventObject() = 0;
 };
 
 #endif

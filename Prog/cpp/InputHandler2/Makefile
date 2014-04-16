@@ -8,11 +8,12 @@ main: main.o libs
 
 libs: libInputHandler.so
 
-libInputHandler.so: InputHandler.o TestStream/NormalTest1Stream.o
+libInputHandler.so: InputHandler.o EventObject.o TestStream/NormalTest1Stream.o
 	g++ -shared -o $@ $^ ${LDFLAGS}
 
 main.o: main.cc
 InputHandler.o: InputHandler.h InputHandler.cc
+EventObject.o: EventObject.h EventObject.cc
 TestStream/NormalTest1Stream.o: TestStream/NormalTest1Stream.h TestStream/NormalTest1Stream.cc
 
 
@@ -23,6 +24,7 @@ clean:
 	-rm main.exe main.o
 	-rm libInputHandler.so
 	-rm InputHandler.o
+	-rm EventObject.o
 	-rm TestStream/NormalTest1Stream.o
 
 .PHONY: clean
