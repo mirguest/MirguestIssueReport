@@ -7,6 +7,8 @@
 class TFile;
 class TTree;
 
+class NormalTest1EvtObj;
+
 class NormalTest1Stream: public IStream {
 public:
     NormalTest1Stream();
@@ -25,6 +27,12 @@ private:
 
     TFile* m_file;
     TTree* m_tree;
+private:
+    struct {
+        int evtID;
+    } m_tree_cache;
+    
+    NormalTest1EvtObj* m_evtobj;
 };
 
 #endif

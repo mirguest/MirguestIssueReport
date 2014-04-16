@@ -1,5 +1,6 @@
 #include <iostream>
 #include "TestStream/NormalTest1Stream.h"
+#include "TestStream/NormalTest1EvtObj.h"
 
 #include "TFile.h"
 #include "TTree.h"
@@ -11,17 +12,25 @@ NormalTest1Stream::NormalTest1Stream() {
 
     m_file = 0;
     m_tree = 0;
+    m_evtobj = 0;
 }
 
 bool
 NormalTest1Stream::next() {
+    ++m_index;
     return true;
 }
 
 EventObject*
 NormalTest1Stream::get(const std::string& objPath) {
+    if (not m_tree) {
+        return 0;
+    }
+    m_tree->GetEntry(m_index);
+    NormalTest1EvtObj* evtobj = new NormalTest1EvtObj;
+    evtobj->setEvtID( m_tree_cache.evtID );
 
-    return 0;
+    return evtobj;
 }
 
 bool
@@ -44,5 +53,7 @@ NormalTest1Stream::init_tree() {
     if (not m_tree) {
         return false;
     }
+
+    m_tree->SetBranchAddress("evtID", &m_tree_cache.evtID);
     return true;
 }
