@@ -20,6 +20,8 @@ int main() {
     for (int i = 0; i < 100; ++i) {
         k40input->next();
         NormalTest1EvtObj* evt = dynamic_cast<NormalTest1EvtObj*>(k40input->get(dummypath));
+
+        std::cout << evt->evtID() << std::endl;
     }
 
     std::cout << "FINALIZE" << std::endl;
