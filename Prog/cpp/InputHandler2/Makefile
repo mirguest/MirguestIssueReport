@@ -1,3 +1,4 @@
+CPPFLAGS=-I.
 
 all: libs main
 
@@ -6,11 +7,13 @@ main: main.o libs
 
 libs: libInputHandler.so
 
-libInputHandler.so: InputHandler.o
+libInputHandler.so: InputHandler.o TestStream/NormalTest1Stream.o
 	g++ -shared -o $@ $^
 
 main.o: main.cc
 InputHandler.o: InputHandler.h InputHandler.cc
+TestStream/NormalTest1Stream.o: TestStream/NormalTest1Stream.h TestStream/NormalTest1Stream.cc
+
 
 %.o: %.cc
-	g++ -fPIC -c $< -o $@
+	g++ -fPIC ${CPPFLAGS} -c $< -o $@

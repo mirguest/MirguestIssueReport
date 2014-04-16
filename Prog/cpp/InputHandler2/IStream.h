@@ -1,6 +1,8 @@
 #ifndef IStream_h
 #define IStream_h
 
+#include <string>
+
 class EventObject;
 
 class IStream {
