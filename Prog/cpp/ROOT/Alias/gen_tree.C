@@ -16,6 +16,11 @@ void gen_tree() {
         tree->Fill();
     }
 
+    // Create Alias for tree
+    // So that after re-open the file, we can still use the alias.
+    tree->SetAlias("perp", "(x**2+y**2)**0.5");
+    tree->SetAlias("mag", "(perp**2+z**2)**0.5");
+
     tree->Write();
     f->Close();
 }
