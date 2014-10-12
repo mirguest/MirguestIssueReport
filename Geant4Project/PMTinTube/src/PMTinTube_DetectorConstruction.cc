@@ -499,7 +499,7 @@ PMTinTube_DetectorConstruction::CreateLogicalTrap()
 {
     std::vector<G4TwoVector> verticles;
     verticles.push_back(G4TwoVector(-30,-30));
-    verticles.push_back(G4TwoVector(-30,30));
+    verticles.push_back(G4TwoVector(-30,-30));
     verticles.push_back(G4TwoVector(30,30));
     verticles.push_back(G4TwoVector(30,-30));
     verticles.push_back(G4TwoVector(0,0));
