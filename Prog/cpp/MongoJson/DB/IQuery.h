@@ -9,7 +9,7 @@ public:
     typedef std::vector<std::string> QueryResult;
 
     virtual QueryResult query(const QueryString& qs) = 0;
-
+    virtual ~IQuery(){};
 };
 
 #endif
