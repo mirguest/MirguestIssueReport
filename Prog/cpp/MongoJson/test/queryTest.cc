@@ -10,7 +10,10 @@ int main() {
     std::cout << "+ Construct Query Str: " << querystr << std::endl;
     IQuery::QueryResult results = querySvc->query(querystr);
     std::cout << "+ Result: " << std::endl;
-
+    for (IQuery::QueryResult::iterator it = results.begin();
+	 it != results.end();++it) {
+      std::cout << (*it) << std::endl;
+    }
     // release
     delete mymongo;
 }

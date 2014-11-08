@@ -9,6 +9,7 @@ MyMongoDB::MyMongoDB()
 
     m_conn->connect(m_hostname);
 
+    m_dbname = "mydb.testData";
 }
 
 MyMongoDB::~MyMongoDB() {
@@ -20,6 +21,15 @@ MyMongoDB::~MyMongoDB() {
 MyMongoDB::QueryResult 
 MyMongoDB::query(const MyMongoDB::QueryString& qs) {
     MyMongoDB::QueryResult result;
+    
+    std::auto_ptr<mongo::DBClientCursor> cursor = m_conn->query(
+                                          m_dbname, 
+                                          mongo::fromjson(qs));
+
+    while ( cursor->more() ) {
+        mongo::BSONObj obj = cursor->next();
+        result.push_back(obj.jsonString());
+    }
 
     return result;
-}
+} 
