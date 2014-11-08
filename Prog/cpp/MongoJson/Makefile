@@ -2,8 +2,9 @@
 CPPFLAGS=-I${MONGOHOME}/include
 LDFLAGS=-L${MONGOHOME}/lib -lmongoclient
 LDFLAGS+=-lboost_thread -lboost_system -lboost_regex 
-
+LDFLAGS+=-Wl,-rpath=.
 CPPFLAGS+=-I.
+CPPFLAGS+=-Isrc
 
 all: loadJson.exe queryTest.exe
 

@@ -8,15 +8,16 @@ namespace mongo {
 }
 
 class MyMongoDB: public IQuery {
-
+public:
     MyMongoDB();
     ~MyMongoDB();
 
-    QueryResult query(const QueryResult& qs);
+    QueryResult query(const QueryString& qs);
 
 private:
 
     std::string m_hostname;
+    std::string m_dbname;
     mongo::DBClientConnection* m_conn;
 
 };
