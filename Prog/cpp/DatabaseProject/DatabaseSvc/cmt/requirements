@@ -10,5 +10,5 @@ macro_append Boost_linkopts " -lboost_thread -lboost_system -lboost_regex "
 macro_append DatabaseSvc_cppflags " -I${MONGOHOME}/include "
 macro_append DatabaseSvc_use_linkopts " -L${MONGOHOME}/lib -lmongoclient "
 
-library DatabaseSvc *.cc
+library DatabaseSvc *.cc ../binding/DatabaseSvcExp.cc
 apply_pattern linker_library library=DatabaseSvc

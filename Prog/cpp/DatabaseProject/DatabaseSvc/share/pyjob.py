@@ -12,5 +12,6 @@ if __name__ == "__main__":
     task.setLogLevel(2)
 
     Sniper.loadDll("libDatabaseSvc.so")
+    import libDatabaseSvc
     dbsvc = task.createSvc("MyMongoDB")
     print dbsvc
