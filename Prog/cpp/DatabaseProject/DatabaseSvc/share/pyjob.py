@@ -17,5 +17,6 @@ if __name__ == "__main__":
     print dbsvc
     # assume we can query directly
     results = dbsvc.query("")
+    import json
     for r in  results:
-        print r
+        print json.loads(r)
