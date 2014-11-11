@@ -1,0 +1,12 @@
+package DatabaseSvc
+
+use SniperKernel v*
+use Boost v* Externals
+
+apply_pattern install_more_includes more="DatabaseSvc"
+
+macro_append DatabaseSvc_cppflags " -I${MONGOHOME}/include "
+macro_append DatabaseSvc_linkopts " -L${MONGOHOME} -lmongoclient "
+
+library DatabaseSvc *.cc
+
