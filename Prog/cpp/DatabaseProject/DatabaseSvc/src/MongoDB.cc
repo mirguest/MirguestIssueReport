@@ -10,16 +10,15 @@ DECLARE_SERVICE(MyMongoDB);
 MyMongoDB::MyMongoDB(const std::string& name)
   : SvcBase(name), m_hostname("localhost"), m_conn(0){
     mongo::client::initialize();
-    m_conn = new mongo::DBClientConnection;
-
-    m_conn->connect(m_hostname);
-
-    m_dbname = "mydb.testData";
+    declProp("Hostname", m_hostname);
+    declProp("DBName", m_dbname = "mydb.testData");
 }
 
 MyMongoDB::~MyMongoDB() {
     std::cout << "MyMongoDB::~MyMongoDB() Begin" << std::endl;
-    delete m_conn;
+    if (m_conn) {
+        delete m_conn;
+    }
     std::cout << "MyMongoDB::~MyMongoDB() End" << std::endl;
 }
 
@@ -41,6 +40,9 @@ MyMongoDB::query(const MyMongoDB::QueryString& qs) {
 
 bool
 MyMongoDB::initialize() {
+    m_conn = new mongo::DBClientConnection;
+
+    m_conn->connect(m_hostname);
     return true;
 }
 
