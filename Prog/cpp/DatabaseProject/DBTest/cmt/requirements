@@ -1,0 +1,7 @@
+package DBTest
+
+use SniperKernel v*
+use DatabaseSvc
+
+library DBTest *.cc
+apply_pattern linker_library library=DBTest
