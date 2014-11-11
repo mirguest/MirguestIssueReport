@@ -15,3 +15,7 @@ if __name__ == "__main__":
     import libDatabaseSvc
     dbsvc = task.createSvc("MyMongoDB")
     print dbsvc
+    # assume we can query directly
+    results = dbsvc.query("")
+    for r in  results:
+        print r
