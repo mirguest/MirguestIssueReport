@@ -2,8 +2,13 @@
 #include "MongoDB.h"
 #include <iostream>
 
-MyMongoDB::MyMongoDB()
-  : m_hostname("localhost"), m_conn(0){
+#include "SniperKernel/SvcFactory.h"
+#include "SniperKernel/SniperLog.h"
+
+DECLARE_SERVICE(MyMongoDB);
+
+MyMongoDB::MyMongoDB(const std::string& name)
+  : SvcBase(name), m_hostname("localhost"), m_conn(0){
     mongo::client::initialize();
     m_conn = new mongo::DBClientConnection;
 
@@ -33,3 +38,13 @@ MyMongoDB::query(const MyMongoDB::QueryString& qs) {
 
     return result;
 } 
+
+bool
+MyMongoDB::initialize() {
+    return true;
+}
+
+bool
+MyMongoDB::finalize() {
+    return true;
+}

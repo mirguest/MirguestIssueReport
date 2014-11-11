@@ -2,15 +2,19 @@
 #define src_MongoDB_h
 
 #include <DatabaseSvc/IQuery.h>
+#include <SniperKernel/SvcBase.h>
 
 namespace mongo {
     class DBClientConnection;
 }
 
-class MyMongoDB: public IQuery {
+class MyMongoDB: public IQuery, public SvcBase {
 public:
-    MyMongoDB();
+    MyMongoDB(const std::string& name);
     ~MyMongoDB();
+
+    bool initialize();
+    bool finalize();
 
     QueryResult query(const QueryString& qs);
 
