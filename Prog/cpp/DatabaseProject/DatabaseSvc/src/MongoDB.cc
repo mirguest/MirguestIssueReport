@@ -22,8 +22,8 @@ MyMongoDB::~MyMongoDB() {
     std::cout << "MyMongoDB::~MyMongoDB() End" << std::endl;
 }
 
-MyMongoDB::QueryResult 
-MyMongoDB::query(const MyMongoDB::QueryString& qs) {
+IQuery::QueryResult 
+MyMongoDB::query(const IQuery::QueryString& qs) {
     MyMongoDB::QueryResult result;
     
     std::auto_ptr<mongo::DBClientCursor> cursor = m_conn->query(
@@ -37,6 +37,12 @@ MyMongoDB::query(const MyMongoDB::QueryString& qs) {
 
     return result;
 } 
+
+bool
+MyMongoDB::update(const IUpdate::QueryString& qs, const IUpdate::RecordString& rs)
+{
+    return true;
+}
 
 bool
 MyMongoDB::initialize() {

@@ -2,13 +2,14 @@
 #define src_MongoDB_h
 
 #include <DatabaseSvc/IQuery.h>
+#include <DatabaseSvc/IUpdate.h>
 #include <SniperKernel/SvcBase.h>
 
 namespace mongo {
     class DBClientConnection;
 }
 
-class MyMongoDB: public IQuery, public SvcBase {
+class MyMongoDB: public IQuery, public IUpdate, public SvcBase {
 public:
     MyMongoDB(const std::string& name);
     ~MyMongoDB();
@@ -16,7 +17,8 @@ public:
     bool initialize();
     bool finalize();
 
-    QueryResult query(const QueryString& qs);
+    IQuery::QueryResult query(const IQuery::QueryString& qs);
+    bool update(const IUpdate::QueryString& qs, const IUpdate::RecordString& rs);
 
 private:
 
