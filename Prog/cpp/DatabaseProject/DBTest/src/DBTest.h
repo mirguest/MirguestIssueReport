@@ -9,6 +9,10 @@ public:
     bool initialize();
     bool execute();
     bool finalize();
+
+private:
+    void test_insert();
+    void test_query();
 };
 
 #endif
