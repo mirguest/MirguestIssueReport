@@ -47,6 +47,7 @@ MyMongoDB::update(const IUpdate::QueryString& qs, const IUpdate::RecordString& r
 bool
 MyMongoDB::insert(const IInsert::RecordString& rs)
 {
+    m_conn -> insert(m_dbname, mongo::fromjson(rs));
     return true;
 }
 
