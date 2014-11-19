@@ -3,13 +3,14 @@
 
 #include <DatabaseSvc/IQuery.h>
 #include <DatabaseSvc/IUpdate.h>
+#include <DatabaseSvc/IInsert.h>
 #include <SniperKernel/SvcBase.h>
 
 namespace mongo {
     class DBClientConnection;
 }
 
-class MyMongoDB: public IQuery, public IUpdate, public SvcBase {
+class MyMongoDB: public IQuery, public IInsert, public IUpdate, public SvcBase {
 public:
     MyMongoDB(const std::string& name);
     ~MyMongoDB();
@@ -19,6 +20,7 @@ public:
 
     IQuery::QueryResult query(const IQuery::QueryString& qs);
     bool update(const IUpdate::QueryString& qs, const IUpdate::RecordString& rs);
+    bool insert(const IInsert::RecordString& rs);
 
 private:
 

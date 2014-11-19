@@ -45,6 +45,12 @@ MyMongoDB::update(const IUpdate::QueryString& qs, const IUpdate::RecordString& r
 }
 
 bool
+MyMongoDB::insert(const IInsert::RecordString& rs)
+{
+    return true;
+}
+
+bool
 MyMongoDB::initialize() {
     m_conn = new mongo::DBClientConnection;
 
