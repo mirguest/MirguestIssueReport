@@ -41,6 +41,7 @@ MyMongoDB::query(const IQuery::QueryString& qs) {
 bool
 MyMongoDB::update(const IUpdate::QueryString& qs, const IUpdate::RecordString& rs)
 {
+    m_conn -> update(m_dbname, mongo::fromjson(qs), mongo::fromjson(rs));
     return true;
 }
 

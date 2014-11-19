@@ -12,6 +12,7 @@ public:
 
 private:
     void test_insert();
+    void test_update();
     void test_query();
 };
 

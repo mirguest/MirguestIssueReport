@@ -4,6 +4,7 @@
 #include "SniperKernel/SniperPtr.h"
 #include "DatabaseSvc/IQuery.h"
 #include "DatabaseSvc/IInsert.h"
+#include "DatabaseSvc/IUpdate.h"
 
 DECLARE_ALGORITHM(DBTest);
 
@@ -21,6 +22,7 @@ DBTest::initialize() {
 bool
 DBTest::execute() {
     test_insert();
+    test_update();
     test_query();
     return true;
 }
@@ -35,6 +37,15 @@ DBTest::test_insert() {
     SniperPtr<IInsert> insert_svc(getScope(), "MyMongoDB");
     IInsert::RecordString rs = "{\"age\":42}";
     insert_svc->insert(rs);
+}
+
+void
+DBTest::test_update() {
+    SniperPtr<IUpdate> update_svc(getScope(), "MyMongoDB");
+    IUpdate::QueryString qs = "{\"age\":42}";
+    IUpdate::RecordString rs = "{\"age\":24}";
+    update_svc->update(qs, rs);
+
 }
 
 void
