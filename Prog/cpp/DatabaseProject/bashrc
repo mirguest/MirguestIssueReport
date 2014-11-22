@@ -1,0 +1,4 @@
+
+export CMTPATH=`pwd`:$CMTPATH
+export MONGOHOME=/home/ihep/mongo-cxx-driver/build/install
+export LD_LIBRARY_PATH=$MONGOHOME/lib::$LD_LIBRARY_PATH

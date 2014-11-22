@@ -1,0 +1,14 @@
+package DatabaseSvc
+
+use SniperKernel v*
+use Boost v* Externals
+
+apply_pattern install_more_includes more="DatabaseSvc"
+
+macro_append Boost_linkopts " -lboost_thread -lboost_system -lboost_regex "
+
+macro_append DatabaseSvc_cppflags " -I${MONGOHOME}/include "
+macro_append DatabaseSvc_use_linkopts " -L${MONGOHOME}/lib -lmongoclient "
+
+library DatabaseSvc *.cc ../binding/DatabaseSvcExp.cc
+apply_pattern linker_library library=DatabaseSvc
