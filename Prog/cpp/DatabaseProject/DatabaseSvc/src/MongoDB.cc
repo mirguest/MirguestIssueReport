@@ -62,5 +62,7 @@ MyMongoDB::initialize() {
 
 bool
 MyMongoDB::finalize() {
+    mongo::BSONObj info;
+    m_conn->logout(m_dbname, info);
     return true;
 }
