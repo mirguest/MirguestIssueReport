@@ -23,8 +23,9 @@ def resize(arr,lower=0.0,upper=1.0):
     arr += lower
     return arr
 
-def magic_main(x):
-    n, bins, patches = plt.hist(x, 60, cumulative=True, normed=True)
+def magic_main(x, title, outputfile):
+    n, bins, patches = plt.hist(x, 60, cumulative=True, normed=True,
+            histtype='step')
     #print n     # y
     #print len(n)     # y
     #print bins  # x
@@ -44,9 +45,12 @@ def magic_main(x):
     print x0, k
 
     plog = sigmoid(p, bincenters)
-    plt.plot(bincenters, plog, '-')
+    #plt.plot(bincenters,n, '+', bincenters, plog, '-*')
+    plt.plot(bincenters, plog, '-*')
 
-    plt.show()
+    #plt.show()
+    plt.title(title)
+    plt.savefig(outputfile)
 
 if __name__ == "__main__":
     import argparse
@@ -58,6 +62,7 @@ if __name__ == "__main__":
     col = args.col
     data = np.loadtxt(filename)
     x = data[:, col]
-
-    magic_main(x)
+    title = "%s: %d" %(filename, col)
+    outputfile = "%s-%d.png"%(filename, col)
+    magic_main(x, title, outputfile)
 
