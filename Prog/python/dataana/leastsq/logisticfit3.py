@@ -12,6 +12,11 @@ def sigmoid(p,x):
     y = 1 / (1 + np.exp(-k*(x-x0)))
     return y
 
+def sigmoid2(p,x):
+    x0,k=p
+    y = k * np.exp(-k*(x-x0)) / (1 + np.exp(-k*(x-x0)))**2
+    return y
+
 def residuals(p,x,y):
     return y - sigmoid(p,x)
 
@@ -24,8 +29,15 @@ def resize(arr,lower=0.0,upper=1.0):
     return arr
 
 def magic_main(x, title, outputfile):
+    #fig = plt.figure()
+    plt.title(title)
+    #print np.sum(n)
+    plt.subplot(2,1,1)
+    #fig.add_subplot(212)
+    #return
     n, bins, patches = plt.hist(x, 60, cumulative=True, normed=True,
             histtype='step')
+    print np.sum(n)
     #print n     # y
     #print len(n)     # y
     #print bins  # x
@@ -49,7 +61,14 @@ def magic_main(x, title, outputfile):
     plt.plot(bincenters, plog, '-*')
 
     #plt.show()
-    plt.title(title)
+    # ======
+    #fig.add_subplot(211)
+    plt.subplot(2,1,2)
+    n, bins, patches = plt.hist(x, 60, normed=True, stacked=True)
+    plog = sigmoid2(p, bincenters)
+    plt.plot(bincenters, plog, '-*')
+
+    #plt.show()
     plt.savefig(outputfile)
 
 if __name__ == "__main__":
