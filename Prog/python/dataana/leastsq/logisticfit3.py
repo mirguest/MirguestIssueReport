@@ -35,8 +35,8 @@ def magic_main(x, title, outputfile):
     plt.subplot(2,1,1)
     #fig.add_subplot(212)
     #return
-    n, bins, patches = plt.hist(x, 60, cumulative=True, normed=True,
-            histtype='step')
+    n, bins, patches = plt.hist(x, 22, cumulative=True, normed=True,
+            histtype='bar', color='crimson')
     print np.sum(n)
     #print n     # y
     #print len(n)     # y
@@ -56,17 +56,18 @@ def magic_main(x, title, outputfile):
     x0,k=p
     print x0, k
 
+    bincenters = np.arange(bins[0], bins[-1], 10)
     plog = sigmoid(p, bincenters)
     #plt.plot(bincenters,n, '+', bincenters, plog, '-*')
-    plt.plot(bincenters, plog, '-*')
+    plt.plot(bincenters, plog, '-')
 
     #plt.show()
     # ======
     #fig.add_subplot(211)
     plt.subplot(2,1,2)
-    n, bins, patches = plt.hist(x, 60, normed=True, stacked=True)
+    n, bins, patches = plt.hist(x, 22, normed=True, stacked=True)
     plog = sigmoid2(p, bincenters)
-    plt.plot(bincenters, plog, '-*')
+    plt.plot(bincenters, plog, '-')
 
     #plt.show()
     plt.savefig(outputfile)
@@ -79,6 +80,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     filename = args.file
     col = args.col
+    print filename, col
     data = np.loadtxt(filename)
     x = data[:, col]
     title = "%s: %d" %(filename, col)
