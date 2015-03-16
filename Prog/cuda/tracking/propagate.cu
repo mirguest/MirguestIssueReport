@@ -29,6 +29,9 @@
 #include <helper_cuda.h>
 #include <helper_functions.h> // helper functions for SDK examples
 
+#define CONSTANT_LS_BALL_R 17500.
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // declaration, forward
 void runTest(int argc, char **argv);
@@ -91,6 +94,30 @@ generate_op_uniform(curandState *state,
     state[id] = localState;
 }
 
+__global__ void 
+propagate_op_to_boundary(curandState *state,
+                    float* op_x,  float* op_y,  float* op_z,
+                    float* op_px, float* op_py, float* op_pz) {
+    float dist = -1.0; // if dist < 0, some errors happen
+
+    int id = blockDim.x * blockIdx.x + threadIdx.x;
+
+    float r2 = ( op_x[id]*op_x[id] + op_y[id]*op_y[id] + op_z[id]*op_z[id]);
+    float r = sqrtf(r2);
+    // r \dot dir = r * cos(theta)
+    float r_costheta = (op_x[id]*op_px[id]
+                      + op_y[id]*op_py[id]
+                      + op_z[id]*op_pz[id]
+                        ); 
+    
+    dist = - r_costheta + sqrtf( CONSTANT_LS_BALL_R*CONSTANT_LS_BALL_R
+                               - (r2 - r_costheta*r_costheta));
+    // update the position
+    op_x[id] += dist*op_px[id];
+    op_y[id] += dist*op_py[id];
+    op_z[id] += dist*op_pz[id];
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Program main
 ////////////////////////////////////////////////////////////////////////////////
@@ -148,11 +175,13 @@ runTest(int argc, char **argv)
     // execute the kernel
     //testKernel<<< grid, threads, mem_size >>>(d_idata, d_odata);
 
-    // random generator
+    // = OP Tracking =
+    // == initialize random generator =
     curandState *devStates = 0;
     cudaMalloc((void **)&devStates, grid.x * threads.x * 
                               sizeof(curandState));
 
+    // == momentum ==
     float *h_oppx = 0;
     float *h_oppy = 0;
     float *h_oppz = 0;
@@ -168,14 +197,59 @@ runTest(int argc, char **argv)
     cudaMalloc((void**)&d_oppy, grid.x * threads.x * sizeof(float));
     cudaMalloc((void**)&d_oppz, grid.x * threads.x * sizeof(float));
 
-    init_rand_state<<< grid, threads >>>(devStates, 42);
+    // == position ==
+    // set the initial position
+    // default unit is mm, (same as geant4)
+    float *h_opx = 0;
+    float *h_opy = 0;
+    float *h_opz = 0;
+    h_opx = (float*)malloc(grid.x * threads.x * sizeof(float));
+    h_opy = (float*)malloc(grid.x * threads.x * sizeof(float));
+    h_opz = (float*)malloc(grid.x * threads.x * sizeof(float));
 
+    for (int i = 0; i < grid.x * threads.x; ++i) {
+        h_opx[i] = 1.e3; // 1m
+        h_opy[i] = 0.e3; // 0m
+        h_opy[i] = 0.e3; // 0m
+    }
+
+    float *d_opx = 0;
+    float *d_opy = 0;
+    float *d_opz = 0;
+
+    cudaMalloc((void**)&d_opx, grid.x * threads.x * sizeof(float));
+    cudaMalloc((void**)&d_opy, grid.x * threads.x * sizeof(float));
+    cudaMalloc((void**)&d_opz, grid.x * threads.x * sizeof(float));
+
+    cudaMemcpy(d_opx, h_opx, grid.x * threads.x * sizeof(float),
+                        cudaMemcpyHostToDevice); 
+    cudaMemcpy(d_opy, h_opy, grid.x * threads.x * sizeof(float),
+                        cudaMemcpyHostToDevice); 
+    cudaMemcpy(d_opz, h_opz, grid.x * threads.x * sizeof(float),
+                        cudaMemcpyHostToDevice); 
+
+    // == start ==
+    // === initialize the random engine ===
+    init_rand_state<<< grid, threads >>>(devStates, 42);
+    // === generate the direction ===
     generate_op_uniform<<< grid, threads >>>(devStates, d_oppx, d_oppy, d_oppz);
+    // === start tracking onec ===
+    propagate_op_to_boundary<<< grid, threads >>>(devStates, 
+            d_opx,  d_opy,  d_opz,
+            d_oppx, d_oppy, d_oppz);
 
     // check if kernel execution generated and error
     getLastCudaError("Kernel execution failed");
 
     // == copy data back to host ==
+    // === copy data back to host (position)===
+    cudaMemcpy(h_opx, d_opx, grid.x * threads.x * sizeof(float),
+                        cudaMemcpyDeviceToHost);
+    cudaMemcpy(h_opy, d_opy, grid.x * threads.x * sizeof(float),
+                        cudaMemcpyDeviceToHost);
+    cudaMemcpy(h_opz, d_opz, grid.x * threads.x * sizeof(float),
+                        cudaMemcpyDeviceToHost);
+    // === copy data back to host (momentum)===
     cudaMemcpy(h_oppx, d_oppx, grid.x * threads.x * sizeof(float),
                         cudaMemcpyDeviceToHost);
     cudaMemcpy(h_oppy, d_oppy, grid.x * threads.x * sizeof(float),
@@ -195,9 +269,14 @@ runTest(int argc, char **argv)
     sdkDeleteTimer(&timer);
 
 
-    // print the data
+    // = print the data =
+    // == print the data of momentum ==
+    //for (int i = 0; i < grid.x*threads.x; ++i) {
+    //    std::cout << h_oppx[i] << " " << h_oppy[i] << " " << h_oppz[i] << std::endl;
+    //}
+    // == print the data of position ==
     for (int i = 0; i < grid.x*threads.x; ++i) {
-        std::cout << h_oppx[i] << " " << h_oppy[i] << " " << h_oppz[i] << std::endl;
+        std::cout << h_opx[i] << " " << h_opy[i] << " " << h_opz[i] << std::endl;
     }
 
     // compute reference solution
