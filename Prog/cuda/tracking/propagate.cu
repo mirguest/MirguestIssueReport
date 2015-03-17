@@ -30,6 +30,9 @@
 #include <helper_functions.h> // helper functions for SDK examples
 
 #define CONSTANT_LS_BALL_R 17500.
+#define CONSTANT_LS_RINDEX 1.50
+#define CONSTANT_WATER_RINDEX 1.33
+#define CONSTANT_PMT_BALL_R 19500.
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -104,13 +107,89 @@ propagate_op_to_boundary(curandState *state,
 
     float r2 = ( op_x[id]*op_x[id] + op_y[id]*op_y[id] + op_z[id]*op_z[id]);
     float r = sqrtf(r2);
+
+    // r \dot dir = r * cos(theta)
+    float r_costheta = (op_x[id]*op_px[id]
+                      + op_y[id]*op_py[id]
+                      + op_z[id]*op_pz[id]
+                        ); 
+
+    float r_sintheta = sqrtf(r2 - r_costheta*r_costheta);
+
+    dist = (sqrtf(CONSTANT_LS_BALL_R + r_sintheta))
+          *(sqrtf(CONSTANT_LS_BALL_R - r_sintheta));
+    op_x[id] = (CONSTANT_LS_BALL_R );
+    op_y[id] = (CONSTANT_LS_BALL_R );
+    op_z[id] = (CONSTANT_LS_BALL_R );
+    return;
+    
+    dist = - r_costheta + sqrtf(CONSTANT_LS_BALL_R + r_sintheta)
+                         *sqrtf(CONSTANT_LS_BALL_R - r_sintheta);
+    op_x[id] = dist;
+    op_y[id] = dist;
+    op_z[id] = dist;
+    return;
+
+
+    // update the position
+    op_x[id] += dist*op_px[id];
+    op_y[id] += dist*op_py[id];
+    op_z[id] += dist*op_pz[id];
+}
+
+__global__ void 
+propagate_op_at_boundary(curandState *state,
+                    float* op_x,  float* op_y,  float* op_z,
+                    float* op_px, float* op_py, float* op_pz) {
+    int id = blockDim.x * blockIdx.x + threadIdx.x;
+
+    float n = CONSTANT_LS_RINDEX / CONSTANT_WATER_RINDEX;
+    // incident: 
+    float r2 = ( op_x[id]*op_x[id] + op_y[id]*op_y[id] + op_z[id]*op_z[id]);
+    float r = sqrtf(r2);
+    // r \dot dir = r * cos(theta)
+    float cosI = (op_x[id]*op_px[id]
+                + op_y[id]*op_py[id]
+                + op_z[id]*op_pz[id]
+                  ) / r; 
+    float sinT2 = n*n*(1.0-cosI*cosI);
+    if (sinT2 > 1.0) {
+        // total internal reflection
+        // * for current stage, just set it to zero.
+        op_px[id] = 0.0;
+        op_py[id] = 0.0;
+        op_pz[id] = 0.0;
+    } else {
+        // refraction
+        op_px[id] = n*op_px[id] 
+                    + (n+sqrtf(1.0 - sinT2)) * op_x[id]/CONSTANT_LS_BALL_R;
+        op_py[id] = n*op_py[id] 
+                    + (n+sqrtf(1.0 - sinT2)) * op_y[id]/CONSTANT_LS_BALL_R;
+        op_pz[id] = n*op_pz[id] 
+                    + (n+sqrtf(1.0 - sinT2)) * op_z[id]/CONSTANT_LS_BALL_R;
+    }
+
+
+
+}
+
+__global__ void 
+propagate_op_to_boundary_pmt(curandState *state,
+                    float* op_x,  float* op_y,  float* op_z,
+                    float* op_px, float* op_py, float* op_pz) {
+    float dist = -1.0; // if dist < 0, some errors happen
+
+    int id = blockDim.x * blockIdx.x + threadIdx.x;
+
+    float r2 = ( op_x[id]*op_x[id] + op_y[id]*op_y[id] + op_z[id]*op_z[id]);
+    float r = sqrtf(r2);
     // r \dot dir = r * cos(theta)
     float r_costheta = (op_x[id]*op_px[id]
                       + op_y[id]*op_py[id]
                       + op_z[id]*op_pz[id]
                         ); 
     
-    dist = - r_costheta + sqrtf( CONSTANT_LS_BALL_R*CONSTANT_LS_BALL_R
+    dist = - r_costheta + sqrtf( CONSTANT_PMT_BALL_R*CONSTANT_PMT_BALL_R
                                - (r2 - r_costheta*r_costheta));
     // update the position
     op_x[id] += dist*op_px[id];
@@ -144,8 +223,8 @@ runTest(int argc, char **argv)
     sdkCreateTimer(&timer);
     sdkStartTimer(&timer);
 
-    unsigned int num_threads = 32;
-    unsigned int num_blocks = 64;
+    unsigned int num_threads = 1; //32;
+    unsigned int num_blocks = 1; //64;
     unsigned int mem_size = sizeof(float) * num_threads;
 
     // allocate host memory
@@ -233,10 +312,22 @@ runTest(int argc, char **argv)
     init_rand_state<<< grid, threads >>>(devStates, 42);
     // === generate the direction ===
     generate_op_uniform<<< grid, threads >>>(devStates, d_oppx, d_oppy, d_oppz);
-    // === start tracking onec ===
+    // === start tracking optical photon ===
+    // ==== -> LS boundary ====
+    // the position will be updated
     propagate_op_to_boundary<<< grid, threads >>>(devStates, 
             d_opx,  d_opy,  d_opz,
             d_oppx, d_oppy, d_oppz);
+    // // ==== -> Refract between LS and Water====
+    // // the momentum will be updated
+    // propagate_op_at_boundary<<< grid, threads >>>(devStates, 
+    //         d_opx,  d_opy,  d_opz,
+    //         d_oppx, d_oppy, d_oppz);
+    // // ==== -> PMT boundary ====
+    // // the position will be updated
+    // propagate_op_to_boundary_pmt<<< grid, threads >>>(devStates, 
+    //         d_opx,  d_opy,  d_opz,
+    //         d_oppx, d_oppy, d_oppz);
 
     // check if kernel execution generated and error
     getLastCudaError("Kernel execution failed");
@@ -271,9 +362,11 @@ runTest(int argc, char **argv)
 
     // = print the data =
     // == print the data of momentum ==
-    //for (int i = 0; i < grid.x*threads.x; ++i) {
-    //    std::cout << h_oppx[i] << " " << h_oppy[i] << " " << h_oppz[i] << std::endl;
-    //}
+    for (int i = 0; i < grid.x*threads.x; ++i) {
+        std::cout << h_oppx[i] << " " << h_oppy[i] << " " << h_oppz[i] << std::endl;
+    }
+    std::cout << "========================================================"
+              << std::endl;
     // == print the data of position ==
     for (int i = 0; i < grid.x*threads.x; ++i) {
         std::cout << h_opx[i] << " " << h_opy[i] << " " << h_opz[i] << std::endl;
