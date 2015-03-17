@@ -216,8 +216,10 @@ runTest(int argc, char **argv)
     sdkCreateTimer(&timer);
     sdkStartTimer(&timer);
 
-    unsigned int num_threads = 1; //32;
-    unsigned int num_blocks = 1; //64;
+    // unsigned int num_threads = 1; //32;
+    // unsigned int num_blocks = 1; //64;
+    unsigned int num_threads = 32;
+    unsigned int num_blocks = 64;
     unsigned int mem_size = sizeof(float) * num_threads;
 
     // allocate host memory
@@ -316,11 +318,11 @@ runTest(int argc, char **argv)
     propagate_op_at_boundary<<< grid, threads >>>(devStates, 
             d_opx,  d_opy,  d_opz,
             d_oppx, d_oppy, d_oppz);
-    // // ==== -> PMT boundary ====
-    // // the position will be updated
-    // propagate_op_to_boundary_pmt<<< grid, threads >>>(devStates, 
-    //         d_opx,  d_opy,  d_opz,
-    //         d_oppx, d_oppy, d_oppz);
+    // ==== -> PMT boundary ====
+    // the position will be updated
+    propagate_op_to_boundary_pmt<<< grid, threads >>>(devStates, 
+            d_opx,  d_opy,  d_opz,
+            d_oppx, d_oppy, d_oppz);
 
     // check if kernel execution generated and error
     getLastCudaError("Kernel execution failed");
