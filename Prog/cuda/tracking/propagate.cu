@@ -154,12 +154,9 @@ propagate_op_at_boundary(curandState *state,
         // refraction
         float tmp = (sqrtf(1.0 - sinT2)-n*cosI);
 
-        op_px[id] = n*op_px[id] 
-                    + tmp * norm_x;
-        op_py[id] = n*op_py[id] 
-                    + tmp * norm_x;
-        op_pz[id] = n*op_pz[id] 
-                    + tmp * norm_x;
+        op_px[id] = n*op_px[id] + tmp * norm_x;
+        op_py[id] = n*op_py[id] + tmp * norm_y;
+        op_pz[id] = n*op_pz[id] + tmp * norm_z;
     }
 
 
@@ -220,6 +217,16 @@ runTest(int argc, char **argv)
     // unsigned int num_blocks = 1; //64;
     unsigned int num_threads = 32;
     unsigned int num_blocks = 64;
+
+    unsigned int total_photon = num_threads * num_blocks;
+    
+    if (checkCmdLineFlag(argc, (const char **)argv, "total")) {
+        total_photon = getCmdLineArgumentInt(argc, (const char **)argv, "total");
+    }
+
+    num_blocks = (total_photon+num_threads-1)/num_threads;
+
+
     unsigned int mem_size = sizeof(float) * num_threads;
 
     // allocate host memory
