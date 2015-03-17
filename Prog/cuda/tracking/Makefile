@@ -144,7 +144,7 @@ ALL_LDFLAGS += $(addprefix -Xlinker ,$(LDFLAGS))
 ALL_LDFLAGS += $(addprefix -Xlinker ,$(EXTRA_LDFLAGS))
 
 # Common includes and paths for CUDA
-INCLUDES  := -I/home/ihep/data/doc/home/ihep/NVIDIA_CUDA-6.5_Samples/common/inc
+INCLUDES  := -I/home/ihep/NVIDIA_CUDA-6.5_Samples/common/inc
 LIBRARIES :=
 
 ################################################################################

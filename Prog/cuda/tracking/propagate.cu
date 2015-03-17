@@ -115,21 +115,9 @@ propagate_op_to_boundary(curandState *state,
                         ); 
 
     float r_sintheta = sqrtf(r2 - r_costheta*r_costheta);
-
-    dist = (sqrtf(CONSTANT_LS_BALL_R + r_sintheta))
-          *(sqrtf(CONSTANT_LS_BALL_R - r_sintheta));
-    op_x[id] = (CONSTANT_LS_BALL_R );
-    op_y[id] = (CONSTANT_LS_BALL_R );
-    op_z[id] = (CONSTANT_LS_BALL_R );
-    return;
     
     dist = - r_costheta + sqrtf(CONSTANT_LS_BALL_R + r_sintheta)
                          *sqrtf(CONSTANT_LS_BALL_R - r_sintheta);
-    op_x[id] = dist;
-    op_y[id] = dist;
-    op_z[id] = dist;
-    return;
-
 
     // update the position
     op_x[id] += dist*op_px[id];
@@ -147,6 +135,9 @@ propagate_op_at_boundary(curandState *state,
     // incident: 
     float r2 = ( op_x[id]*op_x[id] + op_y[id]*op_y[id] + op_z[id]*op_z[id]);
     float r = sqrtf(r2);
+    float norm_x = op_x[id]/r;
+    float norm_y = op_y[id]/r;
+    float norm_z = op_z[id]/r;
     // r \dot dir = r * cos(theta)
     float cosI = (op_x[id]*op_px[id]
                 + op_y[id]*op_py[id]
@@ -161,12 +152,14 @@ propagate_op_at_boundary(curandState *state,
         op_pz[id] = 0.0;
     } else {
         // refraction
+        float tmp = (sqrtf(1.0 - sinT2)-n*cosI);
+
         op_px[id] = n*op_px[id] 
-                    + (n+sqrtf(1.0 - sinT2)) * op_x[id]/CONSTANT_LS_BALL_R;
+                    + tmp * norm_x;
         op_py[id] = n*op_py[id] 
-                    + (n+sqrtf(1.0 - sinT2)) * op_y[id]/CONSTANT_LS_BALL_R;
+                    + tmp * norm_x;
         op_pz[id] = n*op_pz[id] 
-                    + (n+sqrtf(1.0 - sinT2)) * op_z[id]/CONSTANT_LS_BALL_R;
+                    + tmp * norm_x;
     }
 
 
@@ -318,11 +311,11 @@ runTest(int argc, char **argv)
     propagate_op_to_boundary<<< grid, threads >>>(devStates, 
             d_opx,  d_opy,  d_opz,
             d_oppx, d_oppy, d_oppz);
-    // // ==== -> Refract between LS and Water====
-    // // the momentum will be updated
-    // propagate_op_at_boundary<<< grid, threads >>>(devStates, 
-    //         d_opx,  d_opy,  d_opz,
-    //         d_oppx, d_oppy, d_oppz);
+    // ==== -> Refract between LS and Water====
+    // the momentum will be updated
+    propagate_op_at_boundary<<< grid, threads >>>(devStates, 
+            d_opx,  d_opy,  d_opz,
+            d_oppx, d_oppy, d_oppz);
     // // ==== -> PMT boundary ====
     // // the position will be updated
     // propagate_op_to_boundary_pmt<<< grid, threads >>>(devStates, 
