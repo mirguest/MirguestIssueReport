@@ -105,6 +105,9 @@ propagate_op_to_boundary(curandState *state,
     float dist = -1.0; // if dist < 0, some errors happen
 
     int id = blockDim.x * blockIdx.x + threadIdx.x;
+    if (op_px[id] == 0.0 && op_py[id] == 0.0 && op_pz[id] == 0.0) {
+        return;
+    }
     /* Copy state to local memory for efficiency */
     curandState localState = state[id];
 
@@ -151,6 +154,9 @@ propagate_op_at_boundary(curandState *state,
                     float* op_x,  float* op_y,  float* op_z,
                     float* op_px, float* op_py, float* op_pz) {
     int id = blockDim.x * blockIdx.x + threadIdx.x;
+    if (op_px[id] == 0.0 && op_py[id] == 0.0 && op_pz[id] == 0.0) {
+        return;
+    }
 
     float n = CONSTANT_LS_RINDEX / CONSTANT_WATER_RINDEX;
     // incident: 
@@ -191,6 +197,9 @@ propagate_op_to_boundary_pmt(curandState *state,
     float dist = -1.0; // if dist < 0, some errors happen
 
     int id = blockDim.x * blockIdx.x + threadIdx.x;
+    if (op_px[id] == 0.0 && op_py[id] == 0.0 && op_pz[id] == 0.0) {
+        return;
+    }
 
     float r2 = ( op_x[id]*op_x[id] + op_y[id]*op_y[id] + op_z[id]*op_z[id]);
     float r = sqrtf(r2);
