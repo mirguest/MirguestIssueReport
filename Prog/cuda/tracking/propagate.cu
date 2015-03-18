@@ -219,10 +219,25 @@ runTest(int argc, char **argv)
     unsigned int num_blocks = 64;
 
     unsigned int total_photon = num_threads * num_blocks;
+
+    int init_pos_x = 0;
+    int init_pos_y = 0;
+    int init_pos_z = 0;
     
     if (checkCmdLineFlag(argc, (const char **)argv, "total")) {
         total_photon = getCmdLineArgumentInt(argc, (const char **)argv, "total");
     }
+
+    if (checkCmdLineFlag(argc, (const char **)argv, "x")) {
+        init_pos_x = getCmdLineArgumentInt(argc, (const char **)argv, "x");
+    }
+    if (checkCmdLineFlag(argc, (const char **)argv, "y")) {
+        init_pos_y = getCmdLineArgumentInt(argc, (const char **)argv, "y");
+    }
+    if (checkCmdLineFlag(argc, (const char **)argv, "z")) {
+        init_pos_z = getCmdLineArgumentInt(argc, (const char **)argv, "z");
+    }
+
 
     num_blocks = (total_photon+num_threads-1)/num_threads;
 
@@ -289,9 +304,9 @@ runTest(int argc, char **argv)
     h_opz = (float*)malloc(grid.x * threads.x * sizeof(float));
 
     for (int i = 0; i < grid.x * threads.x; ++i) {
-        h_opx[i] = 1.e3; // 1m
-        h_opy[i] = 0.e3; // 0m
-        h_opy[i] = 0.e3; // 0m
+        h_opx[i] = init_pos_x; // 1m
+        h_opy[i] = init_pos_y; // 0m
+        h_opy[i] = init_pos_z; // 0m
     }
 
     float *d_opx = 0;
