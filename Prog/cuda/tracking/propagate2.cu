@@ -34,6 +34,7 @@
 #define CONSTANT_WATER_RINDEX 1.33
 #define CONSTANT_PMT_BALL_R 19500.
 #define CONSTANT_MEAN_PATH_LS 60000.
+#define CONSTANT_MEAN_PATH_WATER 30000.
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -200,6 +201,8 @@ propagate_op_to_boundary_pmt(curandState *state,
     if (op_px[id] == 0.0 && op_py[id] == 0.0 && op_pz[id] == 0.0) {
         return;
     }
+    /* Copy state to local memory for efficiency */
+    curandState localState = state[id];
 
     float r2 = ( op_x[id]*op_x[id] + op_y[id]*op_y[id] + op_z[id]*op_z[id]);
     float r = sqrtf(r2);
@@ -211,10 +214,24 @@ propagate_op_to_boundary_pmt(curandState *state,
     
     dist = - r_costheta + sqrtf( CONSTANT_PMT_BALL_R*CONSTANT_PMT_BALL_R
                                - (r2 - r_costheta*r_costheta));
+    // == absorption ==
+    float dist_abs = CONSTANT_MEAN_PATH_WATER * (-logf(curand_uniform(&localState)));
+    if (dist_abs <= dist) {
+        // the photon stop at the abs position
+        dist = dist_abs;
+    }
     // update the position
     op_x[id] += dist*op_px[id];
     op_y[id] += dist*op_py[id];
     op_z[id] += dist*op_pz[id];
+    if (dist_abs <= dist) {
+        // the photon stop at the abs position
+        op_px[id] = 0.0;
+        op_py[id] = 0.0;
+        op_pz[id] = 0.0;
+    }
+    /* Copy state back to global memory */
+    state[id] = localState;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
