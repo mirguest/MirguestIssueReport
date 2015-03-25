@@ -183,7 +183,7 @@ endif
 # Target rules
 all: build
 
-build: propagate propagate2 propagate3
+build: propagate propagate2 propagate3 rayleigh
 
 check.deps:
 ifeq ($(SAMPLE_ENABLED),0)
@@ -222,6 +222,14 @@ propagate3: propagate3.o propagate_cpu.o
 	$(EXEC) mkdir -p ../../bin/$(OS_ARCH)/$(OSLOWER)/$(TARGET)$(if $(abi),/$(abi))
 	$(EXEC) cp $@ ../../bin/$(OS_ARCH)/$(OSLOWER)/$(TARGET)$(if $(abi),/$(abi))
 #
+# == rayleigh ==
+rayleigh.o:rayleigh.cu
+	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
+
+rayleigh: rayleigh.o
+	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
+	$(EXEC) mkdir -p ../../bin/$(OS_ARCH)/$(OSLOWER)/$(TARGET)$(if $(abi),/$(abi))
+	$(EXEC) cp $@ ../../bin/$(OS_ARCH)/$(OSLOWER)/$(TARGET)$(if $(abi),/$(abi))
 
 run: build
 	$(EXEC) ./propagate

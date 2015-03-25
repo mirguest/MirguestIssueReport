@@ -164,6 +164,7 @@ propagate_op_to_boundary(curandState *state,
         op_pz[id] = 0.0;
     } else if (type == 2) {
         // update momentum
+        // rayleigh_scattering();
     }
 
     /* Copy state back to global memory */
