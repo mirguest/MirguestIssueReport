@@ -34,6 +34,7 @@
 #define CONSTANT_WATER_RINDEX 1.33
 #define CONSTANT_PMT_BALL_R 19500.
 #define CONSTANT_MEAN_PATH_LS 60000.
+#define CONSTANT_RAYLEIGH_LS 30000.
 #define CONSTANT_MEAN_PATH_WATER 30000.
 
 
@@ -124,14 +125,30 @@ propagate_op_to_boundary(curandState *state,
 
     float r_sintheta = sqrtf(r2 - r_costheta*r_costheta);
     
+    // == flight ==
     dist = - r_costheta + sqrtf(CONSTANT_LS_BALL_R + r_sintheta)
                          *sqrtf(CONSTANT_LS_BALL_R - r_sintheta);
     // == absorption ==
     float dist_abs = CONSTANT_MEAN_PATH_LS * (-logf(curand_uniform(&localState)));
+    // == rayleigh ==
+    float dist_ray = CONSTANT_RAYLEIGH_LS*(-logf(curand_uniform(&localState)));
+
+    // type of physics
+    // * 0 -> flight
+    // * 1 -> absorption
+    // * 2 -> rayleigh
+    int type = 0;
 
     if (dist_abs <= dist) {
         // the photon stop at the abs position
         dist = dist_abs;
+        type = 1;
+    }
+
+    if (dist_ray <= dist) {
+        // the photon stop at the abs position
+        dist = dist_ray;
+        type = 2;
     }
 
     // update the position
@@ -139,11 +156,14 @@ propagate_op_to_boundary(curandState *state,
     op_y[id] += dist*op_py[id];
     op_z[id] += dist*op_pz[id];
 
-    if (dist_abs <= dist) {
+    // update the momentum
+    if (type == 1) {
         // the photon stop at the abs position
         op_px[id] = 0.0;
         op_py[id] = 0.0;
         op_pz[id] = 0.0;
+    } else if (type == 2) {
+        // update momentum
     }
 
     /* Copy state back to global memory */
