@@ -203,5 +203,12 @@ runTest(int argc, char **argv)
     cudaMemcpy(h_op_polz, d_op_polz, grid.x * threads.x * sizeof(float),
                         cudaMemcpyDeviceToHost);
 
+    // = display the results =
+    for (int i = 0; i < grid.x*threads.x; ++i) {
+        std::cout << h_op_x[i] << " " << h_op_y[i] << " " << h_op_z[i] << " "
+                  << h_op_px[i] << " " << h_op_py[i] << " " << h_op_pz[i] << " "
+                  << h_op_polx[i] << " " << h_op_poly[i] << " " << h_op_polz[i] << " "
+                  << std::endl;
+    }
 
 }
