@@ -340,6 +340,10 @@ runTest(int argc, char **argv)
     cudaMemcpy(h_op_polz, d_op_polz, grid.x * threads.x * sizeof(float),
                         cudaMemcpyDeviceToHost);
 
+    sdkStopTimer(&timer);
+    printf("Processing time: %f (ms)\n", sdkGetTimerValue(&timer));
+    sdkDeleteTimer(&timer);
+
     // = display the results =
     for (int i = 0; i < grid.x*threads.x; ++i) {
         std::cout << h_op_x[i] << " " << h_op_y[i] << " " << h_op_z[i] << " "
