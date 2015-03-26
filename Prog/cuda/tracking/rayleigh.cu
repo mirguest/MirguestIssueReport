@@ -221,6 +221,12 @@ runTest(int argc, char **argv)
     int init_pos_y = 0;
     int init_pos_z = 0;
 
+    // command line parser
+    if (checkCmdLineFlag(argc, (const char **)argv, "total")) {
+        total_photon = getCmdLineArgumentInt(argc, (const char **)argv, "total");
+    }
+    num_blocks = (total_photon+num_threads-1)/num_threads;
+
     // setup execution parameters
     dim3  grid(num_blocks, 1, 1);
     dim3  threads(num_threads, 1, 1);
