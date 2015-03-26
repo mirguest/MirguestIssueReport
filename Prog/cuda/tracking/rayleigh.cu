@@ -63,6 +63,39 @@ generate_op_uniform(curandState *state,
     /* Copy state back to global memory */
     state[id] = localState;
 }
+////////////////////////////////////////////////////////////////////////////////
+__global__ void
+test_generate_op_uniform(curandState *state,
+                    float* op_px,   float* op_py,   float* op_pz,
+                    float* op_polx, float* op_poly, float* op_polz) {
+    int id = blockDim.x * blockIdx.x + threadIdx.x;
+    /* Copy state to local memory for efficiency */
+    curandState localState = state[id];
+
+    // == theta and phi ==
+    // theta = 0, phi = 0
+    float costheta = 1.;
+    float sintheta = 0.;
+    float phi = 0.;
+    float cosphi = cosf(phi);
+    float sinphi = sinf(phi);
+
+    op_px[id] = 1.*sintheta*cosphi;
+    op_py[id] = 1.*sintheta*sinphi;
+    op_pz[id] = 1.*costheta;
+
+    // == in a local coordinate, generate polarization in x-y plane ==
+    float pol_phi = 2*CUDART_PI_F*curand_uniform(&localState);
+    float dx = cosf(pol_phi);
+    float dy = sinf(pol_phi);
+    // === rotate the polarization ===
+    op_polx[id] = cosphi*costheta*dx - sinphi*dy;
+    op_poly[id] = sinphi*costheta*dx + cosphi*dy;
+    op_polz[id] = -sintheta*dx;;
+
+    /* Copy state back to global memory */
+    state[id] = localState;
+}
 
 __device__ void
 rotateUz(const float& u1, const float& u2, const float& u3, 
@@ -266,7 +299,10 @@ runTest(int argc, char **argv)
     init_rand_state<<< grid, threads >>>(devStates, 42);
     // == generate optical photons ==
     // === generate the direction ===
-    generate_op_uniform<<< grid, threads >>>(devStates, 
+    // generate_op_uniform<<< grid, threads >>>(devStates, 
+    //         d_op_px,   d_op_py,   d_op_pz,
+    //         d_op_polx, d_op_poly, d_op_polz);
+    test_generate_op_uniform<<< grid, threads >>>(devStates, 
             d_op_px,   d_op_py,   d_op_pz,
             d_op_polx, d_op_poly, d_op_polz);
 
