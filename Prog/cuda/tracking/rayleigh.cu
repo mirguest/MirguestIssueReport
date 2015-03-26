@@ -63,6 +63,97 @@ generate_op_uniform(curandState *state,
     /* Copy state back to global memory */
     state[id] = localState;
 }
+
+__device__ void
+rotateUz(const float& u1, const float& u2, const float& u3, 
+         float& dx, float& dy, float& dz) {
+    // rotate (dx, dy, dz) to (dx', dy', dz')
+    // copy from CLHEP::ThreeVector::rotateUz
+    float up = u1*u1 + u2*u2;
+
+    if (up>0) {
+        up = sqrtf(up);
+        double px = dx,  py = dy,  pz = dz;
+        dx = (u1*u3*px - u2*py)/up + u1*pz;
+        dy = (u2*u3*px + u1*py)/up + u2*pz;
+        dz =    -up*px +             u3*pz;
+    } else if (u3 < 0.) {
+        dx = -dx;
+        dz = -dz;
+    }
+}
+
+__device__ void
+do_rayleigh(curandState& state,
+            float& op_px,   float& op_py,   float& op_pz,
+            float& op_polx, float& op_poly, float& op_polz) {
+    float sc_op_px, sc_op_py, sc_op_pz;
+    float sc_op_polx, sc_op_poly, sc_op_polz;
+
+    int cnt = 0;
+    while(true) {
+        // == sample the scattering momentum ==
+        // === sample the scattering momentum in local coordiniate ===
+        float costheta = -1. + 2*curand_uniform(&state);
+        float sintheta = sqrtf(1-costheta*costheta);
+        float phi = 2*CUDART_PI_F*curand_uniform(&state);
+        float cosphi = cosf(phi);
+        float sinphi = sinf(phi);
+
+        sc_op_px = 1.*sintheta*cosphi;
+        sc_op_py = 1.*sintheta*sinphi;
+        sc_op_pz = 1.*costheta;
+        // === rotate the scattering momentum in global coordiniate ===
+        rotateUz(op_px, op_py, op_pz, sc_op_px, sc_op_py, sc_op_pz);
+
+        // == caculate the scattering polarization ==
+        // pol_sc = (pol - cos(alpha) n)/sin(alpha)
+        // alpha is the angle between n and pol.
+        float cosalpha = op_polx * sc_op_px
+                       + op_poly * sc_op_py
+                       + op_polz * sc_op_pz;
+        float sinalpha = sqrtf(1.-cosalpha*cosalpha);
+        sc_op_polx = (op_polx - cosalpha*sc_op_px)/sinalpha;
+        sc_op_poly = (op_poly - cosalpha*sc_op_py)/sinalpha;
+        sc_op_polz = (op_polz - cosalpha*sc_op_pz)/sinalpha;
+
+        // == sample using cos(theta)**2 ==
+        // === cos(theta_pol) = pol dot sc_pol ===
+        float costhetap = op_polx*sc_op_polx
+                        + op_poly*sc_op_poly
+                        + op_polz*sc_op_polz;
+        if (curand_uniform(&state) <= powf(costhetap,2)) {
+            break;
+        }
+        // FIXME
+        if (++cnt>100) {
+            break;
+        }
+    }
+
+    op_px = sc_op_px;
+    op_py = sc_op_py;
+    op_pz = sc_op_pz;
+
+    op_polx = sc_op_polx;
+    op_poly = sc_op_poly;
+    op_polz = sc_op_polz;
+}
+////////////////////////////////////////////////////////////////////////////////
+__global__ void
+propagate_op_rayleigh(curandState *state,
+                    float* op_px,   float* op_py,   float* op_pz,
+                    float* op_polx, float* op_poly, float* op_polz) {
+    int id = blockDim.x * blockIdx.x + threadIdx.x;
+    // Copy state to local memory for efficiency 
+    curandState localState = state[id];
+
+    do_rayleigh(localState, op_px[id],   op_py[id],   op_pz[id],
+                            op_polx[id], op_poly[id], op_polz[id]);
+
+    // Copy state back to global memory
+    state[id] = localState;
+}
 ////////////////////////////////////////////////////////////////////////////////
 
 int
@@ -176,6 +267,10 @@ runTest(int argc, char **argv)
     // == generate optical photons ==
     // === generate the direction ===
     generate_op_uniform<<< grid, threads >>>(devStates, 
+            d_op_px,   d_op_py,   d_op_pz,
+            d_op_polx, d_op_poly, d_op_polz);
+
+    propagate_op_rayleigh<<< grid, threads >>>(devStates, 
             d_op_px,   d_op_py,   d_op_pz,
             d_op_polx, d_op_poly, d_op_polz);
 
