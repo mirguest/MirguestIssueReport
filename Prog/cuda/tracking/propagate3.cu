@@ -82,7 +82,8 @@ init_rand_state(curandState* state, unsigned int seed) {
 
 __global__ void
 generate_op_uniform(curandState *state,
-                    float* op_px, float* op_py, float* op_pz) {
+                    float* op_px, float* op_py, float* op_pz,
+                    float* op_polx, float* op_poly, float* op_polz) {
     int id = blockDim.x * blockIdx.x + threadIdx.x;
     /* Copy state to local memory for efficiency */
     curandState localState = state[id];
@@ -91,48 +92,121 @@ generate_op_uniform(curandState *state,
     float costheta = -1. + 2*curand_uniform(&localState);
     float sintheta = sqrtf(1-costheta*costheta);
     float phi = 2*CUDART_PI_F*curand_uniform(&localState);
+    float cosphi = cosf(phi);
+    float sinphi = sinf(phi);
 
     op_px[id] = 1.*sintheta*cosf(phi);
     op_py[id] = 1.*sintheta*sinf(phi);
     op_pz[id] = 1.*costheta;
 
+    // == in a local coordinate, generate polarization in x-y plane ==
+    float pol_phi = 2*CUDART_PI_F*curand_uniform(&localState);
+    float dx = cosf(pol_phi);
+    float dy = sinf(pol_phi);
+    // === rotate the polarization ===
+    op_polx[id] = cosphi*costheta*dx - sinphi*dy;
+    op_poly[id] = sinphi*costheta*dx + cosphi*dy;
+    op_polz[id] = -sintheta*dx;;
+
     /* Copy state back to global memory */
     state[id] = localState;
 }
 
-__global__ void 
-propagate_op_to_boundary(curandState *state,
-                    float* op_x,  float* op_y,  float* op_z,
-                    float* op_px, float* op_py, float* op_pz) {
-    float dist = -1.0; // if dist < 0, some errors happen
+__device__ void
+rotateUz(const float& u1, const float& u2, const float& u3, 
+         float& dx, float& dy, float& dz) {
+    // rotate (dx, dy, dz) to (dx', dy', dz')
+    // copy from CLHEP::ThreeVector::rotateUz
+    float up = u1*u1 + u2*u2;
 
-    int id = blockDim.x * blockIdx.x + threadIdx.x;
-    if (op_px[id] == 0.0 && op_py[id] == 0.0 && op_pz[id] == 0.0) {
-        return;
+    if (up>0) {
+        up = sqrtf(up);
+        double px = dx,  py = dy,  pz = dz;
+        dx = (u1*u3*px - u2*py)/up + u1*pz;
+        dy = (u2*u3*px + u1*py)/up + u2*pz;
+        dz =    -up*px +             u3*pz;
+    } else if (u3 < 0.) {
+        dx = -dx;
+        dz = -dz;
     }
-    /* Copy state to local memory for efficiency */
-    curandState localState = state[id];
+}
 
-    float r2 = ( op_x[id]*op_x[id] + op_y[id]*op_y[id] + op_z[id]*op_z[id]);
-    float r = sqrtf(r2);
+__device__ void
+do_rayleigh(curandState& state,
+            float& op_px,   float& op_py,   float& op_pz,
+            float& op_polx, float& op_poly, float& op_polz) {
+    float sc_op_px, sc_op_py, sc_op_pz;
+    float sc_op_polx, sc_op_poly, sc_op_polz;
 
-    // == fly to the boundary ==
-    // r \dot dir = r * cos(theta)
-    float r_costheta = (op_x[id]*op_px[id]
-                      + op_y[id]*op_py[id]
-                      + op_z[id]*op_pz[id]
-                        ); 
+    int cnt = 0;
+    while(true) {
+        // == sample the scattering momentum ==
+        // === sample the scattering momentum in local coordiniate ===
+        float costheta = -1. + 2*curand_uniform(&state);
+        float sintheta = sqrtf(1-costheta*costheta);
+        float phi = 2*CUDART_PI_F*curand_uniform(&state);
+        float cosphi = cosf(phi);
+        float sinphi = sinf(phi);
 
-    float r_sintheta = sqrtf(r2 - r_costheta*r_costheta);
-    
-    // == flight ==
-    dist = - r_costheta + sqrtf(CONSTANT_LS_BALL_R + r_sintheta)
-                         *sqrtf(CONSTANT_LS_BALL_R - r_sintheta);
-    // == absorption ==
+        sc_op_px = 1.*sintheta*cosphi;
+        sc_op_py = 1.*sintheta*sinphi;
+        sc_op_pz = 1.*costheta;
+        // === rotate the scattering momentum in global coordiniate ===
+        rotateUz(op_px, op_py, op_pz, sc_op_px, sc_op_py, sc_op_pz);
+
+        // == caculate the scattering polarization ==
+        // pol_sc = (pol - cos(alpha) n)/sin(alpha)
+        // alpha is the angle between n and pol.
+        float cosalpha = op_polx * sc_op_px
+                       + op_poly * sc_op_py
+                       + op_polz * sc_op_pz;
+        float sinalpha = sqrtf(1.-cosalpha*cosalpha);
+        sc_op_polx = (op_polx - cosalpha*sc_op_px)/sinalpha;
+        sc_op_poly = (op_poly - cosalpha*sc_op_py)/sinalpha;
+        sc_op_polz = (op_polz - cosalpha*sc_op_pz)/sinalpha;
+
+        // == sample using cos(theta)**2 ==
+        // === cos(theta_pol) = pol dot sc_pol ===
+        float costhetap = op_polx*sc_op_polx
+                        + op_poly*sc_op_poly
+                        + op_polz*sc_op_polz;
+        if (curand_uniform(&state) <= powf(costhetap,2)) {
+            break;
+        }
+        // FIXME
+        if (++cnt>100) {
+            break;
+        }
+    }
+
+    op_px = sc_op_px;
+    op_py = sc_op_py;
+    op_pz = sc_op_pz;
+
+    op_polx = sc_op_polx;
+    op_poly = sc_op_poly;
+    op_polz = sc_op_polz;
+}
+
+__device__ int 
+stepping_in_LS(curandState& localState,
+        float& op_x,    float& op_y,    float& op_z,   float& op_t,
+        float& op_px,   float& op_py,   float& op_pz,
+        float& op_polx, float& op_poly, float& op_polz
+        ) {
+
+    // == do the sampling of length ==
+    // === calculate the absorption length ===
     float dist_abs = CONSTANT_MEAN_PATH_LS * (-logf(curand_uniform(&localState)));
-    // == rayleigh ==
+    // === calculate the rayleigh scattering length ===
     float dist_ray = CONSTANT_RAYLEIGH_LS*(-logf(curand_uniform(&localState)));
-
+    // === calculate the propagation length to boundary ===
+    float r2 = ( op_x*op_x + op_y*op_y + op_z*op_z);
+    float r_costheta = (op_x*op_px + op_y*op_py + op_z*op_pz); 
+    float r_sintheta = sqrtf(r2 - r_costheta*r_costheta);
+    float dist = - r_costheta + sqrtf(CONSTANT_LS_BALL_R + r_sintheta)
+                               *sqrtf(CONSTANT_LS_BALL_R - r_sintheta);
+    // === select the minimal dist ===
     // type of physics
     // * 0 -> flight
     // * 1 -> absorption
@@ -144,28 +218,59 @@ propagate_op_to_boundary(curandState *state,
         dist = dist_abs;
         type = 1;
     }
-
     if (dist_ray <= dist) {
-        // the photon stop at the abs position
+        // the photon stop at the rayleigh position
         dist = dist_ray;
         type = 2;
     }
 
-    // update the position
-    op_x[id] += dist*op_px[id];
-    op_y[id] += dist*op_py[id];
-    op_z[id] += dist*op_pz[id];
+    // == update the position and time ==
+    op_x += dist*op_px;
+    op_y += dist*op_py;
+    op_z += dist*op_pz;
+    // TODO calculate the time
 
-    // update the momentum
+    // == update the momentum and polarization ==
     if (type == 1) {
         // the photon stop at the abs position
-        op_px[id] = 0.0;
-        op_py[id] = 0.0;
-        op_pz[id] = 0.0;
+        op_px = 0.0;
+        op_py = 0.0;
+        op_pz = 0.0;
     } else if (type == 2) {
         // update momentum
-        // rayleigh_scattering();
+        do_rayleigh(localState, op_px,   op_py,   op_pz,
+                                op_polx, op_poly, op_polz);
     }
+
+    return type;
+}
+
+__global__ void 
+propagate_op_to_boundary(curandState *state,
+                    float* op_x,  float* op_y,  float* op_z, float* op_t,
+                    float* op_px, float* op_py, float* op_pz,
+                    float* op_polx, float* op_poly, float* op_polz
+                    ) {
+    float dist = -1.0; // if dist < 0, some errors happen
+
+    int id = blockDim.x * blockIdx.x + threadIdx.x;
+    if (op_px[id] == 0.0 && op_py[id] == 0.0 && op_pz[id] == 0.0) {
+        return;
+    }
+    /* Copy state to local memory for efficiency */
+    curandState localState = state[id];
+
+    while (true) {
+        int type = stepping_in_LS(localState,
+                    op_x[id],    op_y[id],    op_z[id],   op_t[id],
+                    op_px[id],   op_py[id],   op_pz[id],
+                    op_polx[id], op_poly[id], op_polz[id]
+                    );
+        if (type == 0 || type == 1) {
+            break;
+        }
+    }
+
 
     /* Copy state back to global memory */
     state[id] = localState;
@@ -361,29 +466,50 @@ runTest(int argc, char **argv)
     cudaMalloc((void**)&d_oppy, grid.x * threads.x * sizeof(float));
     cudaMalloc((void**)&d_oppz, grid.x * threads.x * sizeof(float));
 
+    // == polarization ==
+    float *h_oppolx = 0;
+    float *h_oppoly = 0;
+    float *h_oppolz = 0;
+    h_oppolx = (float*)malloc(grid.x * threads.x * sizeof(float));
+    h_oppoly = (float*)malloc(grid.x * threads.x * sizeof(float));
+    h_oppolz = (float*)malloc(grid.x * threads.x * sizeof(float));
+
+    float *d_oppolx = 0;
+    float *d_oppoly = 0;
+    float *d_oppolz = 0;
+
+    cudaMalloc((void**)&d_oppolx, grid.x * threads.x * sizeof(float));
+    cudaMalloc((void**)&d_oppoly, grid.x * threads.x * sizeof(float));
+    cudaMalloc((void**)&d_oppolz, grid.x * threads.x * sizeof(float));
+
     // == position ==
     // set the initial position
     // default unit is mm, (same as geant4)
     float *h_opx = 0;
     float *h_opy = 0;
     float *h_opz = 0;
+    float *h_opt = 0;
     h_opx = (float*)malloc(grid.x * threads.x * sizeof(float));
     h_opy = (float*)malloc(grid.x * threads.x * sizeof(float));
     h_opz = (float*)malloc(grid.x * threads.x * sizeof(float));
+    h_opt = (float*)malloc(grid.x * threads.x * sizeof(float));
 
     for (int i = 0; i < grid.x * threads.x; ++i) {
         h_opx[i] = init_pos_x; // 1m
         h_opy[i] = init_pos_y; // 0m
-        h_opy[i] = init_pos_z; // 0m
+        h_opz[i] = init_pos_z; // 0m
+        h_opt[i] = 0.0; // 0m
     }
 
     float *d_opx = 0;
     float *d_opy = 0;
     float *d_opz = 0;
+    float *d_opt = 0;
 
     cudaMalloc((void**)&d_opx, grid.x * threads.x * sizeof(float));
     cudaMalloc((void**)&d_opy, grid.x * threads.x * sizeof(float));
     cudaMalloc((void**)&d_opz, grid.x * threads.x * sizeof(float));
+    cudaMalloc((void**)&d_opt, grid.x * threads.x * sizeof(float));
 
     cudaMemcpy(d_opx, h_opx, grid.x * threads.x * sizeof(float),
                         cudaMemcpyHostToDevice); 
@@ -391,28 +517,35 @@ runTest(int argc, char **argv)
                         cudaMemcpyHostToDevice); 
     cudaMemcpy(d_opz, h_opz, grid.x * threads.x * sizeof(float),
                         cudaMemcpyHostToDevice); 
+    cudaMemcpy(d_opt, h_opt, grid.x * threads.x * sizeof(float),
+                        cudaMemcpyHostToDevice); 
 
     // == start ==
     // === initialize the random engine ===
     init_rand_state<<< grid, threads >>>(devStates, 42);
     // === generate the direction ===
-    generate_op_uniform<<< grid, threads >>>(devStates, d_oppx, d_oppy, d_oppz);
+    generate_op_uniform<<< grid, threads >>>(devStates, 
+            d_oppx, d_oppy, d_oppz,
+            d_oppolx, d_oppoly, d_oppolz
+            );
     // === start tracking optical photon ===
     // ==== -> LS boundary ====
     // the position will be updated
     propagate_op_to_boundary<<< grid, threads >>>(devStates, 
-            d_opx,  d_opy,  d_opz,
-            d_oppx, d_oppy, d_oppz);
-    // ==== -> Refract between LS and Water====
-    // the momentum will be updated
-    propagate_op_at_boundary<<< grid, threads >>>(devStates, 
-            d_opx,  d_opy,  d_opz,
-            d_oppx, d_oppy, d_oppz);
-    // ==== -> PMT boundary ====
-    // the position will be updated
-    propagate_op_to_boundary_pmt<<< grid, threads >>>(devStates, 
-            d_opx,  d_opy,  d_opz,
-            d_oppx, d_oppy, d_oppz);
+            d_opx,  d_opy,  d_opz, d_opt,
+            d_oppx, d_oppy, d_oppz,
+            d_oppolx, d_oppoly, d_oppolz
+            );
+    // // ==== -> Refract between LS and Water====
+    // // the momentum will be updated
+    // propagate_op_at_boundary<<< grid, threads >>>(devStates, 
+    //         d_opx,  d_opy,  d_opz,
+    //         d_oppx, d_oppy, d_oppz);
+    // // ==== -> PMT boundary ====
+    // // the position will be updated
+    // propagate_op_to_boundary_pmt<<< grid, threads >>>(devStates, 
+    //         d_opx,  d_opy,  d_opz,
+    //         d_oppx, d_oppy, d_oppz);
 
     // check if kernel execution generated and error
     getLastCudaError("Kernel execution failed");
