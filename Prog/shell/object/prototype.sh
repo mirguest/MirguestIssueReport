@@ -92,6 +92,16 @@ function main() {
     a.prodx 3
 
     a.doc
+
+    A a2 13 2
+
+    a2.x
+    a2.y
+
+    a2.prodxy
+    a2.prodx 3
+
+    a2.doc
 }
 
 main
