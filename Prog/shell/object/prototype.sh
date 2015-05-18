@@ -89,7 +89,11 @@ EOF
         object-property-method ${cls} ${obj} doc
     }
 
-    A.init $*
+    if [[ "$#" -gt 1 ]]; then
+        A.init $*
+    else
+        A.doc
+    fi
 }
 
 function main() {
