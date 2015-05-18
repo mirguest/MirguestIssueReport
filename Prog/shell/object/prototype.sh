@@ -46,6 +46,13 @@ function object-property-method() {
     eval "${obj}.${method}() { ${cls}.${method} ${obj} \$*;}"
 }
 
+function object-property-self() {
+    local cls=$1; shift
+    local obj=$1; shift
+
+    eval "${obj}() { echo ${obj} is ${cls};}"
+}
+
 function A() {
     local cls=${FUNCNAME}
 
@@ -71,6 +78,8 @@ EOF
         local obj=$1; shift;
         local x=$1; shift
         local y=$1; shift
+        # create self description
+        object-property-self ${cls} ${obj}
         # create property
         object-prototype-property ${obj} x $x
         object-prototype-property ${obj} y $y
@@ -105,4 +114,6 @@ function main() {
     a2.doc
 }
 
-main
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    main "$@"
+fi
