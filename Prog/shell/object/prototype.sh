@@ -48,7 +48,6 @@ function object-property-method() {
 
 function A() {
     local cls=${FUNCNAME}
-    local obj=$1; shift;
 
     function A.doc() {
 cat << EOF
@@ -68,6 +67,8 @@ EOF
     }
 
     function A.init() {
+        # keep the obj in the method
+        local obj=$1; shift;
         local x=$1; shift
         local y=$1; shift
         # create property
