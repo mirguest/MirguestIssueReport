@@ -30,38 +30,53 @@ I think we can define two types functions:
 EOF
 }
 
+function object-prototype-property() {
+    local obj=$1; shift
+    local method=$1; shift
+    local value="$*"
+    # create getter
+    eval "${obj}.${method}() { echo $value; }"
+}
+
+function object-property-method() {
+    local cls=$1; shift
+    local obj=$1; shift
+    local method=$1; shift
+
+    eval "${obj}.${method}() { ${cls}.${method} ${obj} \$*;}"
+}
+
 function A() {
+    local cls=${FUNCNAME}
+    local obj=$1; shift;
+
     function A.doc() {
 cat << EOF
     A is the constructor method.
 EOF
     }
-    # property
-    function A.x() {
-        local obj=$1; shift
-        ${obj}.x
-    }
-
-    function A.y() {
-        local obj=$1; shift
-        ${obj}.y
-    }
     # normal function
-    function A.prod() {
+    function A.prodxy() {
         local obj=$1; shift
         echo $(($(${obj}.x) * $(${obj}.y)))
     }
 
-    function A.init() {
+    function A.prodx() {
         local obj=$1; shift
+        local val=$1; shift
+        echo $(($(${obj}.x) * ${val}))
+    }
+
+    function A.init() {
         local x=$1; shift
         local y=$1; shift
-        # create function
-        eval "${obj}.x () { echo ${x};}"
-        eval "${obj}.y () { echo ${y};}"
-
-        eval "${obj}.prod() { A.prod ${obj};}"
-        eval "${obj}.doc() { A.doc;}"
+        # create property
+        object-prototype-property ${obj} x $x
+        object-prototype-property ${obj} y $y
+        # create normal method
+        object-property-method ${cls} ${obj} prodxy
+        object-property-method ${cls} ${obj} prodx
+        object-property-method ${cls} ${obj} doc
     }
 
     A.init $*
@@ -73,7 +88,8 @@ function main() {
     a.x
     a.y
 
-    a.prod
+    a.prodxy
+    a.prodx 3
 
     a.doc
 }
