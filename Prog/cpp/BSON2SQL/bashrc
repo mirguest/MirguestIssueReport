@@ -1,0 +1,6 @@
+#!/bin/bash
+
+brew-setup
+
+export MONGOHOME=$(brew --prefix libmongoclient-legacy)
+export CPATH=$MONGOHOME/include
