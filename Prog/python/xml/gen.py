@@ -14,6 +14,32 @@ FOAF = "{http://xmlns.com/foaf/0.1/}"
 cal = lambda x: CAL+x
 foaf = lambda x: FOAF+x
 
+# collections to simplify input
+# == collaborations ==
+s_cls      = lambda top     : SubElement(top,     cal("collaborations"))
+s_cl       = lambda cls, cid: SubElement(cls,     cal("collaboration"), {"id": cid})
+s_cl_name  = lambda cl      : SubElement(cl,      foaf("name"))
+s_cl_expno = lambda cl      : SubElement(cl,      cal("experimentNumber"))
+# == organizations ==
+s_orgs     = lambda top     : SubElement(top,     cal("organizations"))
+s_org      = lambda orgs,oid: SubElement(orgs,    foaf("Organization"), {"id": oid})
+s_org_name = lambda org     : SubElement(org,     foaf("name"))
+s_org_oname= lambda org     : SubElement(org,     cal("orgName"))
+s_org_oaddr= lambda org     : SubElement(org,     cal("orgAddress"))
+s_org_ostat= lambda org     : SubElement(org,     cal("orgStatus"))
+# == authors ==
+s_authors  = lambda top     : SubElement(top,     cal("authors"))
+s_person   = lambda authors : SubElement(authors, foaf("Person"))
+s_per_np   = lambda person  : SubElement(person,  cal("authorNamePaper"))
+s_per_gn   = lambda person  : SubElement(person,  foaf("givenName"))
+s_per_fn   = lambda person  : SubElement(person,  foaf("familyName"))
+s_per_coll = lambda person,cid:SubElement(person, cal("authorCollaboration"), {"collaborationid": cid}) 
+s_per_affs = lambda person  : SubElement(person, cal("authorAffiliations"))
+s_per_aff  = lambda affs, oid: SubElement(affs, cal("authorAffiliation"), {"connection":"Affiliated with", "organizationid":oid})
+s_per_aids = lambda person  : SubElement(person, cal("authorids"))
+s_per_aid_inspire = lambda authorids: SubElement(authorids, cal("authorid"), {"source": "Inspire ID"})
+s_per_aid_orcid = lambda authorids: SubElement(authorids, cal("authorid"), {"source": "ORCID"})
+
 def prettify(elem):
     """Return a pretty-printed XML string for the Element.
     """
@@ -22,57 +48,55 @@ def prettify(elem):
     return reparsed.toprettyxml(indent="  ")
 
 def build_collaborations(top):
-    cls = SubElement(top, cal("collaborations"))
+    cls = s_cls(top)
 
-    cl = SubElement(cls, cal("collaboration"), {"id": "c1"})
-    name = SubElement(cl, foaf("name"))
+    cl = s_cl(cls, "c1")
+    name = s_cl_name(cl)
     name.text = "Daya Bay Collaboration"
 
-    expno = SubElement(cl, cal("experimentNumber"))
+    expno = s_cl_expno(cl)
     expno.text = "DAYA-BAY"
     pass
 
 def build_organizations(top):
-    orgs = SubElement(top, cal("organizations"))
+    orgs = s_orgs(top)
     
     # loop here, load all organizations
-    org = SubElement(orgs, foaf("Organization"), {"id": "o0"})
-    name = SubElement(org, foaf("name"))
+    org = s_org(orgs, "o0")
+    name = s_org_name(org)
     name.text = "Institute of Modern Physics, East China University of Science and Technology, Shanghai"
-    orgname = SubElement(org, cal("orgName"))
+    orgname = s_org_oname(org)
     orgname.text = "East China U. Sci. Tech."
-    orgaddr = SubElement(org, cal("orgAddress"))
+    orgaddr = s_org_oaddr(org)
     orgaddr.text = "Institute of Modern Physics, East China University of Science and Technology, Shanghai"
-    orgstat = SubElement(org, cal("orgStatus"))
+    orgstat = s_org_ostat(org)
     orgstat.text = "member"
 
     pass
 
 def build_authors(top):
-    authors = SubElement(top, cal("authors"))
+    authors = s_authors(top)
 
     # Loop here, load all authors
-    person = SubElement(authors, foaf("Person"))
-    authorNamePaper = SubElement(person, cal("authorNamePaper"))
+    person = s_person(authors)
+    authorNamePaper = s_per_np(person)
     authorNamePaper.text = "An, F.P."
-    givenName = SubElement(person, foaf("givenName"))
+    givenName = s_per_gn(person)
     givenName.text = "Feng Peng"
-    familyName = SubElement(person, foaf("familyName"))
+    familyName = s_per_fn(person)
     familyName.text = "An"
     # author collaboration
-    authorCollaboration = SubElement(person, cal("authorCollaboration"), 
-                                            {"collaborationid": "c1"})
+    authorCollaboration = s_per_coll(person, "c1")
     # author affiliations
-    authorAffiliations = SubElement(person, cal("authorAffiliations"))
-    authorAffiliation = SubElement(authorAffiliations, cal("authorAffiliation"),
-                                    {"connection":"Affiliated with",
-                                     "organizationid":"o0"})
+    authorAffiliations = s_per_affs(person)
+    # === one person can with different affiliations ===
+    authorAffiliation = s_per_aff(authorAffiliations, "o0")
 
     # authorids 
-    authorids = SubElement(person, cal("authorids"))
-    aid_inspire = SubElement(authorids, cal("authorid"), {"source": "Inspire ID"})
+    authorids = s_per_aids(person)
+    aid_inspire = s_per_aid_inspire(authorids)
     aid_inspire.text = "INSPIRE-00447796"
-    aid_orcid = SubElement(authorids, cal("authorid"), {"source": "ORCID"})
+    aid_orcid = s_per_aid_orcid(authorids)
     aid_orcid.text = "0000-0002-8359-7804"
 
     
