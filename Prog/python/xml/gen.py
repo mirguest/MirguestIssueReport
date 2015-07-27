@@ -45,7 +45,7 @@ def prettify(elem):
     """
     rough_string = ElementTree.tostring(elem, encoding='utf-8')
     reparsed = minidom.parseString(rough_string)
-    return reparsed.toprettyxml(indent="  ")
+    return reparsed.toprettyxml(indent="  ", encoding="UTF-8")
 
 def build_collaborations(top):
     cls = s_cls(top)
