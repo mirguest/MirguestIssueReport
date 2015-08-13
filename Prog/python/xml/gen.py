@@ -43,7 +43,7 @@ s_per_aid_orcid = lambda authorids: SubElement(authorids, cal("authorid"), {"sou
 def prettify(elem):
     """Return a pretty-printed XML string for the Element.
     """
-    rough_string = ElementTree.tostring(elem, encoding='utf-8')
+    rough_string = ElementTree.tostring(elem, encoding='UTF-8')
     reparsed = minidom.parseString(rough_string)
     return reparsed.toprettyxml(indent="  ", encoding="UTF-8")
 
