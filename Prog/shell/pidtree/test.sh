@@ -31,6 +31,11 @@ function mom() {
     local child=$(get-child $parent)
     child=$(filter-child $child)
     echo child: $child
+
+    while ps --pid $child -o vsz h;
+    do
+        sleep 1
+    done
 }
 
 mom $$ &
