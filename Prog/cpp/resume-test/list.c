@@ -8,7 +8,7 @@
  *        Version:  1.0
  *        Created:  2015年10月03日 15时46分46秒
  *       Revision:  none
- *       Compiler:  gcc
+ *       Compiler:  gcc -std=c99
  *
  *         Author:  Tao Lin (), 
  *   Organization:  
@@ -124,7 +124,7 @@ void list_display(const list* l) {
 
 void list_visitor_dispaly(struct list_node* p) {
     if (p) {
-        printf("%d\n", p->item->key);
+        printf("%d ", p->item->key);
     }
 }
 
@@ -145,14 +145,17 @@ int main() {
 
     list_insert(&l, 0, elems[9]);
     list_visit(&l, list_visitor_dispaly);
+    printf("\n");
 
     int len = list_length(&l);
     printf("length: %d\n", len);
 
     list_insert(&l, 42, elems[7]);
     list_visit(&l, list_visitor_dispaly);
+    printf("\nlength: %d\n", list_length(&l));
 
     list_delete(&l, elems[3]);
     list_visit(&l, list_visitor_dispaly);
+    printf("\nlength: %d\n", list_length(&l));
     return 0;
 }
