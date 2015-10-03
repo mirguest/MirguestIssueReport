@@ -75,6 +75,20 @@ void list_insert(list* l, int idx, struct element* elem) {
 
 
 /* delete */
+void list_delete(list* l, struct element* elem) {
+    struct list_node** tail = &l->first;
+    while (*tail) {
+        // find the object
+        if ((*tail)->item == elem) {
+            struct list_node* p = *tail;
+            *tail = (*tail)->next;
+            // release the node, but not the element
+            free(p);
+            break;
+        }
+        tail = &(*tail)->next;
+    }
+}
 
 /* length */
 int list_length(const list* l) {
@@ -136,6 +150,9 @@ int main() {
     printf("length: %d\n", len);
 
     list_insert(&l, 42, elems[7]);
+    list_visit(&l, list_visitor_dispaly);
+
+    list_delete(&l, elems[3]);
     list_visit(&l, list_visitor_dispaly);
     return 0;
 }
