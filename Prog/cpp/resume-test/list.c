@@ -1,0 +1,116 @@
+/*
+ * =====================================================================================
+ *
+ *       Filename:  list.c
+ *
+ *    Description:  list
+ *
+ *        Version:  1.0
+ *        Created:  2015年10月03日 15时46分46秒
+ *       Revision:  none
+ *       Compiler:  gcc
+ *
+ *         Author:  Tao Lin (), 
+ *   Organization:  
+ *
+ * =====================================================================================
+ */
+#include <stdio.h>
+#include <stdlib.h>
+
+struct element {
+    int key;
+};
+
+struct list_node {
+    struct element *item;
+    struct list_node* next;
+};
+
+typedef struct list {
+    struct list_node* first;
+} list;
+
+/* create */
+list list_create() {
+    list l;
+    l.first = NULL;
+    return l;
+}
+
+/* append */
+void list_append(list* l, struct element* elem) {
+    struct list_node* p = NULL;
+
+    // create a new node
+    p = malloc(sizeof(struct list_node));
+    p->item = elem;
+    p->next = NULL;
+    // append it to the list
+    struct list_node* tail = l->first;
+    if (tail == NULL) {
+        l->first = p;
+    }
+}
+
+/* insert */
+
+/* delete */
+
+/* length */
+int list_length(const list* l) {
+    int len = 0;
+    struct list_node* p = l->first;
+    while (p) {
+        ++len;
+        p = p->next;
+    }
+
+    return len;
+ }
+
+/* visit */
+typedef void (*list_visitor_func)(struct list_node*);
+
+void list_visit(list* l, list_visitor_func func) {
+    struct list_node* p = l->first;
+    while(p) {
+        func(p);
+        p = p->next;
+    }
+}
+
+/* display */
+void list_display(const list* l) {
+    struct list_node* p = l->first;
+    while(p) {
+        printf("%d\n", p->item->key);
+        p = p->next;
+    }
+}
+
+void list_visitor_dispaly(struct list_node* p) {
+    if (p) {
+        printf("%d\n", p->item->key);
+    }
+}
+
+
+int main() {
+    list l = list_create();
+
+    struct element* elems[10];
+    for (int i = 0; i < 10; ++i) {
+        elems[i] = malloc(sizeof(struct element));
+        elems[i]->key = i;
+    }
+
+    list_append(&l, elems[3]);
+
+    list_display(&l);
+    list_visit(&l, list_visitor_dispaly);
+
+    int len = list_length(&l);
+    printf("length: %d", len);
+    return 0;
+}
