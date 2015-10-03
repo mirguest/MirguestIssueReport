@@ -65,7 +65,7 @@ void list_insert(list* l, int idx, struct element* elem) {
     // insert into 
     struct list_node** tail = &l->first;
     int i = 0;
-    while (*tail && i < idx) {
+    while (*tail && i++ < idx) {
         tail = &(*tail)->next;
     }
 
@@ -151,6 +151,10 @@ int main() {
     printf("length: %d\n", len);
 
     list_insert(&l, 42, elems[7]);
+    list_visit(&l, list_visitor_dispaly);
+    printf("\nlength: %d\n", list_length(&l));
+
+    list_insert(&l, 2, elems[2]);
     list_visit(&l, list_visitor_dispaly);
     printf("\nlength: %d\n", list_length(&l));
 
