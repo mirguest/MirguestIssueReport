@@ -47,13 +47,32 @@ void list_append(list* l, struct element* elem) {
     p->item = elem;
     p->next = NULL;
     // append it to the list
-    struct list_node* tail = l->first;
-    if (tail == NULL) {
-        l->first = p;
+    struct list_node** tail = &l->first;
+    while (*tail) {
+        tail = &(*tail)->next;
     }
+
+    *tail = p;
 }
 
 /* insert */
+void list_insert(list* l, int idx, struct element* elem) {
+    struct list_node* p = NULL;
+    // create a new node
+    p = malloc(sizeof(struct list_node));
+    p->item = elem;
+    p->next = NULL;
+    // insert into 
+    struct list_node** tail = &l->first;
+    int i = 0;
+    while (*tail && i < idx) {
+        tail = &(*tail)->next;
+    }
+
+    p->next = *tail;
+    *tail = p;
+}
+
 
 /* delete */
 
@@ -106,11 +125,17 @@ int main() {
     }
 
     list_append(&l, elems[3]);
+    list_append(&l, elems[8]);
 
     list_display(&l);
+
+    list_insert(&l, 0, elems[9]);
     list_visit(&l, list_visitor_dispaly);
 
     int len = list_length(&l);
-    printf("length: %d", len);
+    printf("length: %d\n", len);
+
+    list_insert(&l, 42, elems[7]);
+    list_visit(&l, list_visitor_dispaly);
     return 0;
 }
