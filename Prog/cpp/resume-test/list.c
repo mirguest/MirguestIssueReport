@@ -128,6 +128,21 @@ void list_visitor_dispaly(struct list_node* p) {
     }
 }
 
+/* reverse */
+void list_reverse(list* l) {
+    struct list_node** tail = &l->first;
+    struct list_node* new_node = NULL;
+    while(*tail) {
+        struct list_node* p = (*tail);
+        // remove the current node
+        *tail = (*tail)->next;
+        // attach the new node to current node, make it as a new node
+        p->next = new_node;
+        new_node = p;
+    }
+
+    *tail = new_node;
+}
 
 int main() {
     list l = list_create();
@@ -159,6 +174,10 @@ int main() {
     printf("\nlength: %d\n", list_length(&l));
 
     list_delete(&l, elems[3]);
+    list_visit(&l, list_visitor_dispaly);
+    printf("\nlength: %d\n", list_length(&l));
+
+    list_reverse(&l);
     list_visit(&l, list_visitor_dispaly);
     printf("\nlength: %d\n", list_length(&l));
     return 0;
