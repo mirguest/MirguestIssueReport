@@ -9,4 +9,9 @@ int main() {
     boost::uuids::uuid uuid1 = generator();
 
     std::string uuid_str = to_string(uuid1);
+
+    TUUID uuid_root;
+    uuid_root.SetUUID(uuid_str.c_str());
+
+    std::cout << uuid_root.AsString() << std::endl;
 }
