@@ -1,4 +1,5 @@
 #include "MyApp.h"
+#include <iostream>
 App* app = 0;
 MyApp myapp;
 
@@ -7,5 +8,8 @@ MyApp::MyApp() {
 }
 
 int MyApp::run() {
+    std::cout << "begin running..." << std::endl;
+
+    std::cout << "stop..." << std::endl;
     return 0;
 }

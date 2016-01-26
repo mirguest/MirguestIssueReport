@@ -6,4 +6,6 @@ class App {
         virtual int run() = 0;
 };
 
+extern App* app;
+
 #endif
