@@ -1,8 +1,14 @@
 
-all: libmain myapp
+all: libmain.so myapp myapp2
 
-libmain: main.cpp
+libmain.so: main.cpp
 	g++ -fPIC -shared -o libmain.so main.cpp
 
-myapp: libmain MyApp.h MyApp.cpp
-	g++ -o myapp MyApp.cpp -L. -lmain -Wl,-rpath=.
+myapp: MyApp.cpp | libmain.so
+	g++ -o $@ $< -L. -lmain -Wl,-rpath=.
+
+myapp2: MyApp2.cpp | libmain.so
+	g++ -o $@ $< -L. -lmain -Wl,-rpath=.
+
+MyApp.cpp: MyApp.h 
+MyApp2.cpp: MyApp2.h
