@@ -1,4 +1,4 @@
-
+#!/usr/bin/env node
 /*
  * Handle I/O with:
  * * callback
@@ -8,6 +8,11 @@
  */
 
 console.log('Hello')
+
+/*
+ * callback
+ * one to one
+ */
 
 fs = require('fs')
 
@@ -28,3 +33,18 @@ function addOne() {
 
 addOne()
 
+/* 
+ * event
+ * observer pattern
+ * many to many
+ */
+
+
+/*
+ * Streams
+ * keep one semantics for i/o and net
+ */
+
+/*
+ * modules
+ */
