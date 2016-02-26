@@ -22,9 +22,9 @@ function addOne() {
         console.log(content)
         number = parseInt(content)
         number++
+        console.log(number)
     })
 }
 
 addOne()
 
-console.log(number)
