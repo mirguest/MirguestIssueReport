@@ -23,6 +23,35 @@ class EntryAuthor(object):
     def __init__(self, raw_name, affis):
         self.raw_name = raw_name
         self.affis = affis
+        self.family_name = ""
+        self.given_name = ""
+        self.magic()
+    def magic(self):
+        # check affis
+        for a in self.affis:
+            if map_tex_affi.has_key(a):
+                # it's ok
+                pass
+            else:
+                print "don't understand affi name: %s"%a
+        # remove ~ and get the given/family name
+        self.magic_name()
+        return
+
+    def magic_name(self):
+        # J.~P.~Ochoa-Ricoux
+        #    \  \ 
+        #    i2  i1
+        i1 = self.raw_name.rfind("~")
+        self.family_name = self.raw_name[i1+1:]
+        #print self.family_name 
+        tmp_given_name = self.raw_name[:i1]
+        #print tmp_given_name
+        # if the name has -, give warning
+        if tmp_given_name.find('-')>0:
+            print "WARN: There is a dash in given name: %s"%self.raw_name
+        self.given_name = tmp_given_name.replace('~', '')
+        
 
 map_tex_affi = {}
 map_tex_author = {}
@@ -72,8 +101,9 @@ def parse_tex_line_author(line):
     if map_tex_author.has_key(raw_name):
         print "author name conflict: ", raw_name
 
-    map_tex_author[raw_name] = EntryAuthor(raw_name, affis)
-    list_tex_author.append( EntryAuthor(raw_name, affis) )
+    ea = EntryAuthor(raw_name, affis)
+    map_tex_author[raw_name] = ea
+    list_tex_author.append( ea )
 
 def parse_tex_line(line):
     line = line.strip()
@@ -92,5 +122,10 @@ def parse_tex(filename):
         for line in f:
             parse_tex_line(line)
 
+def format_it():
+    for a in list_tex_author:
+        print "%s %s"%(a.given_name, a.family_name)
+
 if __name__ == "__main__":
     parse_tex("PhysRev.tex")
+    format_it()
