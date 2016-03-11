@@ -25,6 +25,7 @@ class EntryAuthor(object):
         self.affis = affis
         self.family_name = ""
         self.given_name = ""
+        self.paper_name = ""
         self.magic()
     def magic(self):
         # check affis
@@ -52,9 +53,11 @@ class EntryAuthor(object):
             print "WARN: There is a dash in given name: %s"%self.raw_name
         self.given_name = tmp_given_name.replace('~', '')
         
+        self.paper_name = "%s %s"%(self.given_name, self.family_name)
 
 map_tex_affi = {}
 map_tex_author = {}
+map_paper_author = {}
 list_tex_author = []
 
 def parse_tex_line_affi(line):
@@ -103,6 +106,7 @@ def parse_tex_line_author(line):
 
     ea = EntryAuthor(raw_name, affis)
     map_tex_author[raw_name] = ea
+    map_paper_author[ea.paper_name] = ea
     list_tex_author.append( ea )
 
 def parse_tex_line(line):
@@ -124,8 +128,22 @@ def parse_tex(filename):
 
 def format_it():
     for a in list_tex_author:
-        print "%s %s"%(a.given_name, a.family_name)
+        #print "%s %s"%(a.given_name, a.family_name)
+        print a.paper_name
+
+def load_paper_name_from_xslt():
+    with open("autogen-author-paper-name.txt") as f:
+        for line in f:
+            line = line.strip()
+
+            # look for the name
+            if map_paper_author.has_key(line):
+                pass
+            else:
+                print "cannot find %s"%line 
+
 
 if __name__ == "__main__":
     parse_tex("PhysRev.tex")
     format_it()
+    load_paper_name_from_xslt()
