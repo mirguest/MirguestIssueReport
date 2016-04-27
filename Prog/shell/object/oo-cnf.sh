@@ -44,12 +44,10 @@ function Class () {
         local newval=$1
         if [ -z "$newval" ]; then
             # getter
-            local v=${!this[_var]}
-            echo $this.$vn $v
+            $this._$vn
         else
             # setter
-            eval "${this}[_$vn]=$newval"
-            echo ${!this[_var]}
+            eval "$this._$vn() { echo $newval; }"
         fi
 
     }
@@ -76,7 +74,5 @@ function Class () {
 
 Class a
 a.hello
-exit
-a.var 1
+function a._var() { echo 10; }
 a.var
-echo ${a[var]}
