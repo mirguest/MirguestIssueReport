@@ -158,9 +158,13 @@ def load_paper_name_from_xslt():
             cache_status[k] = CONST_IN_TEX
 
     # list all
+    # list not in xml
     for k, v in cache_status.iteritems():
         if v == CONST_IN_TEX:
-            print "only appear in tex: %s" %k
+            a = map_paper_author[k].affis
+            print "only appear in tex: %s" %(k), a
+    print "-"*50
+
 
 if __name__ == "__main__":
     parse_tex("PhysRev.tex")
