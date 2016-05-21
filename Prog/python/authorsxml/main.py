@@ -16,8 +16,11 @@ class EntryAffi(object):
     def __init__(self, name, raw):
         self.name = name
         self.raw_tex = raw
+        self.aff = raw
+        self.xml_short = ""
         self.magic()
     def magic(self):
+        self.aff = self.raw_tex.replace('~', ' ')
         return
 class EntryAuthor(object):
     def __init__(self, raw_name, affis):
@@ -59,6 +62,7 @@ map_tex_affi = {}
 map_tex_author = {}
 map_paper_author = {}
 list_tex_author = []
+map_org_long_to_short = {}
 
 def parse_tex_line_affi(line):
     """
@@ -131,6 +135,31 @@ def format_it():
         #print "%s %s"%(a.given_name, a.family_name)
         print a.paper_name
 
+def load_affils_from_xslt():
+    print "-"*50
+    with open("autogen-org-paper-name.txt") as f:
+        for line in f:
+            line = line.strip()
+            # 
+            s, l = line.split(" ", 1)
+            #print s, l
+            map_org_long_to_short[l] = s
+
+            # search in map_tex_affi
+            found = False
+            for k,v in map_tex_affi.iteritems():
+                if v.aff == l or v.aff.find(l) != -1 or l.find(v.aff) != -1:
+                    map_tex_affi[k].xml_short = s
+                    found = True
+                elif l.find("Chile") and v.aff.find("Chile"):
+                    # CUC
+                    map_tex_affi[k].xml_short = s
+                    found = True
+
+            if not found:
+                print "not found: %s"% l
+                    
+
 def load_paper_name_from_xslt():
     CONST_IN_XML = 0
     CONST_IN_XML_TEX = 1
@@ -162,11 +191,15 @@ def load_paper_name_from_xslt():
     for k, v in cache_status.iteritems():
         if v == CONST_IN_TEX:
             a = map_paper_author[k].affis
-            print "only appear in tex: %s" %(k), a
+            # try to found the xml org id
+            xmla = [map_tex_affi[i].xml_short 
+                        for i in a]
+            print "only appear in tex: %s" %(k), a, xmla
     print "-"*50
 
 
 if __name__ == "__main__":
     parse_tex("PhysRev.tex")
+    load_affils_from_xslt()
     #format_it()
     load_paper_name_from_xslt()
