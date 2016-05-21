@@ -132,18 +132,37 @@ def format_it():
         print a.paper_name
 
 def load_paper_name_from_xslt():
+    CONST_IN_XML = 0
+    CONST_IN_XML_TEX = 1
+    CONST_IN_TEX = 2
+
+    cache_status = {}
+    print "-"*50
     with open("autogen-author-paper-name.txt") as f:
         for line in f:
             line = line.strip()
+            # appear in xml
+            cache_status[line] = CONST_IN_XML
 
             # look for the name
             if map_paper_author.has_key(line):
+                # appear in xml and tex
+                cache_status[line] = CONST_IN_XML_TEX
                 pass
             else:
-                print "cannot find %s"%line 
+                print "only appear in xml: %s"%line 
+    print "-"*50
+    # check who appears in tex only
+    for k in map_paper_author:
+        if k not in cache_status:
+            cache_status[k] = CONST_IN_TEX
 
+    # list all
+    for k, v in cache_status.iteritems():
+        if v == CONST_IN_TEX:
+            print "only appear in tex: %s" %k
 
 if __name__ == "__main__":
     parse_tex("PhysRev.tex")
-    format_it()
+    #format_it()
     load_paper_name_from_xslt()
