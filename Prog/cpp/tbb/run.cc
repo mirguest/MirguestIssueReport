@@ -36,6 +36,13 @@ class IOTbbTask: public TbbTask
 {
     tbb::task* execute() {
         std::cout << "IOTbbTask::execute. " << std::endl;
+
+        // if nothing to be read, we won't set it as recycle.
+        if (its_done<total_evtmax) {
+	    recycle_as_continuation();
+        } else {
+	    std::cout << "won't set iotask as recycle." << std::endl;
+	}
         return NULL;
     }
 };
@@ -45,24 +52,37 @@ IOTbbTask* global_iotask = 0;
 
 class WorkerTbbTask: public TbbTask
 {
-    tbb::task* execute() {
-        std::cout << "WorkerTbbTask::execute. " << std::endl;
+public:
+    WorkerTbbTask(int i) : tid(i) {}
 
+    tbb::task* execute() {
 	// then, we need to recycle.
 	tbb::task* next = NULL;
 	int evtid = eventid();
 	if (doNext(evtid)) {
             recycle_as_continuation();
 	    next = this;
-	}
+	} else {
+	    std::cout << "[tid" << tid << "] WorkerTbbTask return without recycle_as_continuation. " << std::endl;
+            return next;
+        }
+
+        std::cout << "[tid" << tid << "] WorkerTbbTask::execute: " << evtid << std::endl;
 
         // sometimes, we need to call io task.
-        if (evtid==10) {
+        if (evtid%10==0) {
+            // IOTbbTask* global_iotask = new (tbb::task::allocate_root()) IOTbbTask();
 	    std::cout << "global_iotask: " << global_iotask << std::endl;
 	    tbb::task::enqueue(*global_iotask, tbb::priority_high);
+
+	    std::cout << "[tid" << tid << "] set next is iotask. " << std::endl;
+            // next = global_iotask;
 	}
         return next;
     }
+
+private:
+    int tid;
 };
 
 // supervisor, root of children
@@ -97,9 +117,13 @@ public:
     // At the same time, we insert some I/O tasks into the queue.
     void init() {
         for (int i = 0; i < 4; ++i) {
-	    TbbTask* child = new (allocate_child()) WorkerTbbTask();
+	    TbbTask* child = new (allocate_child()) WorkerTbbTask(i);
 	    m_children.push_back(child);
         }
+
+        global_iotask = new (tbb::task::allocate_child()) IOTbbTask();
+	// m_children.push_back(global_iotask);
+
     }
 
 private:
@@ -112,7 +136,7 @@ int main() {
     int nthreads = 4;
     tbb::task_scheduler_init scheduler_init(nthreads);
 
-    global_iotask = new (tbb::task::allocate_root()) IOTbbTask();
+    // global_iotask = new (tbb::task::allocate_root()) IOTbbTask();
 
     TaskSupervisor* supervisor = new(tbb::task::allocate_root()) TaskSupervisor();
     supervisor->init();
