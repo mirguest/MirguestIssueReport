@@ -121,7 +121,7 @@ public:
 	    m_children.push_back(child);
         }
 
-        global_iotask = new (tbb::task::allocate_child()) IOTbbTask();
+        // global_iotask = new (tbb::task::allocate_child()) IOTbbTask();
 	// m_children.push_back(global_iotask);
 
     }
@@ -136,7 +136,7 @@ int main() {
     int nthreads = 4;
     tbb::task_scheduler_init scheduler_init(nthreads);
 
-    // global_iotask = new (tbb::task::allocate_root()) IOTbbTask();
+    global_iotask = new (tbb::task::allocate_root()) IOTbbTask();
 
     TaskSupervisor* supervisor = new(tbb::task::allocate_root()) TaskSupervisor();
     supervisor->init();
