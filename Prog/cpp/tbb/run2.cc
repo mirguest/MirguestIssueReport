@@ -11,6 +11,7 @@ public:
     bool run() {
 	tbb::task_scheduler_init scheduler_init(m_nthreads);
 
+	m_iotask = new(tbb::task::allocate_root()) BTask();
 	TaskSupervisor* supervisor = new(tbb::task::allocate_root()) TaskSupervisor();
 
 	tbb::task::spawn_root_and_wait(*supervisor);
@@ -34,6 +35,15 @@ public:
 	    } else {
                 LOG("stop");
 	    }
+
+            // if iotask flag is zero, we try to invoke it.
+            // otherwise, it is running yet.
+            if (m_iotask && m_iotask_flag.compare_and_swap(1, 0)) {
+                LOG("iotask flag: 0->1");
+		dynamic_cast<BTask*>(m_iotask)->set_next_task(next);
+		next = m_iotask;
+            }
+
             return next;
 	}
     private:
@@ -44,15 +54,51 @@ public:
     public:
 	BTask() {
             tid = 999;
+	    cnt_data_to_be_read = 3;
+
+	    next_task = 0;
 	}
 
 	tbb::task* execute() {
-            LOG("BTask::execute");
+            LOG("BTask::execute cnt_data_to_be_read:" << cnt_data_to_be_read);
+	    cnt_data_to_be_read -= 1;
+
+	    // make it recycle, so it could be used later.
+	    // but the next time, we are invoke it by ATask.
+            if (cnt_data_to_be_read != 0) {
+                recycle_as_continuation();
+	    } else {
+                LOG("stop recycle_as_continuation");
+
+		m_iotask = 0;
+		LOG("reset iotask=0");
+		// return NULL;
+	    }
+
+	    tbb::task* next = NULL;
+
+	    if (next_task) {
+                next = next_task;
+	    	next_task = 0;
+	    }
+
+	    // done: reset the flag
+	    while(m_iotask_flag.compare_and_swap(0, 1)) {
+	    }
+	    LOG("reset iotaskflag.");
 	    return next;
 	}
 
+	void set_next_task(tbb::task* t) {
+            next_task = t;
+        }
+
     private:
         int tid;
+
+	int cnt_data_to_be_read;
+
+	tbb::task* next_task;
     };
 
     class TaskSupervisor: public tbb::task {
@@ -64,9 +110,9 @@ public:
 		m_children.push_back(child);
 	    }
 
-	    // insert task B
-	    tbb::task* tb = new (allocate_child()) BTask();
-	    m_children.push_back(tb);
+ 	    // // insert task B
+	    // tbb::task* tb = new (allocate_child()) BTask();
+	    // m_children.push_back(tb);
         }
     
 	tbb::task* execute() {
@@ -89,12 +135,16 @@ protected:
     static int m_nthreads;
     static int m_evtmax;
     static tbb::atomic<int> m_cur_evtid;
+
+    static tbb::task* m_iotask;
+    static tbb::atomic<int> m_iotask_flag;
 };
 
 int TestCase::m_nthreads = 4;
-int TestCase::m_evtmax = 100;
+int TestCase::m_evtmax = 10;
 tbb::atomic<int> TestCase::m_cur_evtid = 0;
-
+tbb::task* TestCase::m_iotask = 0;
+tbb::atomic<int> TestCase::m_iotask_flag = 0;
 
 int main() {
     TestCase tc;
