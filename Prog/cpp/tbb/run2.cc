@@ -42,6 +42,17 @@ public:
 
     class BTask: public tbb::task {
     public:
+	BTask() {
+            tid = 999;
+	}
+
+	tbb::task* execute() {
+            LOG("BTask::execute");
+	    return next;
+	}
+
+    private:
+        int tid;
     };
 
     class TaskSupervisor: public tbb::task {
@@ -52,6 +63,10 @@ public:
 		tbb::task* child = new (allocate_child()) ATask(i);
 		m_children.push_back(child);
 	    }
+
+	    // insert task B
+	    tbb::task* tb = new (allocate_child()) BTask();
+	    m_children.push_back(tb);
         }
     
 	tbb::task* execute() {
