@@ -40,6 +40,7 @@ namespace SniperLog
         }
 
 	LogHelper& operator<<(std::ostream& (*_f)(std::ostream&)) {
+            if ( m_active ) _f(std::cout);
 	    return *this;
         }
 
@@ -63,17 +64,27 @@ using SniperLog::scope;
 using SniperLog::objName;
 
 
-#define SNIPERLOG(Flag)  SniperLog::LogHelper(\
-        Flag,\
-        logLevel(),\
-        scope(),\
-        objName(),\
-        __func__\
+
+#define SNIPERLOG_OBJ(Flag) \
+       SniperLog::LogHelper(\
+        Flag,                                   \
+        logLevel(),                             \
+        scope(),                                \
+	objName(),				\
+        __func__                                \
+        )
+#define SNIPERLOG_GLB(Flag)			\
+       SniperLog::LogHelper(\
+        Flag,                                   \
+        logLevel(),                             \
+        scope(),                                \
+	::objName(),	            		\
+        __func__                                \
         )
 
 #define LogTest   SNIPERLOG(0)
 #define LogDebug  SNIPERLOG(2)
-#define LogInfo   SNIPERLOG(3)
+#define LogInfo   #if define(this) SNIPERLOG_OBJ(3) #else SNIPERLOG_GLB(3) #endif
 #define LogWarn   SNIPERLOG(4)
 #define LogError  SNIPERLOG(5)
 #define LogFatal  SNIPERLOG(6)
@@ -84,6 +95,9 @@ class A {
 public:
     static void mymethod() {
         LogInfo << "hello" << std::endl;
+#if defined(this)
+	std::cout << this << std::endl;
+#endif
     }
 
     const std::string& objName() { return m_name; }
