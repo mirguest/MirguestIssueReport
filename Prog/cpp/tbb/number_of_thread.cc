@@ -1,11 +1,20 @@
+/*
+ * g++ -std=c++11 -o not number_of_thread.cc -I$TBBROOT/include -L$TBBROOT/lib -ltbb
+ */
+
 #include <iostream>
 #include <list>
+#include <cstdlib>
+#include <cstring>
+#include <pthread.h>
 #include <tbb/task.h>
 #include <tbb/task_scheduler_init.h>
 #include <tbb/atomic.h>
 #include <tbb/concurrent_queue.h>
 
-#define LOG(x) do { std::cout << "[tid:" << tid << "] " << __func__ << " " << x << std::endl; } while(0)
+
+#define LOG(x) do { std::cout << "[tid:" << tid << "]@{thread id " << pthread_self() << "} " << __func__ << " " << x << std::endl; } while(0)
+
 
 template<class T>
 class Dispatcher {
@@ -55,37 +64,9 @@ protected:
     int tid;
 };
 
-class SNiPERIOTask: public SNiPERTask {
-public:
-
-    SNiPERIOTask() : SNiPERTask(8888) {}
-
-    virtual bool run() {
-        return true;
-    }
-
-    virtual bool execute() {
-        LOG("SNiPERIOTask: I'am doing I/O now.");
-        return true;
-    }
-
-private:
-
-};
-
 
 class TestCase {
 public:
-    bool run() {
-	tbb::task_scheduler_init scheduler_init(m_nthreads);
-
-	TaskSupervisor* supervisor = new(tbb::task::allocate_root()) TaskSupervisor();
-
-	tbb::task::spawn_root_and_wait(*supervisor);
-        return true;
-    }
-
-
     class ATask: public tbb::task {
     public:
 	ATask(int i): tid(i) {
@@ -152,8 +133,8 @@ public:
 	    }
 
  	    // insert iotask
-	    SNiPERIOTask* iotask = new SNiPERIOTask();
-	    m_dispatcher.init_io(iotask);
+	    // SNiPERIOTask* iotask = new SNiPERIOTask();
+	    // m_dispatcher.init_io(iotask);
         }
     
 	tbb::task* execute() {
@@ -172,20 +153,48 @@ public:
 	int tid;
     };
 
-protected:
+public:
+    TestCase(int argc, char* argv[]): tid(418) {
+        for (int i = 1; i < argc; ++i) {
+            if (strcmp(argv[i], "-n")==0) {
+                if (++i<argc) { m_nthreads = atoi(argv[i]); }
+                else { std::cerr << "missing value" << std::endl;}
+            } else {
+		std::cerr << "unknown option: " << argv[i] << std::endl;
+            } 
+        }
+    }
+
+
+    bool run() {
+        LOG("Initialize number of threads: " << m_nthreads);
+	tbb::task_scheduler_init scheduler_init(m_nthreads);
+
+	TaskSupervisor* supervisor = new(tbb::task::allocate_root()) TaskSupervisor();
+
+	tbb::task::spawn_root_and_wait(*supervisor);
+
+        return true;
+    }
+
+private:
+    int tid;
     static int m_nthreads;
     static int m_evtmax;
     static tbb::atomic<int> m_cur_evtid;
 
     static Dispatcher<SNiPERTask*> m_dispatcher;
+
 };
 
-int TestCase::m_nthreads = 4;
+int TestCase::m_nthreads = 1;
 int TestCase::m_evtmax = 10;
 tbb::atomic<int> TestCase::m_cur_evtid = 0;
 Dispatcher<SNiPERTask*> TestCase::m_dispatcher;
 
-int main() {
-    TestCase tc;
+
+int main(int argc, char* argv[]) {
+    TestCase tc(argc, argv);
     tc.run();
+
 }
