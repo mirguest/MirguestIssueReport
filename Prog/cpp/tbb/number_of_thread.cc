@@ -49,7 +49,7 @@ private:
 class SNiPERTask {
 public:
 
-    SNiPERTask(int i) : tid(i) {}
+    SNiPERTask(int i, int w) : tid(i), workload(w) {}
 
     virtual bool run() {
         for (int i = 0; i < 10000000; ++i) {
@@ -63,8 +63,8 @@ public:
 
     virtual bool execute() {
         LOG("SNiPERTask: I'am working now.");
-        for (int i = 0; i < 10000000; ++i) {
-            for (int j = 0; j < 10000000; ++j) {
+        for (int i = 0; i < 1000*workload; ++i) {
+            for (int j = 0; j < 1000*workload; ++j) {
                 int k = i+j;
 		double kd = i*j;
             }
@@ -76,6 +76,7 @@ public:
 protected:
 
     int tid;
+    int workload;
 };
 
 
@@ -142,7 +143,7 @@ public:
 		tbb::task* child = new (allocate_child()) ATask(i);
 		m_children.push_back(child);
 
-		SNiPERTask* item = new SNiPERTask(i);
+		SNiPERTask* item = new SNiPERTask(i, m_workload);
 		m_dispatcher.add(item);
 	    }
 
@@ -176,6 +177,9 @@ public:
             } else if (strcmp(argv[i], "--evtmax")==0) {
                 if (++i<argc) { m_evtmax = atoi(argv[i]); }
                 else { std::cerr << "missing value" << std::endl;}
+            } else if (strcmp(argv[i], "--workload")==0) {
+                if (++i<argc) { m_workload = atoi(argv[i]); }
+                else { std::cerr << "missing value" << std::endl;}
             } else {
 		std::cerr << "unknown option: " << argv[i] << std::endl;
             } 
@@ -196,6 +200,7 @@ public:
 
 private:
     int tid;
+    static int m_workload;
     static int m_nthreads;
     static int m_evtmax;
     static tbb::atomic<int> m_cur_evtid;
@@ -204,6 +209,7 @@ private:
 
 };
 
+int TestCase::m_workload = 0; // 0 -> ... more heavy
 int TestCase::m_nthreads = 1;
 int TestCase::m_evtmax = 10;
 tbb::atomic<int> TestCase::m_cur_evtid = 0;
