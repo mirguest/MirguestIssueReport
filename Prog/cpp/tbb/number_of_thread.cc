@@ -1,6 +1,31 @@
 /*
  * $ g++ -std=c++11 -o not number_of_thread.cc -I$TBBROOT/include -L$TBBROOT/lib -ltbb
- * $ ./not -n 40 --evtmax 100
+ * $ ./not -n 40 --evtmax 100 >& mylog
+ * $ grep -oP '[0-9]+' mylog | sort | uniq -c
+ * or 
+ * $ ./not -n 40 --evtmax 100 | grep -oP '[0-9]+' | sort | uniq -c
+ * If the overload is heavy, about 4x physical threads will be created.
+
+ihep@linux-h5h2:~/code-/MirguestIssueReport/Prog/cpp/tbb> ./not -n 40 --evtmax 100 --workload 10000 >& mylog
+^C
+ihep@linux-h5h2:~/code-/MirguestIssueReport/Prog/cpp/tbb> grep -oP '[0-9]+' mylog | sort | uniq -c
+      2 139862791419648
+      2 139863265490688
+      2 139863269689088
+      2 139863273887488
+      2 139863278085888
+      2 139863282284288
+      2 139863286482688
+      2 139863290681088
+      2 139863294879488
+      2 139863299077888
+      2 139863303276288
+      2 139863307474688
+      2 139863311673088
+      2 139863315871488
+      2 139863320069888
+      3 139863348238144
+      1 40
  */
 
 #include <iostream>
@@ -13,9 +38,8 @@
 #include <tbb/atomic.h>
 #include <tbb/concurrent_queue.h>
 
-
-#define LOG(x) do { std::cout << "[tid:" << tid << "]@{thread id " << pthread_self() << "} " << __func__ << " " << x << std::endl; } while(0)
-
+// #define LOG(x) do { std::cout << "[tid:" << tid << "]@{thread id " << pthread_self() << "} " << __func__ << " " << x << std::endl; } while(0)
+#define LOG(x) do { std::cout << "@{thread id " << pthread_self() << "} " << __func__ << " " << x << std::endl; } while(0)
 
 template<class T>
 class Dispatcher {
@@ -217,6 +241,7 @@ Dispatcher<SNiPERTask*> TestCase::m_dispatcher;
 
 
 int main(int argc, char* argv[]) {
+    LOG("I am main().");
     TestCase tc(argc, argv);
     tc.run();
 
