@@ -1,5 +1,6 @@
 /*
- * g++ -std=c++11 -o not number_of_thread.cc -I$TBBROOT/include -L$TBBROOT/lib -ltbb
+ * $ g++ -std=c++11 -o not number_of_thread.cc -I$TBBROOT/include -L$TBBROOT/lib -ltbb
+ * $ ./not -n 40 --evtmax 100
  */
 
 #include <iostream>
@@ -51,11 +52,24 @@ public:
     SNiPERTask(int i) : tid(i) {}
 
     virtual bool run() {
+        for (int i = 0; i < 10000000; ++i) {
+            for (int j = 0; j < 10000000; ++j) {
+                int k = i+j;
+		double kd = i*j;
+            }
+        }
         return true;
     }
 
     virtual bool execute() {
         LOG("SNiPERTask: I'am working now.");
+        for (int i = 0; i < 10000000; ++i) {
+            for (int j = 0; j < 10000000; ++j) {
+                int k = i+j;
+		double kd = i*j;
+            }
+        }
+
         return true;
     }
 
@@ -158,6 +172,9 @@ public:
         for (int i = 1; i < argc; ++i) {
             if (strcmp(argv[i], "-n")==0) {
                 if (++i<argc) { m_nthreads = atoi(argv[i]); }
+                else { std::cerr << "missing value" << std::endl;}
+            } else if (strcmp(argv[i], "--evtmax")==0) {
+                if (++i<argc) { m_evtmax = atoi(argv[i]); }
                 else { std::cerr << "missing value" << std::endl;}
             } else {
 		std::cerr << "unknown option: " << argv[i] << std::endl;
