@@ -20,6 +20,12 @@ border_elm_1_str = '''<w:tcBorders {}>
 <w:right w:val="single" w:color="5C5C5C" w:space="0" w:sz="6"/>
 </w:tcBorders>'''.format(nsdecls('w'))
 
+border_elm_2_str = '''<w:tcBorders {}>
+<w:top w:val="single" w:color="BBBBBB" w:space="0" w:sz="6"/>
+<w:left w:val="single" w:color="BBBBBB" w:space="0" w:sz="6"/>
+<w:bottom w:val="single" w:color="BBBBBB" w:space="0" w:sz="6"/>
+<w:right w:val="single" w:color="BBBBBB" w:space="0" w:sz="6"/>
+</w:tcBorders>'''.format(nsdecls('w'))
 
 cell_spacing_1_str = '''
 <w:tblCellSpacing {} w:w="15" w:type="dxa"/>
@@ -78,19 +84,19 @@ for month in range(1, 13):
             for (m, day) in enumerate(reversed(week_only)):
                 week_cells[6-m].text = day
                 
-                border_elm_1 = parse_xml(border_elm_1_str)
+                border_elm_2 = parse_xml(border_elm_2_str)
                 shading_elm_1 = parse_xml(r'<w:shd {} w:fill="EFEFEF"/>'.format(nsdecls('w')))
 
-                week_cells[6-m]._tc.get_or_add_tcPr().append(border_elm_1)
+                week_cells[6-m]._tc.get_or_add_tcPr().append(border_elm_2)
                 week_cells[6-m]._tc.get_or_add_tcPr().append(shading_elm_1)
         else:
             for (m, day) in enumerate(week_only):
                 week_cells[m].text = day
 
-                border_elm_1 = parse_xml(border_elm_1_str)
+                border_elm_2 = parse_xml(border_elm_2_str)
                 shading_elm_1 = parse_xml(r'<w:shd {} w:fill="EFEFEF"/>'.format(nsdecls('w')))
                 
-                week_cells[m]._tc.get_or_add_tcPr().append(border_elm_1)
+                week_cells[m]._tc.get_or_add_tcPr().append(border_elm_2)
                 week_cells[m]._tc.get_or_add_tcPr().append(shading_elm_1)
 
     # Add a new page
