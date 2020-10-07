@@ -81,6 +81,16 @@ host_infos_all = [
         domain: "*.qq.com",
         proxy: PROXY_LAN
     },
+    {
+        name: "qq",
+        domain: "*.gtimg.cn",
+        proxy: PROXY_LAN
+    },
+    {
+        name: "qq",
+        domain: "*.gtimg.com",
+        proxy: PROXY_LAN
+    },
     // * ## Default
     {
         name: "default",
