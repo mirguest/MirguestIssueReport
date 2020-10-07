@@ -21,12 +21,14 @@ PROXY_DEFAULT = PROXY_WAN;
 
 
 host_infos_all = [
+    // * ## Local host
     {
         name: "local",
         ip: "127.0.0.1",
         ipmask: "255.255.255.255",
         proxy: PROXY_DIRECT
     },
+    // * ## Some IPv6 mirrors should be accessed directly
     {
         name: "byr",
         domain: "*.byr.cn",
@@ -48,6 +50,12 @@ host_infos_all = [
         proxy: PROXY_DIRECT
     },
     {
+        name: "lzu",
+        domain: "*.lzu.edu.cn",
+        proxy: PROXY_DIRECT
+    },
+    // * ## CAS
+    {
         name: "ihep",
         domain: "*.ihep.ac.cn",
         proxy: PROXY_DIRECT
@@ -57,6 +65,17 @@ host_infos_all = [
         domain: "*.ihep.cas.cn",
         proxy: PROXY_DIRECT
     },
+    {
+        name: "ucas",
+        domain: "*.ucas.ac.cn",
+        proxy: PROXY_DIRECT
+    },
+    {
+        name: "cas-cst",
+        domain: "*.cstnet.cn",
+        proxy: PROXY_DIRECT
+    },
+    // * ## Default
     {
         name: "default",
         proxy: PROXY_DEFAULT
