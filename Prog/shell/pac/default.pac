@@ -75,6 +75,12 @@ host_infos_all = [
         domain: "*.cstnet.cn",
         proxy: PROXY_DIRECT
     },
+    // * ## Tencent
+    {
+        name: "qq",
+        domain: "*.qq.com",
+        proxy: PROXY_LAN
+    },
     // * ## Default
     {
         name: "default",
