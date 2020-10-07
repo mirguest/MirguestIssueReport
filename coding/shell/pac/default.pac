@@ -5,7 +5,7 @@
 // - Edit: https://github.com/mirguest/MirguestIssueReport/edit/master/coding/shell/pac/default.pac
 // - Raw:
 //   - https://raw.githubusercontent.com/mirguest/MirguestIssueReport/master/coding/shell/pac/default.pac
-
+//   - https://bitbucket.org/lintao/mirguestissuereport/raw/master/coding/shell/pac/default.pac
 
 PROXY_DIRECT = "DIRECT";
 PROXY_LAN = "SOCKS5 127.0.0.1:3839";
