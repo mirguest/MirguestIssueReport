@@ -1,6 +1,9 @@
 // -*- javascript -*-
 // This is a PAC (Proxy Auto-Config) file
 // Refer: https://developer.mozilla.org/en-US/docs/Web/HTTP/Proxy_servers_and_tunneling/Proxy_Auto-Configuration_(PAC)_file
+// GitHub: https://github.com/mirguest/MirguestIssueReport/blob/master/Prog/shell/pac/default.pac
+// Raw: https://raw.githubusercontent.com/mirguest/MirguestIssueReport/master/Prog/shell/pac/default.pac
+// Edit: https://github.com/mirguest/MirguestIssueReport/edit/master/Prog/shell/pac/default.pac
 
 PROXY_DIRECT = "DIRECT";
 PROXY_LAN = "SOCKS5 127.0.0.1:3839";
