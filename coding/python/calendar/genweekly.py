@@ -7,7 +7,7 @@
 
 import calendar
 
-year = 2021
+year = 2022
 
 results = []
 
@@ -29,7 +29,7 @@ for month in range(1, 13):
         if not firstday_in_week:
             continue
         # print(firstday_in_week)
-        result = "Week of %s %s"%(firstday_in_week, str_month)
+        result = "* Week of %s %s"%(firstday_in_week, str_month)
         results.append(result)
 
 for r in results[::-1]:
