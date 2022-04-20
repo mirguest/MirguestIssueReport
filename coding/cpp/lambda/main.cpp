@@ -16,7 +16,14 @@ struct InternalResult {
         T r{};
         return r;
     }
+
 };
+
+template<>
+double InternalResult::get<double>(int i) const {
+    return 42;
+}
+
 
 // Ref:
 //     https://nilsdeppe.com/posts/tmpl-part3
@@ -31,6 +38,7 @@ void tuple_element_helper(const TInput& ir, std::tuple<Args...>& tuple) {
     auto& v1 = std::get<IndexR>(tuple);
     typedef typename std::decay<decltype(v1)>::type T;
     auto v2 = ir.template get<T>(IndexR);
+    v1 = v2;
 
     std::cout << " tuple: " << std::get<IndexR>(tuple) << std::endl;
 
