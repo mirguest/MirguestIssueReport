@@ -13,3 +13,7 @@
 
 # Python
 *.py[co]
+
+a.out
+
+.vscode
