@@ -9,11 +9,11 @@
 第一级可以安装下面的方式分类：
 
 * 编程语言
-  * [Bash](coding/shell)
   * [C++](coding/cpp)
+  * [Bash](coding/shell)
+  * [Python](coding/python)
   * [Fortran](coding/fortran)
   * [Haskell](coding/haskell)
-  * [Python](coding/python)
 * 编程工具
   * [GDB](coding/gdb)
   * [scons](coding/scons)
