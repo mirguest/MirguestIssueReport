@@ -49,6 +49,16 @@ const char *KernelSource = "\n" \
 "       output[i] = input[i] * input[i];                                \n" \
 "}                                                                      \n" \
 "\n";
+
+const char *KernelSourceV2 = R"(
+__kernel void square(__global float* input, __global float* output, const unsigned int count) {
+    int i = get_global_id(0);
+    if (i<count) {
+        output[i] = input[i] * input[i];
+    }
+}
+)";
+
 ////////////////////////////////////////////////////////////////////////////////
 
  
@@ -79,8 +89,7 @@ int main(int argc, char** argv)
 
     // Connect to a compute device
     //
-    int gpu = 1;
-
+    cl_device_type   device_type = 0;
 
     char chBuffer[1024];
     cl_uint num_platforms;
@@ -115,15 +124,27 @@ int main(int argc, char** argv)
                 if(strstr(chBuffer, "NVIDIA") != NULL)
                 {
                     clSelectedPlatformID = clPlatformIDs[i];
+                    device_type = CL_DEVICE_TYPE_GPU;
+                    printf("selected device NVIDIA\n");
                     break;
-                }
+                } else if (strstr(chBuffer, "Intel(R) OpenCL") != NULL) {
+                    clSelectedPlatformID = clPlatformIDs[i];
+                    device_type = CL_DEVICE_TYPE_CPU;
+                    printf("selected device Intel CPU\n");
+                    break;
+                } else if (strstr(chBuffer, "Intel(R) FGPA") != NULL) {
+                    clSelectedPlatformID = clPlatformIDs[i];
+                    device_type = CL_DEVICE_TYPE_ACCELERATOR;
+                    printf("selected device Intel FPGA\n");
+                    break;
+                } 
             }
         }
 
     }
 
 
-    err = clGetDeviceIDs(clSelectedPlatformID, gpu ? CL_DEVICE_TYPE_GPU : CL_DEVICE_TYPE_CPU, 1, &device_id, NULL);
+    err = clGetDeviceIDs(clSelectedPlatformID, device_type, 1, &device_id, NULL);
 
     if (err != CL_SUCCESS)
     {
@@ -160,7 +181,7 @@ int main(int argc, char** argv)
 
     // Create the compute program from the source buffer
     //
-    program = clCreateProgramWithSource(context, 1, (const char **) & KernelSource, NULL, &err);
+    program = clCreateProgramWithSource(context, 1, (const char **) & KernelSourceV2, NULL, &err);
     if (!program)
     {
         printf("Error: Failed to create compute program!\n");
@@ -237,14 +258,17 @@ int main(int argc, char** argv)
         exit(1);
     }
 
+    printf("size of local: %ld\n", local);
+
     // Execute the kernel over the entire range of our 1d input data set
     // using the maximum number of work group items for this device
     //
     global = count;
-    err = clEnqueueNDRangeKernel(commands, kernel, 1, NULL, &global, &local, 0, NULL, NULL);
+    err = clEnqueueNDRangeKernel(commands, kernel, 1, NULL, &global, NULL, 0, NULL, NULL);
     if (err)
     {
         printf("Error: Failed to execute kernel!\n");
+        printf("Error code is %d\n", err);
         return EXIT_FAILURE;
     }
 
