@@ -52,7 +52,7 @@ MIR 代码仓库
 * [Security](https://dl.acm.org/subject/security)
 * [Web, Mobile](https://dl.acm.org/subject/mobile)
 * [Graphics, CAD](https://dl.acm.org/subject/graphics)
-* [Hardward](https://dl.acm.org/subject/hardware)
+* [Hardware](https://dl.acm.org/subject/hardware)
 * [Software Engineering, Programming Languages](https://dl.acm.org/subject/se)
 
 而 [ACM SIG](https://www.acm.org/special-interest-groups/alphabetical-listing) 则有更多细化的主题。
