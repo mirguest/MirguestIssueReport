@@ -1,9 +1,9 @@
-代码仓库
+MIR 代码仓库
 ===================
 
 
-## 练习
-学习过程中的练习代码。
+## 关于本仓库
+存储学习过程中的练习代码。但是请注意，计算机相关的知识不仅仅是编程。
 
 关于目录结构，尽量采用扁平化的方式，避免过多嵌套。
 两级结构：第一级是技术，第二级是特定的问题或应用。
@@ -39,3 +39,28 @@
 * 数据处理技术
 * 模拟技术
 
+在 [ACM Digital Library](https://dl.acm.org/) 中给出了相关的主题:
+* [AI](https://dl.acm.org/subject/ai)
+* [Society](https://dl.acm.org/subject/society)
+* [Network](https://dl.acm.org/subject/network)
+* [Human Computer Interaction](https://dl.acm.org/subject/hci)
+* [Theory](https://dl.acm.org/subject/theory)
+* [Information System, Database, Data Science](https://dl.acm.org/subject/is)
+* [Applied Computing](https://dl.acm.org/subject/applied)
+* [Architecutre, Embedded, Robotics](https://dl.acm.org/subject/architecture)
+* [Security](https://dl.acm.org/subject/security)
+* [Web, Mobile](https://dl.acm.org/subject/mobile)
+* [Graphics, CAD](https://dl.acm.org/subject/graphics)
+* [Hardward](https://dl.acm.org/subject/hardware)
+* [Software Engineering, Programming Languages](https://dl.acm.org/subject/se)
+
+而 [ACM SIG](https://www.acm.org/special-interest-groups/alphabetical-listing) 则有更多细化的主题。
+
+[ACM推荐的课程](https://www.acm.org/education/curricula-recommendations) 也包含了一些分类。例如 Computing Curricula 2020 保护了：
+* Computer Engineering
+* Computer Science
+* Cybersecurity
+* Information Systems
+* Information Technology
+* Software Engineering
+* Data science 
