@@ -39,6 +39,7 @@ MIR 代码仓库
 * 数据处理技术
 * 模拟技术
 
+## 关于分类
 在 [ACM Digital Library](https://dl.acm.org/) 中给出了相关的主题:
 * [AI](https://dl.acm.org/subject/ai)
 * [Society](https://dl.acm.org/subject/society)
@@ -56,7 +57,7 @@ MIR 代码仓库
 
 而 [ACM SIG](https://www.acm.org/special-interest-groups/alphabetical-listing) 则有更多细化的主题。
 
-[ACM推荐的课程](https://www.acm.org/education/curricula-recommendations) 也包含了一些分类。例如 Computing Curricula 2020 保护了：
+[ACM推荐的课程](https://www.acm.org/education/curricula-recommendations) 也包含了一些分类。例如 Computing Curricula 2020 包含了：
 * Computer Engineering
 * Computer Science
 * Cybersecurity
