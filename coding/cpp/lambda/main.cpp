@@ -68,6 +68,27 @@ std::vector<std::tuple<Args...>> myquery2(const std::string& str) {
     return results;
 }
 
+
+template<typename T, typename... Args>
+std::vector<T> myquery2(const std::string& str, std::function<T(Args...)> f) {
+    std::vector<T> results;
+
+    typedef typename std::tuple<Args...> TupleT;
+
+    for (int i = 0; i < 1; ++i) {
+        TupleT t;
+
+        InternalResult ir; // a runtime result
+
+        tuple_element_helper<std::tuple_size_v<TupleT>, 0>(ir, t);
+
+        results.push_back(std::apply(f, t));
+    }
+
+    
+    return results;
+}
+
 int main() {
     // myquery("abcd", [](int id) {
     //     std::cout << id << std::endl;
@@ -99,5 +120,18 @@ int main() {
     //     auto [id, name] = result;
     // }
 
+    struct Dual {
+        int one;
+    };
 
+    std::function<Dual(int)> f = [](int i)->Dual {
+                                     return Dual{i};
+                                 };
+
+    auto result3 = myquery2(stmt, f);
+
+    std::cout << "Using struct Dual " << std::endl;
+    for (auto result: result3) {
+        std::cout << "one: " << result.one << std::endl;
+    }
 }
