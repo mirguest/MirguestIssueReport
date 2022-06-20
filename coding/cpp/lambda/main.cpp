@@ -89,6 +89,7 @@ std::vector<T> myquery2(const std::string& str, std::function<T(Args...)> f) {
     return results;
 }
 
+
 int main() {
     // myquery("abcd", [](int id) {
     //     std::cout << id << std::endl;
@@ -122,11 +123,13 @@ int main() {
 
     struct Dual {
         int one;
+
+        typedef std::function<Dual(int)> F;
     };
 
-    std::function<Dual(int)> f = [](int i)->Dual {
-                                     return Dual{i};
-                                 };
+    Dual::F f = [](int i)->Dual {
+                    return Dual{i};
+                };
 
     auto result3 = myquery2(stmt, f);
 
@@ -134,4 +137,5 @@ int main() {
     for (auto result: result3) {
         std::cout << "one: " << result.one << std::endl;
     }
+
 }
