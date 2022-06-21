@@ -138,4 +138,6 @@ int main() {
         std::cout << "one: " << result.one << std::endl;
     }
 
+    // following code won't be compiled due to Dual is not tuple
+    // std::cout << std::tuple_size<Dual>::value << std::endl;
 }
