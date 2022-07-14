@@ -8,6 +8,16 @@ extern "C" {
     void init();
 
     void execute();
+
+    struct Pod {
+        float x;
+        float y;
+        float z;
+        float t;
+    };
+
+    void set_pod(float x, float y, float z, float t);
+    void get_pod(Pod* pod);
 }
 
 #endif

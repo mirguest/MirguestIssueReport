@@ -11,8 +11,20 @@
 
 #include "myinterface.h"
 
+#include <iostream>
+
 int main() {
     init();
 
     execute();
+    Pod pod;
+    get_pod(&pod);
+
+    std::cout << "Pod: " 
+              << " x: " << pod.x
+              << " y: " << pod.y
+              << " z: " << pod.z
+              << " t: " << pod.t
+              << std::endl;
+
 }
