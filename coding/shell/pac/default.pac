@@ -37,6 +37,11 @@ host_infos_all = [
         proxy: PROXY_DIRECT
     },
     {
+        name: "pt",
+        domain: "*.pt",
+        proxy: PROXY_DIRECT
+    },
+    {
         name: "neu",
         domain: "*.neu6.edu.cn",
         proxy: PROXY_DIRECT
