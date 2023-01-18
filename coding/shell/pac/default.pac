@@ -61,6 +61,11 @@ host_infos_all = [
         domain: "*.lzu.edu.cn",
         proxy: PROXY_DIRECT
     },
+    {
+        name: "edu",
+        domain: "*.edu.cn",
+        proxy: PROXY_DIRECT
+    },
     // * ## CAS
     {
         name: "ihep",
@@ -80,6 +85,11 @@ host_infos_all = [
     {
         name: "cas-cst",
         domain: "*.cstnet.cn",
+        proxy: PROXY_DIRECT
+    },
+    {
+        name: "cas",
+        domain: "*.cas.cn",
         proxy: PROXY_DIRECT
     },
     // * ## Tencent
