@@ -19,6 +19,7 @@ import (
     "fmt"
     "os"
     "rsc.io/quote"	
+    "mirguest/go/learn/greetings"
 )
 
 // Let us start
@@ -26,4 +27,5 @@ func main() {
     fmt.Println("Hello, world!")  // Print simple text on screen
     fmt.Println(os.Getenv("USER"), ", Let's be friends!") // Read Linux $USER environment variable
     fmt.Println(quote.Go())
+    fmt.Println(greetings.Hello(os.Getenv("USER")))
 }
