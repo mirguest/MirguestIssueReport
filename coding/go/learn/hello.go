@@ -1,8 +1,15 @@
-// Run
+// Run:
 // $ go run hello.go
-// Build
+//
+// Build:
 // $ go build hello.go
 // $ ./hello
+//
+// Create a mod:
+// $ go mod init mirguest/go/learn
+//
+// Download dependencies:
+// $ go mod tidy
 // 
 // Hello Word in Go
 package main
