@@ -10,8 +10,10 @@
 PROXY_DIRECT = "DIRECT";
 PROXY_LAN = "SOCKS5 127.0.0.1:3839";
 PROXY_WAN = "SOCKS5 127.0.0.1:48888";
+PROXY_WAN_ = "PROXY 127.0.0.1:57890";
 
-PROXY_DEFAULT = PROXY_WAN;
+
+PROXY_DEFAULT = PROXY_WAN_;
 
 // host_infos contains a list of host info:
 // * name/description
@@ -32,33 +34,8 @@ host_infos_all = [
     },
     // * ## Some IPv6 mirrors should be accessed directly
     {
-        name: "byr",
-        domain: "*.byr.cn",
-        proxy: PROXY_DIRECT
-    },
-    {
         name: "pt",
         domain: "*.pt",
-        proxy: PROXY_DIRECT
-    },
-    {
-        name: "neu",
-        domain: "*.neu6.edu.cn",
-        proxy: PROXY_DIRECT
-    },
-    {
-        name: "ustc",
-        domain: "*.ustc.edu.cn",
-        proxy: PROXY_DIRECT
-    },
-    {
-        name: "tsinghua",
-        domain: "*.tsinghua.edu.cn",
-        proxy: PROXY_DIRECT
-    },
-    {
-        name: "lzu",
-        domain: "*.lzu.edu.cn",
         proxy: PROXY_DIRECT
     },
     {
@@ -66,25 +43,9 @@ host_infos_all = [
         domain: "*.edu.cn",
         proxy: PROXY_DIRECT
     },
-    // * ## CAS
     {
-        name: "ihep",
-        domain: "*.ihep.ac.cn",
-        proxy: PROXY_DIRECT
-    },
-    {
-        name: "ihep-cas",
-        domain: "*.ihep.cas.cn",
-        proxy: PROXY_DIRECT
-    },
-    {
-        name: "ucas",
-        domain: "*.ucas.ac.cn",
-        proxy: PROXY_DIRECT
-    },
-    {
-        name: "cas-cst",
-        domain: "*.cstnet.cn",
+        name: "ac",
+        domain: "*.ac.cn",
         proxy: PROXY_DIRECT
     },
     {
@@ -92,21 +53,10 @@ host_infos_all = [
         domain: "*.cas.cn",
         proxy: PROXY_DIRECT
     },
-    // * ## Tencent
     {
-        name: "qq",
-        domain: "*.qq.com",
-        proxy: PROXY_LAN
-    },
-    {
-        name: "qq",
-        domain: "*.gtimg.cn",
-        proxy: PROXY_LAN
-    },
-    {
-        name: "qq",
-        domain: "*.gtimg.com",
-        proxy: PROXY_LAN
+        name: "cas-cst",
+        domain: "*.cstnet.cn",
+        proxy: PROXY_DIRECT
     },
     // * ## Default
     {
@@ -115,15 +65,7 @@ host_infos_all = [
     }
 ];
 
-// FORCE USING a dedicated proxy
-host_infos_force = [
-    {
-        name: "default",
-        proxy: PROXY_DEFAULT
-    }
-];
-
-host_infos = host_infos_all; // or force
+host_infos = host_infos_all;
 
 function FindProxyForURL (url, host) {
 
