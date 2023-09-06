@@ -58,6 +58,17 @@ host_infos_all = [
         domain: "*.cstnet.cn",
         proxy: PROXY_DIRECT
     },
+    // * QQ
+    {
+        name: "qq",
+        domain: "*.qq.com",
+        proxy: PROXY_DIRECT
+    },
+    {
+        name: "weiyun",
+        domain: "*.weiyun.com",
+        proxy: PROXY_DIRECT
+    },
     // * ## Default
     {
         name: "default",
