@@ -65,6 +65,11 @@ host_infos_all = [
         proxy: PROXY_DIRECT
     },
     {
+        name: "qq",
+        domain: "report.url.cn",
+        proxy: PROXY_DIRECT
+    },
+    {
         name: "weiyun",
         domain: "*.weiyun.com",
         proxy: PROXY_DIRECT
