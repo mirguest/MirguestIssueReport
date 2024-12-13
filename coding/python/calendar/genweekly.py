@@ -5,9 +5,16 @@
 #                * Week of 4 Jan 2021
 #
 
+import argparse
 import calendar
 
-year = 2024
+parser = argparse.ArgumentParser()
+parser.add_argument("year", type=int)
+parser.add_argument("--header", action=argparse.BooleanOptionalAction, default=True)
+
+args = parser.parse_args()
+
+year = args.year
 
 results = []
 
@@ -31,6 +38,10 @@ for month in range(1, 13):
         # print(firstday_in_week)
         result = "* Week of %s %s"%(firstday_in_week, str_month)
         results.append(result)
+
+if args.header:
+    print("#+title: %d周记"%year)
+    print()
 
 for r in results[::-1]:
     print (r)
